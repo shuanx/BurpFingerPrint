@@ -96,7 +96,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
             // 提取url，过滤掉静态文件
             String url = String.valueOf(helpers.analyzeRequest(resrsp).getUrl());
-            if (Utils.isStaticFile(url)){
+            if (Utils.isStaticFile(url) && !url.contains("favicon.")){
                 stdout.println("[+]静态文件，不进行url识别：" + url);
                 return;
             }
@@ -120,6 +120,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                 public void run() {
                     synchronized(log) {
                         int row = log.size();
+                        String faviconHash = "0";
                         String method = helpers.analyzeRequest(resrsp).getMethod();
                         Map<String, String> mapResult =  new HashMap<String, String>();
                         if (finalResponseTitle.equals(responseBody)){
@@ -127,6 +128,20 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                         }
                         else{
                             mapResult.put("title", finalResponseTitle);
+                        }
+
+                        // 进入图标识别的逻辑
+                        if (url.contains(".ico") || url.contains("favicon.")){
+                            try {
+                                faviconHash = Utils.getFaviconHash(url);
+                            } catch (Exception e) {
+                                stderr.println("[!] 无法计算icon的值：" + url);
+                                return;
+                            }
+                            if (faviconHash.equals("0")){
+                                stderr.println("[!] 无法计算icon的值：" + url);
+                                return;
+                            }
                         }
 
                         for (FingerPrintRule rule : fingerprintRules) {
@@ -137,14 +152,30 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 locationContent = responseHeaders;
                             } else if ("title".equals(rule.getLocation())) {
                                 locationContent = finalResponseTitle;
+                            }else{
+                                stderr.println("[!]指纹出现问题：" + rule.getLocation());
                             }
                             boolean allKeywordsPresent = true;
-                            for (String keyword : rule.getKeyword()) {
-                                if (!locationContent.contains(keyword)) {
-                                    allKeywordsPresent = false;
-                                    break;
+                            if ((url.contains(".ico") || url.contains("favicon.")) && "faviconhash".equals(rule.getMethod()))  {
+                                // 进入图标匹配逻辑
+                                try {
+//                                    stdout.println(faviconHash + "-" + rule.getKeyword().get(0));
+                                    if (!(faviconHash.equals(rule.getKeyword().get(0)))){
+                                        allKeywordsPresent = false;
+                                    }
+                                } catch (Exception e) {
+                                    stderr.println(e.getMessage());
+                                }
+                            }else{
+                                // 进入非图标匹配逻辑
+                                for (String keyword : rule.getKeyword()) {
+                                    if (!locationContent.contains(keyword)) {
+                                        allKeywordsPresent = false;
+                                        break;
+                                    }
                                 }
                             }
+
                             if (allKeywordsPresent) {
                                 if (mapResult.containsKey("result")) {
                                     // 如果result键已经存在，那么获取它的值并进行拼接

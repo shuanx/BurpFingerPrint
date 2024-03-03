@@ -8,6 +8,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import burp.ui.LogEntry;
+import org.apache.commons.codec.binary.Base64;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import javax.net.ssl.HttpsURLConnection;
+import org.apache.commons.codec.digest.MurmurHash3;
+import org.apache.commons.io.IOUtils;
+
 
 /**
  * @author： shaun
@@ -24,7 +33,6 @@ public class Utils {
             "bmp",
             "js",
             "css",
-            "ico",
             "woff",
             "woff2",
             "ttf",
@@ -110,5 +118,29 @@ public class Utils {
         else{
             return urlString;
         }
+    }
+    public static String getFaviconHash(String siteUrl) throws Exception {
+        InputStream faviconStream = getFaviconStream(siteUrl);
+        byte[] faviconBytes = IOUtils.toByteArray(faviconStream);
+        faviconStream.close();
+
+        byte[] base64Bytes = java.util.Base64.getEncoder().encode(faviconBytes);
+        return murmur3Hash32(base64Bytes);
+    }
+
+    public static InputStream getFaviconStream(String siteUrl) throws Exception {
+        URL url = new URL(siteUrl);
+        URLConnection connection;
+        if (siteUrl.startsWith("https")) {
+            connection = (HttpsURLConnection) url.openConnection();
+        } else {
+            connection = (HttpURLConnection) url.openConnection();
+        }
+        return connection.getInputStream();
+    }
+
+    public static String murmur3Hash32(byte[] base64Bytes) {
+        int hash = MurmurHash3.hash32x86(base64Bytes);
+        return String.valueOf(hash);
     }
 }

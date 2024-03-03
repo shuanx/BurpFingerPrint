@@ -47,9 +47,6 @@ public class GUI implements IMessageEditorController {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
 
-        ////////////////////////////////////////////////////////////////////
-        // topPanel start
-        ////////////////////////////////////////////////////////////////////
         JPanel topPanel = new JPanel();
         GridBagLayout gridBagLayout = new GridBagLayout();
         // 列数，行数
@@ -58,7 +55,6 @@ public class GUI implements IMessageEditorController {
         // 各列占宽度比，各行占高度比
         gridBagLayout.columnWeights = new double[] { 1.0D, Double.MIN_VALUE };
         topPanel.setLayout(gridBagLayout);
-
 
         JPanel FilterPanel = new JPanel();
         GridBagConstraints gbc_panel_1 = new GridBagConstraints();
@@ -94,7 +90,6 @@ public class GUI implements IMessageEditorController {
         gbc_lbRequest.gridy = 0;
         FilterPanel.add(lbRequest, gbc_lbRequest);
 
-
         lbRequestCount = new JLabel("0");
         lbRequestCount.setForeground(new Color(0,0,255));
         GridBagConstraints gbc_lbRequestCount = new GridBagConstraints();
@@ -104,7 +99,6 @@ public class GUI implements IMessageEditorController {
         gbc_lbRequestCount.gridx = 1;
         gbc_lbRequestCount.gridy = 0;
         FilterPanel.add(lbRequestCount, gbc_lbRequestCount);
-
 
         // 转发成功url数，默认0
         JLabel lbSucces = new JLabel("Finger Success:");
