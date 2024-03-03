@@ -1,6 +1,7 @@
 package burp.ui;
 
 import burp.BurpExtender;
+import javax.swing.JTable;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -10,7 +11,7 @@ public class HttpLogTableModel extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return 5;
+        return 7;
     }
 
     @Override
@@ -25,8 +26,12 @@ public class HttpLogTableModel extends AbstractTableModel {
             case 2:
                 return "URL";
             case 3:
-                return "Status";
+                return "Title";
             case 4:
+                return "Status";
+            case 5:
+                return "Result";
+            case 6:
                 return "Time";
             default:
                 return "";
@@ -52,11 +57,28 @@ public class HttpLogTableModel extends AbstractTableModel {
             case 2:
                 return logEntry.url.toString();
             case 3:
-                return logEntry.status;
+                return logEntry.title;
             case 4:
+                return logEntry.status;
+            case 5:
+                return logEntry.result;
+            case 6:
                 return logEntry.requestTime;
             default:
                 return "";
         }
+    }
+
+    public void setRowCount(int i) {
+        BurpExtender.log.clear();
+        fireTableDataChanged();
+    }
+
+    public void removeSelectedRows(JTable table) {
+        int[] selectedRows = table.getSelectedRows();
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
+            BurpExtender.log.remove(selectedRows[i]);
+        }
+        fireTableDataChanged();
     }
 }

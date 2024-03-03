@@ -8,6 +8,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 
 public class GUI implements IMessageEditorController {
     private JPanel contentPane;
@@ -37,7 +39,7 @@ public class GUI implements IMessageEditorController {
 
     public static IMessageEditor requestViewer;
     public static IMessageEditor responseViewer;
-    public static ITextEditor proxyRspViewer;
+    public static ITextEditor resultDeViewer;
 
 
     public GUI() {
@@ -151,12 +153,25 @@ public class GUI implements IMessageEditorController {
 
         HttpLogTableModel model = new HttpLogTableModel();
         logTable = new HttpLogTable(model);
-        //JTable表头排序,以下两种方法均存在问题，导致界面混乱。
-        //方式一
-        //TableRowSorter<HttpLogTableModel> tableRowSorter=new TableRowSorter<HttpLogTableModel>(model);
-        //logTable.setRowSorter(tableRowSorter);
-        //方式二
-        //logTable.setAutoCreateRowSorter(true);
+        logTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        logTable.setRowSelectionAllowed(true);
+
+        // 创建右键菜单
+        JPopupMenu popupMenu = new JPopupMenu();
+        JMenuItem clearItem = new JMenuItem("清除");
+        popupMenu.add(clearItem);
+
+        // 为菜单项添加行为
+        clearItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.removeSelectedRows(logTable);
+            }
+        });
+
+        // 将右键菜单添加到表格
+        logTable.setComponentPopupMenu(popupMenu);
+
 
         JScrollPane jspLogTable = new JScrollPane(logTable);
         splitPane.setTopComponent(jspLogTable);
@@ -165,11 +180,11 @@ public class GUI implements IMessageEditorController {
         JTabbedPane tabs = new JTabbedPane();
         requestViewer = BurpExtender.callbacks.createMessageEditor(this, false);
         responseViewer = BurpExtender.callbacks.createMessageEditor(this, false);
-        proxyRspViewer = BurpExtender.callbacks.createTextEditor();
+        resultDeViewer = BurpExtender.callbacks.createTextEditor();
 
+        tabs.addTab("Result Details", resultDeViewer.getComponent());
         tabs.addTab("Request", requestViewer.getComponent());
-        tabs.addTab("Original response", responseViewer.getComponent());
-        tabs.addTab("Proxy response",proxyRspViewer.getComponent());
+        tabs.addTab("Original Response", responseViewer.getComponent());
         splitPane.setBottomComponent(tabs);
 
         BurpExtender.callbacks.customizeUiComponent(topPanel);

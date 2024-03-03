@@ -11,7 +11,7 @@
     {
       "cms": "致远OA",
       "method": "keyword",
-      "location": "tile",
+      "location": "title",
       "keyword": [
         "/seeyon/common/"
       ]
@@ -21,5 +21,11 @@
       "method": "keyword",
       "location": "header",
       "keyword": ["TP-LINK"]
-    }  ]
+    },
+    {
+      "cms": "www.w3.org",
+      "method": "keyword",
+      "location": "body",
+      "keyword": ["www.baidu.com"]
+    }]
 }
