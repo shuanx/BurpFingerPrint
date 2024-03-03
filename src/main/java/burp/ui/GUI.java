@@ -34,7 +34,7 @@ public class GUI implements IMessageEditorController {
     public static HttpLogTable logTable;
     public static IHttpRequestResponse currentlyDisplayedItem;
     public static JLabel lbRequestCount;
-    public static JLabel lbSuccesCount;
+    public static JLabel lbSuccessCount;
     public static JLabel lbFailCount;
 
     public static IMessageEditor requestViewer;
@@ -74,11 +74,22 @@ public class GUI implements IMessageEditorController {
         gbl_panel_1.rowWeights = new double[] { 0.0D, Double.MIN_VALUE };
         FilterPanel.setLayout(gbl_panel_1);
 
+        // 在添加 "Requests Total" 和 lbRequestCount 之前添加一个占位组件
+        Component leftStrut = Box.createHorizontalStrut(5); // 你可以根据需要调整这个值
+        GridBagConstraints gbc_leftStrut = new GridBagConstraints();
+        gbc_leftStrut.insets = new Insets(0, 0, 0, 5);
+        gbc_leftStrut.fill = GridBagConstraints.HORIZONTAL;
+        gbc_leftStrut.weightx = 1.0; // 这个值决定了 leftStrut 占据的空间大小
+        gbc_leftStrut.gridx = 10;
+        gbc_leftStrut.gridy = 0;
+        FilterPanel.add(leftStrut, gbc_leftStrut);
+
         // 转发url总数，默认0
-        JLabel lbRequest = new JLabel("Total:");
+        JLabel lbRequest = new JLabel("Requests Total:");
         GridBagConstraints gbc_lbRequest = new GridBagConstraints();
         gbc_lbRequest.insets = new Insets(0, 0, 0, 5);
-        gbc_lbRequest.fill = 0;
+        gbc_lbRequest.fill = GridBagConstraints.HORIZONTAL;
+        gbc_lbRequest.weightx = 0.0;
         gbc_lbRequest.gridx = 0;
         gbc_lbRequest.gridy = 0;
         FilterPanel.add(lbRequest, gbc_lbRequest);
@@ -88,64 +99,41 @@ public class GUI implements IMessageEditorController {
         lbRequestCount.setForeground(new Color(0,0,255));
         GridBagConstraints gbc_lbRequestCount = new GridBagConstraints();
         gbc_lbRequestCount.insets = new Insets(0, 0, 0, 5);
-        gbc_lbRequestCount.fill = 0;
+        gbc_lbRequest.fill = GridBagConstraints.HORIZONTAL;
+        gbc_lbRequest.weightx = 0.0;
         gbc_lbRequestCount.gridx = 1;
         gbc_lbRequestCount.gridy = 0;
         FilterPanel.add(lbRequestCount, gbc_lbRequestCount);
 
-        GridBagConstraints gbc_vb2 = new GridBagConstraints();
-        gbc_vb2.insets = new Insets(0, 0, 0, 5);
-        gbc_vb2.fill = 0;
-        gbc_vb2.gridx = 2;
-        gbc_vb2.gridy = 0;
-        FilterPanel.add(Box.createVerticalBox(), gbc_vb2);
 
         // 转发成功url数，默认0
-        JLabel lbSucces = new JLabel("Success:");
+        JLabel lbSucces = new JLabel("Finger Success:");
         GridBagConstraints gbc_lbSucces = new GridBagConstraints();
         gbc_lbSucces.insets = new Insets(0, 0, 0, 5);
         gbc_lbSucces.fill = 0;
-        gbc_lbSucces.gridx = 3;
+        gbc_lbSucces.gridx = 2;
         gbc_lbSucces.gridy = 0;
         FilterPanel.add(lbSucces, gbc_lbSucces);
 
-        lbSuccesCount = new JLabel("0");
-        lbSuccesCount.setForeground(new Color(0, 255, 0));
-        GridBagConstraints gbc_lbSuccesCount = new GridBagConstraints();
-        gbc_lbSuccesCount.insets = new Insets(0, 0, 0, 5);
-        gbc_lbSuccesCount.fill = 0;
-        gbc_lbSuccesCount.gridx = 4;
-        gbc_lbSuccesCount.gridy = 0;
-        FilterPanel.add(lbSuccesCount, gbc_lbSuccesCount);
+        lbSuccessCount = new JLabel("0");
+        lbSuccessCount.setForeground(new Color(0, 255, 0));
+        GridBagConstraints gbc_lbSuccessCount = new GridBagConstraints();
+        gbc_lbSuccessCount.insets = new Insets(0, 0, 0, 5);
+        gbc_lbSuccessCount.fill = 0;
+        gbc_lbSuccessCount.gridx = 3;
+        gbc_lbSuccessCount.gridy = 0;
+        FilterPanel.add(lbSuccessCount, gbc_lbSuccessCount);
 
-        GridBagConstraints gbc_vb3 = new GridBagConstraints();
-        gbc_vb3.insets = new Insets(0, 0, 0, 5);
-        gbc_vb3.fill = 0;
-        gbc_vb3.gridx = 5;
-        gbc_vb3.gridy = 0;
-        FilterPanel.add(Box.createVerticalBox(), gbc_vb3);
-        // 转发失败url数，默认0
-        JLabel lbFail = new JLabel("Fail:");
-        GridBagConstraints gbc_lbFail = new GridBagConstraints();
-        gbc_lbFail.insets = new Insets(0, 0, 0, 5);
-        gbc_lbFail.fill = 0;
-        gbc_lbFail.gridx = 6;
-        gbc_lbFail.gridy = 0;
-        FilterPanel.add(lbFail, gbc_lbFail);
-
-        lbFailCount = new JLabel("0");
-        lbFailCount.setForeground(new Color(255, 0, 0));
-        GridBagConstraints gbc_lbFailCount = new GridBagConstraints();
-        gbc_lbFailCount.insets = new Insets(0, 0, 0, 5);
-        gbc_lbFailCount.fill = 0;
-        gbc_lbFailCount.gridx = 7;
-        gbc_lbFailCount.gridy = 0;
-        FilterPanel.add(lbFailCount, gbc_lbFailCount);
+        // 添加一个 "清除" 按钮
+        JButton btnClear = new JButton("清除");
+        GridBagConstraints gbc_btnClear = new GridBagConstraints();
+        gbc_btnClear.insets = new Insets(0, 0, 0, 5);
+        gbc_btnClear.fill = 0;
+        gbc_btnClear.gridx = 11;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridy = 0;
+        FilterPanel.add(btnClear, gbc_btnClear);
 
         contentPane.add(topPanel,BorderLayout.NORTH);
-        ////////////////////////////////////////////////////////////////////
-        // topPanl end
-        ////////////////////////////////////////////////////////////////////
 
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setDividerLocation(0.5);
@@ -160,18 +148,29 @@ public class GUI implements IMessageEditorController {
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem clearItem = new JMenuItem("清除");
         popupMenu.add(clearItem);
+        // 将右键菜单添加到表格
+        logTable.setComponentPopupMenu(popupMenu);
 
         // 为菜单项添加行为
         clearItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                int successRequestsCount = Integer.parseInt(lbSuccessCount.getText()) - logTable.getSelectedRows().length;
+                lbSuccessCount.setText(Integer.toString(successRequestsCount));
                 model.removeSelectedRows(logTable);
             }
         });
 
-        // 将右键菜单添加到表格
-        logTable.setComponentPopupMenu(popupMenu);
-
+        // 添加点击事件监听器
+        btnClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 清除表格数据
+                lbRequestCount.setText("0");
+                lbSuccessCount.setText("0");
+                model.setRowCount();
+            }
+        });
 
         JScrollPane jspLogTable = new JScrollPane(logTable);
         splitPane.setTopComponent(jspLogTable);

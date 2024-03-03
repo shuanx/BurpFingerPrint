@@ -62,7 +62,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
 
         InputStream inputStream = classLoader.getResourceAsStream("conf/finger.json");
         if (inputStream == null) {
-            stdout.println("初始化指纹识别finger.json失败，无法找到文件");
+            stderr.println("[!] Failed to load the configuration file finger.json, because config/finger.json not found");
             return;
         }
 
@@ -70,9 +70,9 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             Gson gson = new Gson();
             FingerPrintRulesWrapper rulesWrapper = gson.fromJson(reader, FingerPrintRulesWrapper.class);
             fingerprintRules = rulesWrapper.getFingerprint();
-            stdout.println("初始化指纹识别finger.json成功");
+            stdout.println("[+] Successfully loaded the configuration file finger.json");
         } catch (IOException e) {
-            stdout.println("初始化指纹识别finger.json失败，原因为：" + e.getMessage());
+            stderr.println("[!] Failed to load the configuration file finger.json, because: " + e.getMessage());
         }
     }
 
@@ -89,6 +89,9 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     //    IHttpRequestResponse 接口包含了每个请求和响应的细节，在 brupsuite 中的每个请求或者响应都是 IHttpRequestResponse 实例。通过 getRequest()可以获取请求和响应的细节信息。
     public void processProxyMessage(boolean messageIsRequest, final IInterceptedProxyMessage iInterceptedProxyMessage) {
         if (!messageIsRequest) {
+            // 更新总数
+            int newRequestsCount = Integer.parseInt(GUI.lbRequestCount.getText()) + 1;
+            GUI.lbRequestCount.setText(Integer.toString(newRequestsCount));
             IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
             // 提取url，过滤掉静态文件
@@ -112,7 +115,6 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                 isGetTitle = false;
             }
             String finalResponseTitle = responseTitle;
-            boolean finalIsGetTitle = isGetTitle;
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -121,7 +123,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                         String method = helpers.analyzeRequest(resrsp).getMethod();
                         Map<String, String> mapResult =  new HashMap<String, String>();
                         if (finalResponseTitle.equals(responseBody)){
-                            mapResult.put("title", "无法识别Title");
+                            mapResult.put("title", "-");
                         }
                         else{
                             mapResult.put("title", finalResponseTitle);
@@ -155,7 +157,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 if (mapResult.containsKey("resultDetail")){
                                     // 如果resultDetail键已经存在，那么获取它的值并进行拼接
                                     String existingResultDetail = mapResult.get("resultDetail");
-                                    mapResult.put("resultDetail", existingResultDetail + "\r\n\r\n" + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + "指纹详细信息如下：\r\n" + rule.getInfo());
+                                    mapResult.put("resultDetail", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + "指纹详细信息如下：\r\n" + rule.getInfo() + "\r\n\r\n" + existingResultDetail);
                                 }
                                 else{
                                     // 如果resultDetail键不存在，那么直接添加新的result
@@ -179,6 +181,8 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                     method,
                                     mapResult)
                             );
+                            int successRequestsCount = Integer.parseInt(GUI.lbSuccessCount.getText()) + 1;
+                            GUI.lbSuccessCount.setText(Integer.toString(successRequestsCount));
                         }
                         else{
                             LogEntry existingEntry = null;
@@ -188,7 +192,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 if (logEntry.getUrl().equals(Utils.getUriFromUrl(url))) {
                                     logEntry.setResult(logEntry.getResult() + ", " + mapResult.get("result"));
                                     logEntry.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-                                    logEntry.setResultDetail(logEntry.getResultDetail() + "\r\n" + mapResult.get("resultDetail"));
+                                    logEntry.setResultDetail(mapResult.get("resultDetail") + "\r\n\r\n" + logEntry.getResultDetail());
                                     if (Short.toString(responseInfo.getStatusCode()).equals("200")){
                                         logEntry.setStatus(Short.toString(responseInfo.getStatusCode()));
                                         logEntry.setRequestResponse(callbacks.saveBuffersToTempFiles(resrsp));

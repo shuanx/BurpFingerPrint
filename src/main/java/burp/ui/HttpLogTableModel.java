@@ -69,7 +69,7 @@ public class HttpLogTableModel extends AbstractTableModel {
         }
     }
 
-    public void setRowCount(int i) {
+    public void setRowCount() {
         BurpExtender.log.clear();
         fireTableDataChanged();
     }

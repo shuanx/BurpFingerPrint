@@ -55,13 +55,11 @@ public class Utils {
     public static String getBanner(){
         String bannerInfo =
                 "[+] " + BurpExtender.extensionName + " is loaded\n"
-                        + "[+] ^_^\n"
-                        + "[+]\n"
                         + "[+] #####################################\n"
-                        + "[+]    " + BurpExtender.extensionName + " v" + BurpExtender.version +"\n"
-                        + "[+]    anthor: " + BurpExtender.author + "\n"
+                        + "[+] " + BurpExtender.extensionName + " v" + BurpExtender.version +"\n"
+                        + "[+] anthor: " + BurpExtender.author + "\n"
                         + "[+] ####################################\n"
-                        + "[+] Please enjoy it!\n";
+                        + "[+] Please enjoy it!";
         return bannerInfo;
     }
 
