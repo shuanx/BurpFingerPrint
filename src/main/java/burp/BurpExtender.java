@@ -96,7 +96,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
             // 提取url，过滤掉静态文件
             String url = String.valueOf(helpers.analyzeRequest(resrsp).getUrl());
-            if (Utils.isStaticFile(url) && !url.contains("favicon.")){
+            if (Utils.isStaticFile(url) && !url.contains("favicon.") && !url.contains(".ico")){
                 stdout.println("[+]静态文件，不进行url识别：" + url);
                 return;
             }
@@ -109,10 +109,11 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             String responseHeaders = responseInfo.getHeaders().toString();
             // 提取title
             String responseTitle = Utils.getTitle(responseBody);
-            boolean isGetTitle = true;
+            // 提取mimeType
+            String mimeType = responseInfo.getStatedMimeType().toLowerCase();
+            stdout.println(mimeType);
             if (responseTitle.isEmpty()) {
                 responseTitle = responseBody;
-                isGetTitle = false;
             }
             String finalResponseTitle = responseTitle;
             executorService.submit(new Runnable() {
@@ -129,20 +130,12 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                         else{
                             mapResult.put("title", finalResponseTitle);
                         }
-
-                        // 进入图标识别的逻辑
-                        if (url.contains(".ico") || url.contains("favicon.")){
-                            try {
-                                faviconHash = Utils.getFaviconHash(url);
-                            } catch (Exception e) {
-                                stderr.println("[!] 无法计算icon的值：" + url);
-                                return;
-                            }
-                            if (faviconHash.equals("0")){
-                                stderr.println("[!] 无法计算icon的值：" + url);
-                                return;
-                            }
+                        if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || url.contains("favicon.") || url.contains(".ico")) {
+                            byte[] body = Arrays.copyOfRange(responseBytes, responseInfo.getBodyOffset(), responseBytes.length);
+                            faviconHash = Utils.getFaviconHash(body);
+                            stdout.println("The MurmurHash3 of the image is: " + url + ":" + faviconHash);
                         }
+
 
                         for (FingerPrintRule rule : fingerprintRules) {
                             String locationContent = "";
@@ -156,10 +149,9 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 stderr.println("[!]指纹出现问题：" + rule.getLocation());
                             }
                             boolean allKeywordsPresent = true;
-                            if ((url.contains(".ico") || url.contains("favicon.")) && "faviconhash".equals(rule.getMethod()))  {
+                            if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || url.contains("favicon.") || url.contains(".ico")) {
                                 // 进入图标匹配逻辑
                                 try {
-//                                    stdout.println(faviconHash + "-" + rule.getKeyword().get(0));
                                     if (!(faviconHash.equals(rule.getKeyword().get(0)))){
                                         allKeywordsPresent = false;
                                     }
