@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import burp.ui.LogEntry;
+import java.net.URL;
+import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 
@@ -49,7 +57,8 @@ public class Utils {
             "docx",
             "ppt",
             "pptx",
-            "iso"
+            "iso",
+            "ico"
     };
 
     public static String getBanner(){
@@ -185,6 +194,153 @@ public class Utils {
         }
 
         return formattedBase64.toString();
+    }
+
+    public static List<String> findUrl(URL url, String js)
+    {
+        String pattern_raw = "(?:\"|')(((?:[a-zA-Z]{1,10}://|//)[^\"'/]{1,}\\.[a-zA-Z]{2,}[^\"']{0,})|((?:/|\\.\\./|\\./)[^\"'><,;|*()(%%$^/\\\\\\[\\]][^\"'><,;|()]{1,})|([a-zA-Z0-9_\\-/]{1,}/[a-zA-Z0-9_\\-/]{1,}\\.(?:[a-zA-Z]{1,4}|action)(?:[\\?|/|;][^\"|']{0,}|))|([a-zA-Z0-9_\\-]{1,}\\.(?:php|asp|aspx|jsp|json|action|html|js|txt|xml)(?:\\?[^\"|']{0,}|)))(?:\"|')";
+        Pattern r = Pattern.compile(pattern_raw);
+        Matcher m = r.matcher(js);
+        int matcher_start = 0;
+        List<String> ex_urls = new ArrayList<String>();
+        while (m.find(matcher_start)){
+            ex_urls.add(m.group(1).replaceAll("\"","").replaceAll("'","").replaceAll("\n","").replaceAll("\t","").trim());
+            matcher_start = m.end();
+        }
+        LinkedHashSet<String> hashSet = new LinkedHashSet<>(ex_urls);
+        ArrayList<String> temp_urls = new ArrayList<>(hashSet);
+        List<String> all_urls = new ArrayList<>();
+        for(String temp_url:temp_urls){
+            all_urls.add(process_url(url, temp_url));
+        }
+        List<String> result = new ArrayList<String>();
+        for(String singerurl:all_urls){
+            String domain = url.getHost();
+            List<Integer> positions = find_last(domain, ".");
+            String maindomain = domain;
+            if(positions.size()>1){
+                maindomain = domain.substring(positions.get(-2)+1);
+            }
+            try {
+                URL subURL = new URL(singerurl);
+                String subdomain = subURL.getHost();
+                if(subdomain.contains(maindomain)){
+                    if(!result.contains(singerurl) && !isStaticFile(singerurl)){
+                        result.add(singerurl);
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+
+        }
+        return  result;
+    }
+
+    public static String process_url(URL url, String re_URL) {
+        String black_url = "javascript:";
+        String ab_URL = url.getHost() + ":"+ url.getPort();
+        String host_URL = url.getProtocol();
+        String result = "";
+        if (re_URL.length() < 4) {
+            if (re_URL.startsWith("//")) {
+                result = host_URL + ":" + "//" + ab_URL + re_URL.substring(1);
+            } else if (!re_URL.startsWith("//")) {
+                if (re_URL.startsWith("/")) {
+                    result = host_URL + "://" + ab_URL + re_URL;
+                } else {
+                    if (re_URL.startsWith(".")) {
+                        if (re_URL.startsWith("..")) {
+                            result = host_URL + "://" + ab_URL + re_URL.substring(2);
+                        } else {
+                            result = host_URL + "://" + ab_URL + re_URL.substring(1);
+                        }
+                    } else {
+                        result = host_URL + "://" + ab_URL + "/" + re_URL;
+                    }
+
+                }
+
+            }
+        } else {
+            if (re_URL.startsWith("//")) {
+                result = host_URL + ":" + re_URL;
+            } else if (re_URL.startsWith("http")) {
+                result = re_URL;
+            } else if (!re_URL.startsWith("//") && !re_URL.contains(black_url)) {
+                if (re_URL.startsWith("/")) {
+                    result = host_URL + "://" + ab_URL + re_URL;
+                } else {
+                    if (re_URL.startsWith(".")) {
+                        if (re_URL.startsWith("..")) {
+                            result = host_URL + "://" + ab_URL + re_URL.substring(2);
+                        } else {
+                            result = host_URL + "://" + ab_URL + re_URL.substring(1);
+                        }
+                    } else {
+                        result = host_URL + "://" + ab_URL + "/" + re_URL;
+                    }
+
+                }
+
+            } else {
+                result = url.toString();
+            }
+        }
+        return result;
+
+    }
+
+    public static List<Integer> find_last(String string, String str)
+    {
+        List<Integer> positions = new ArrayList<Integer>();
+        int last_position= -1;
+        while(true){
+            int position = string.lastIndexOf(str,last_position+1);
+            if(position == -1){
+                break;
+            }
+            last_position = position;
+            positions.add(position);
+        }
+
+
+        return positions;
+    }
+
+    public static List<String> extractUrlsFromHtml(String uri, String html) {
+        // 使用正则表达式提取文本内容中的 URL
+        List<String> urlList = new ArrayList<String>();
+        Pattern pattern = Pattern.compile(
+                "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)" +
+                        "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov" +
+                        "|mil|biz|info|mobi|name|aero|jobs|museum" +
+                        "|travel|[a-z]{2}))(:\\d{1,5})?" +
+                        "(((\\/([-\\w~!$+|.,=]|%[a-f\\d]{2})+)+|\\/)+|\\?|#)?" +
+                        "((\\?([-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
+                        "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)" +
+                        "(&(?:[-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
+                        "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*" +
+                        "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
+        Matcher matcher = pattern.matcher(html);
+        while (matcher.find()) {
+            String url = matcher.group();
+            if (!url.contains("http") && url.startsWith("/")) {
+                try {
+                    URI baseUri = new URI(uri);
+                    url = baseUri.resolve(url).toString();
+                } catch (URISyntaxException e) {
+                    continue;
+                }
+            }
+            if (!isStaticFile(url)){
+                urlList.add(url);
+            }
+        }
+        return urlList;
     }
 
 }

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.*;
+import java.net.URL;
 
 
 public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
@@ -111,11 +112,39 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             String responseTitle = Utils.getTitle(responseBody);
             // 提取mimeType
             String mimeType = responseInfo.getStatedMimeType().toLowerCase();
-            stdout.println(mimeType);
             if (responseTitle.isEmpty()) {
                 responseTitle = responseBody;
             }
             String finalResponseTitle = responseTitle;
+
+
+            // 网页提取URL
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    synchronized (log) {
+                        String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
+                        URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
+                        stdout.println("BBBB");
+                        stdout.println(Utils.extractUrlsFromHtml(url, responseBody));
+                        stdout.println("CCCC");
+                        if(mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || url.contains(".js")){
+                            // create a new log entry with the message details
+                            synchronized(log)
+                            {
+                                List<String> map_url = new ArrayList<String>();
+                                map_url = Utils.findUrl(urlUrl, responseBody);
+                                stdout.println("[+] 进入网页提取URL页面： " + url);
+                                stdout.println(map_url);
+
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            // 指纹识别
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -241,6 +270,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                     }
                 }
             });
+
             int waitingTasks = executorService.getQueue().size();  // 添加这行
             stdout.println(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + ": 当前还有" + waitingTasks + " 个任务等待运行");  // 添加这行
 
