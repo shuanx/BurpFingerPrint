@@ -12,10 +12,22 @@ import java.util.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import javax.net.ssl.*;
+import java.security.cert.X509Certificate;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -24,6 +36,7 @@ import java.util.regex.Pattern;
  * @description：TODO
  */
 public class Utils {
+    // 静态文件直接过滤
     public final static String[] STATIC_FILE_EXT = new String[]{
             "png",
             "jpg",
@@ -31,7 +44,6 @@ public class Utils {
             "gif",
             "pdf",
             "bmp",
-            "js",
             "css",
             "woff",
             "woff2",
@@ -51,14 +63,19 @@ public class Utils {
             "mp4",
             "mkv",
             "swf",
-            "xls",
-            "xlsx",
-            "doc",
-            "docx",
+            "iso"
+    };
+
+    // 对以下URl提取URL
+    public final static String[] STATIC_URl_EXT = new String[]{
+            "js",
             "ppt",
             "pptx",
-            "iso",
-            "ico"
+            "doc",
+            "docx",
+            "xls",
+            "xlsx",
+            "cvs"
     };
 
     public static String getBanner(){
@@ -93,6 +110,14 @@ public class Utils {
         }
         return false;
     }
+
+    public  static boolean isGetUrlExt(String url){
+        for (String ext : STATIC_URl_EXT){
+            if (ext.equalsIgnoreCase(Utils.getUriExt(url))) return true;
+        }
+        return false;
+    }
+
 
     public static String getUriExt(String url) {
         String pureUrl = url.substring(0, url.contains("?") ? url.indexOf("?") : url.length());
@@ -216,24 +241,14 @@ public class Utils {
         List<String> result = new ArrayList<String>();
         for(String singerurl:all_urls){
             String domain = url.getHost();
-            List<Integer> positions = find_last(domain, ".");
-            String maindomain = domain;
-            if(positions.size()>1){
-                maindomain = domain.substring(positions.get(-2)+1);
-            }
             try {
                 URL subURL = new URL(singerurl);
                 String subdomain = subURL.getHost();
-                if(subdomain.contains(maindomain)){
-                    if(!result.contains(singerurl) && !isStaticFile(singerurl)){
-                        result.add(singerurl);
+                if(!subdomain.equalsIgnoreCase(domain)){
+                    result.add(singerurl);
                     }
 
-                }
-
             } catch (Exception e) {
-                e.printStackTrace();
-                continue;
             }
 
         }
@@ -336,11 +351,79 @@ public class Utils {
                     continue;
                 }
             }
-            if (!isStaticFile(url)){
+            if (!isStaticFile(url) && !url.endsWith(".js") && !url.contains(".js?")){
                 urlList.add(url);
             }
         }
         return urlList;
+    }
+
+    public static void trustAllCertificates() throws Exception {
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return new X509Certificate[0];
+                    }
+                    public void checkClientTrusted(
+                            X509Certificate[] certs, String authType) {
+                    }
+                    public void checkServerTrusted(
+                            X509Certificate[] certs, String authType) {
+                    }
+                }
+        };
+
+        // Install the all-trusting trust manager
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    }
+
+
+    public static byte[] identifyFingerprint(String urlString) {
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            HttpGet httpGet = new HttpGet(urlString);
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            try {
+                // 获取响应状态行
+                byteArrayOutputStream.write((response.getStatusLine().toString() + "\r\n").getBytes());
+                // 获取所有响应头部
+                Header[] headers = response.getAllHeaders();
+                for (Header header : headers) {
+                    byteArrayOutputStream.write((header.getName() + ": " + header.getValue() + "\r\n").getBytes());
+                }
+                // 添加一个空行来结束头部
+                byteArrayOutputStream.write("\r\n".getBytes());
+
+                // 获得响应实体
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    // 将响应体添加到字节数组输出流中
+                    byteArrayOutputStream.write(EntityUtils.toByteArray(entity));
+                }
+            } finally {
+                response.close();
+            }
+
+            // 返回字节数组
+            return byteArrayOutputStream.toByteArray();
+
+        } catch (IOException e) {
+            return null;
+        }
     }
 
 }

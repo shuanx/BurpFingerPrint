@@ -5,6 +5,7 @@ import burp.util.Utils;
 import burp.ui.GUI;
 import burp.Wrapper.FingerPrintRulesWrapper;
 import burp.model.FingerPrintRule;
+import burp.util.FingerUtils;
 
 import java.awt.Component;
 import java.io.PrintWriter;
@@ -12,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
 import javax.swing.*;
+import javax.xml.stream.FactoryConfigurationError;
+
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,6 +22,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.*;
 import java.net.URL;
+import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
+
 
 
 public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
@@ -33,7 +39,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     private ThreadPoolExecutor executorService;  // 修改这行
     public static GUI gui;
     public static final List<LogEntry> log = new ArrayList<LogEntry>();
-    private List<FingerPrintRule> fingerprintRules;
+    public static List<FingerPrintRule> fingerprintRules;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -75,6 +81,13 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         } catch (IOException e) {
             stderr.println("[!] Failed to load the configuration file finger.json, because: " + e.getMessage());
         }
+
+        // 信任证书，方便进行URL访问
+        try {
+            Utils.trustAllCertificates();
+        } catch (Exception e) {
+            stderr.println("Fail to trustAllCertificates: " +  e.getMessage());
+        }
     }
 
     @Override
@@ -95,6 +108,8 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             GUI.lbRequestCount.setText(Integer.toString(newRequestsCount));
             IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
+            String method = helpers.analyzeRequest(resrsp).getMethod();
+
             // 提取url，过滤掉静态文件
             String url = String.valueOf(helpers.analyzeRequest(resrsp).getUrl());
             if (Utils.isStaticFile(url) && !url.contains("favicon.") && !url.contains(".ico")){
@@ -103,170 +118,98 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             }
 
             byte[] responseBytes = requestResponse.getResponse();
-            IResponseInfo responseInfo = helpers.analyzeResponse(responseBytes);
-            // 响应的body值
-            String responseBody = new String(responseBytes);
-            // 响应的头部字段
-            String responseHeaders = responseInfo.getHeaders().toString();
-            // 提取title
-            String responseTitle = Utils.getTitle(responseBody);
-            // 提取mimeType
-            String mimeType = responseInfo.getStatedMimeType().toLowerCase();
-            if (responseTitle.isEmpty()) {
-                responseTitle = responseBody;
-            }
-            String finalResponseTitle = responseTitle;
 
-
-            // 网页提取URL
+            // 网页提取URL并进行指纹识别
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
                     synchronized (log) {
-                        String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
-                        URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
-                        stdout.println("BBBB");
-                        stdout.println(Utils.extractUrlsFromHtml(url, responseBody));
-                        stdout.println("CCCC");
-                        if(mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || url.contains(".js")){
-                            // create a new log entry with the message details
-                            synchronized(log)
-                            {
-                                List<String> map_url = new ArrayList<String>();
-                                map_url = Utils.findUrl(urlUrl, responseBody);
-                                stdout.println("[+] 进入网页提取URL页面： " + url);
-                                stdout.println(map_url);
-
-                            }
-                        }
-                    }
-                }
-            });
-
-
-            // 指纹识别
-            executorService.submit(new Runnable() {
-                @Override
-                public void run() {
-                    synchronized(log) {
                         int row = log.size();
-                        String faviconHash = "0";
-                        String method = helpers.analyzeRequest(resrsp).getMethod();
-                        Map<String, String> mapResult =  new HashMap<String, String>();
-                        if (finalResponseTitle.equals(responseBody)){
-                            mapResult.put("title", "-");
-                        }
-                        else{
-                            mapResult.put("title", finalResponseTitle);
-                        }
-                        if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || url.contains("favicon.") || url.contains(".ico")) {
-                            byte[] body = Arrays.copyOfRange(responseBytes, responseInfo.getBodyOffset(), responseBytes.length);
-                            faviconHash = Utils.getFaviconHash(body);
-                            stdout.println("The MurmurHash3 of the image is: " + url + ":" + faviconHash);
-                        }
 
+                        // 存储url和对应的response值
+                        Map<String, byte[]> urlResponse = new HashMap<>();
+                        urlResponse.put(url, responseBytes);
 
-                        for (FingerPrintRule rule : fingerprintRules) {
-                            String locationContent = "";
-                            if ("body".equals(rule.getLocation())) {
-                                locationContent = responseBody;
-                            } else if ("header".equals(rule.getLocation())) {
-                                locationContent = responseHeaders;
-                            } else if ("title".equals(rule.getLocation())) {
-                                locationContent = finalResponseTitle;
-                            }else{
-                                stderr.println("[!]指纹出现问题：" + rule.getLocation());
+                        if (!url.contains("favicon.") && !url.contains(".ico")) {
+                            String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
+                            URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
+                            // 针对html页面提取
+                            Set<String> urlSet = new HashSet<>(Utils.extractUrlsFromHtml(url, new String(responseBytes)));
+                            // 针对JS页面提取
+                            if (mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || Utils.isGetUrlExt(url)) {
+                                urlSet.addAll(Utils.findUrl(urlUrl, new String(responseBytes)));
                             }
-                            boolean allKeywordsPresent = true;
-                            if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || url.contains("favicon.") || url.contains(".ico")) {
-                                // 进入图标匹配逻辑
-                                try {
-                                    if (!(faviconHash.equals(rule.getKeyword().get(0)))){
-                                        allKeywordsPresent = false;
-                                    }
-                                } catch (Exception e) {
-                                    stderr.println(e.getMessage());
-                                }
-                            }else{
-                                // 进入非图标匹配逻辑
-                                for (String keyword : rule.getKeyword()) {
-                                    if (!locationContent.contains(keyword)) {
-                                        allKeywordsPresent = false;
+                            stdout.println("[+] 进入网页提取URL页面： " + url + "\r\n URL result: " + urlSet);
+
+                            // 依次遍历urlSet获取其返回的response值
+                            for (String getUrl : urlSet) {
+                                urlResponse.put(getUrl, Utils.identifyFingerprint(url));
+                            }
+                        }
+
+                        // 依次提取url和对应的response值进行指纹识别
+                        for (Map.Entry<String, byte[]> entry : urlResponse.entrySet()){
+
+
+                            String oneUrl = entry.getKey();
+                            byte[] oneResponseBytes = entry.getValue();
+                            IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
+
+                            // 指纹识别并存储匹配结果
+                            Map<String, String> mapResult =  FingerUtils.FingerFilter(oneUrl, oneResponseBytes, helpers);
+
+                            // 无法识别出指纹的，则不添加
+                            if (!mapResult.containsKey("result")){
+                                stdout.println("[+]无法识别指纹url: " + oneUrl);
+                                return;
+                            }
+
+                            mapResult.put("status", Short.toString(responseInfo.getStatusCode()));
+
+                            // 对log添加数据
+                            if (!Utils.urlExistsInLog(log, Utils.getUriFromUrl(oneUrl))) {
+                                log.add(0, new LogEntry(iInterceptedProxyMessage.getMessageReference(),
+                                        callbacks.saveBuffersToTempFiles(resrsp), Utils.getUriFromUrl(oneUrl),
+                                        method,
+                                        mapResult)
+                                );
+                                int successRequestsCount = Integer.parseInt(GUI.lbSuccessCount.getText()) + 1;
+                                GUI.lbSuccessCount.setText(Integer.toString(successRequestsCount));
+                            }
+                            else{
+                                LogEntry existingEntry = null;
+                                int existingIndex = -1;
+                                for (int i = 0; i < log.size(); i++) {
+                                    LogEntry logEntry = log.get(i);
+                                    if (logEntry.getUrl().equals(Utils.getUriFromUrl(oneUrl))) {
+                                        if (!logEntry.getResult().contains(mapResult.get("result"))){
+                                            logEntry.setResult(logEntry.getResult() + ", " + mapResult.get("result"));
+                                        }
+                                        logEntry.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+                                        logEntry.setResultDetail(mapResult.get("resultDetail") + "\r\n\r\n" + logEntry.getResultDetail());
+                                        if (Short.toString(responseInfo.getStatusCode()).equals("200")){
+                                            logEntry.setStatus(Short.toString(responseInfo.getStatusCode()));
+                                            logEntry.setRequestResponse(callbacks.saveBuffersToTempFiles(resrsp));
+                                        }
+                                        existingEntry = logEntry;  // 保存需要移动的条目
+                                        existingIndex = i;  // 保存需要移动的条目的索引
                                         break;
                                     }
                                 }
-                            }
 
-                            if (allKeywordsPresent) {
-                                if (mapResult.containsKey("result")) {
-                                    // 如果result键已经存在，那么获取它的值并进行拼接
-                                    String existingResult = mapResult.get("result");
-                                    mapResult.put("result", existingResult + ", " + rule.getCms());
-                                } else {
-                                    // 如果result键不存在，那么直接添加新的result
-                                    mapResult.put("result", rule.getCms());
-                                }
-                                if (mapResult.containsKey("resultDetail")){
-                                    // 如果resultDetail键已经存在，那么获取它的值并进行拼接
-                                    String existingResultDetail = mapResult.get("resultDetail");
-                                    mapResult.put("resultDetail", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + "指纹详细信息如下：\r\n" + rule.getInfo() + "\r\n\r\n" + existingResultDetail);
-                                }
-                                else{
-                                    // 如果resultDetail键不存在，那么直接添加新的result
-                                    mapResult.put("resultDetail", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + "指纹详细信息如下：\r\n" + rule.getInfo());
-                                }
-                            }
-                        }
-
-                        // 无法识别出指纹的，则不添加
-                        if (!mapResult.containsKey("result")){
-                            stdout.println("[+]无法识别指纹url: " + url);
-                            return;
-                        }
-
-                        mapResult.put("status", Short.toString(responseInfo.getStatusCode()));
-
-                        // 对log添加数据
-                        if (!Utils.urlExistsInLog(log, Utils.getUriFromUrl(url))) {
-                            log.add(0, new LogEntry(iInterceptedProxyMessage.getMessageReference(),
-                                    callbacks.saveBuffersToTempFiles(resrsp), Utils.getUriFromUrl(url),
-                                    method,
-                                    mapResult)
-                            );
-                            int successRequestsCount = Integer.parseInt(GUI.lbSuccessCount.getText()) + 1;
-                            GUI.lbSuccessCount.setText(Integer.toString(successRequestsCount));
-                        }
-                        else{
-                            LogEntry existingEntry = null;
-                            int existingIndex = -1;
-                            for (int i = 0; i < log.size(); i++) {
-                                LogEntry logEntry = log.get(i);
-                                if (logEntry.getUrl().equals(Utils.getUriFromUrl(url))) {
-                                    logEntry.setResult(logEntry.getResult() + ", " + mapResult.get("result"));
-                                    logEntry.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
-                                    logEntry.setResultDetail(mapResult.get("resultDetail") + "\r\n\r\n" + logEntry.getResultDetail());
-                                    if (Short.toString(responseInfo.getStatusCode()).equals("200")){
-                                        logEntry.setStatus(Short.toString(responseInfo.getStatusCode()));
-                                        logEntry.setRequestResponse(callbacks.saveBuffersToTempFiles(resrsp));
+                                // 如果找到了需要移动的条目，将其从列表中移除并添加到列表的开头
+                                if (existingEntry != null) {
+                                    log.remove(existingIndex);
+                                    log.add(0, existingEntry);
+                                    GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(0, 0);
+                                    if (existingIndex + 1 < log.size()) {
+                                        GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(existingIndex, existingIndex);
                                     }
-                                    existingEntry = logEntry;  // 保存需要移动的条目
-                                    existingIndex = i;  // 保存需要移动的条目的索引
-                                    break;
                                 }
                             }
-
-                            // 如果找到了需要移动的条目，将其从列表中移除并添加到列表的开头
-                            if (existingEntry != null) {
-                                log.remove(existingIndex);
-                                log.add(0, existingEntry);
-                                GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(0, 0);
-                                if (existingIndex + 1 < log.size()) {
-                                    GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(existingIndex, existingIndex);
-                                }
-                            }
+                            // 更新表格数据，表格数据对接log
+                            GUI.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
                         }
-                        // 更新表格数据，表格数据对接log
-                        GUI.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
                     }
                 }
             });

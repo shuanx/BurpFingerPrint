@@ -1,534 +1,66 @@
-2024/03/05 01:03:27: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
+2024/03/07 00:28:43: 当前还有0 个任务等待运行
 [+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/index/index.html, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyjj/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/gzzd7/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxgl33/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyfx9/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/shfwgk/index.html, https://www.xcc.edu.cn:443/mkszyxy/llxx50/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xyxz10/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyld/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/zzjg92/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/szdw13/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/zbsz/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/djdt41/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxcg/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/kcjs57/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jyjg/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kytd/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyxm24/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kycg48/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/xssl/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyjd/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/tshd/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/jsxz16/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xsxz73/index.html, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:03:27: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:03:27: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:03:27: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[https://www.xcc.edu.cn/xcxy/404/index.html]
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:03:28: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/jdgroup/index/index.html]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-2024/03/05 01:05:58: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/index/index.html, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyjj/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/gzzd7/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxgl33/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyfx9/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/shfwgk/index.html, https://www.xcc.edu.cn:443/mkszyxy/llxx50/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xyxz10/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyld/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/zzjg92/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/szdw13/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/zbsz/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/djdt41/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxcg/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/kcjs57/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jyjg/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kytd/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyxm24/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kycg48/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/xssl/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyjd/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/tshd/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/jsxz16/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xsxz73/index.html, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
+ URL result: [http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://weibo.com/xcxyxsjzt, https://share.gwd.gov.cn/, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp]
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:05:58: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:05:58: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:05:59: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[https://www.xcc.edu.cn/xcxy/404/index.html]
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:05:59: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/jdgroup/index/index.html]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-2024/03/05 01:06:09: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/index/index.html, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyjj/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/gzzd7/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxgl33/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyfx9/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/shfwgk/index.html, https://www.xcc.edu.cn:443/mkszyxy/llxx50/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xyxz10/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyld/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/zzjg92/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/szdw13/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/zbsz/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/djdt41/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxcg/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/kcjs57/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jyjg/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kytd/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyxm24/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kycg48/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/xssl/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyjd/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/tshd/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/jsxz16/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xsxz73/index.html, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:06:10: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:06:10: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:06:10: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[https://www.xcc.edu.cn/xcxy/404/index.html]
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:06:10: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/jdgroup/index/index.html]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-2024/03/05 01:07:03: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, http://www.w3.org/1999/xhtml]
-CCCC
-[+] 进入网页提取URL页面： http://admin.dlszyht.com:80/login.php
-[http://admin.dlszyht.com:80/templates/login/2017/css/index.css, http://admin.dlszyht.com:80/include/jQ.js, http://admin.dlszyht.com:80/include/cookies.js, http://admin.dlszyht.com:80/js/ev_popup/ev_popup.min.js?212320161229wer3, http://admin.dlszyht.com:80/js/ev_popup/skin/black/skin.css?212320161229wer3, http://admin.dlszyht.com:80/templates/login/2017/js/fn_js.min.js, http://admin.dlszyht.com:80/templates/login/2017/js/jquery.particleground.min.js, http://admin.dlszyht.com:80/login.php?t=1709572023, http://admin.dlszyht.com:80/include/captcha/captcha.php, http://admin.dlszyht.com:80/get_password_new.php, http://admin.dlszyht.com:80/check_login.php]
-2024/03/05 01:07:03: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-The MurmurHash3 of the image is: http://admin.dlszyht.com:80/include/captcha/captcha.php:-1092883062
-[+]无法识别指纹url: http://admin.dlszyht.com:80/include/captcha/captcha.php
-2024/03/05 01:07:03: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-The MurmurHash3 of the image is: http://admin.dlszyht.com:80/favicon.ico:0
-[+]无法识别指纹url: http://admin.dlszyht.com:80/favicon.ico
-[+] Finger Print is loaded
-[+] #####################################
-[+] Finger Print vv2024-03
-[+] anthor: Shaun
-[+] ####################################
-[+] Please enjoy it!
-[+] Successfully loaded the configuration file finger.json
-BBBB
-2024/03/05 01:08:07: 当前还有0 个任务等待运行
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/index/index.html, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyjj/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/gzzd7/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxgl33/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyfx9/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/shfwgk/index.html, https://www.xcc.edu.cn:443/mkszyxy/llxx50/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xyxz10/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyld/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/zzjg92/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/szdw13/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/zbsz/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/djdt41/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxcg/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/kcjs57/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jyjg/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kytd/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyxm24/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kycg48/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/xssl/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyjd/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/tshd/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/jsxz16/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xsxz73/index.html, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
+2024/03/07 00:28:43: 当前还有0 个任务等待运行
+2024/03/07 00:28:43: 当前还有0 个任务等待运行
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-BBBB
-2024/03/05 01:08:07: 当前还有0 个任务等待运行
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-2024/03/05 01:08:07: 当前还有0 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-2024/03/05 01:08:07: 当前还有0 个任务等待运行
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-2024/03/05 01:08:07: 当前还有0 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-BBBB
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-2024/03/05 01:08:07: 当前还有2 个任务等待运行
-[http://jqueryui.com, http://jqueryui.com/themeroller/?ffDefault=Trebuchet%20MS]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-2024/03/05 01:08:07: 当前还有2 个任务等待运行
-BBBB
-[http://t.qq.com/yisibl, http://creativecommons.org/licenses/LGPL/2.1]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-2024/03/05 01:08:07: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
+2024/03/07 00:28:43: 当前还有0 个任务等待运行
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-2024/03/05 01:08:07: 当前还有2 个任务等待运行
-2024/03/05 01:08:07: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-2024/03/05 01:08:08: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/list-bg.jpg
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/header-bg.jpg
 [+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:08:08: 当前还有2 个任务等待运行
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
+2024/03/07 00:28:44: 当前还有0 个任务等待运行
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/footer-bg.jpg
+[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/icons/loading.gif
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
+ URL result: []
 [+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, http://www.w3.org/1999/xhtml]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-[https://www.xcc.edu.cn:443/eportal/uiFramework/css/tip.css, https://www.xcc.edu.cn:443/eportal/uiFramework/images/picNews/tip.png]
-2024/03/05 01:08:08: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
+ URL result: []
 [+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:08:08: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[https://www.xcc.edu.cn/xcxy/404/index.html]
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js
+ URL result: []
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js
+ URL result: []
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js
+ URL result: [http://www.real.com/player, http://www.apple.com/qtactivex/qtplugin.cab, http://www.microsoft.com/Windows/MediaPlayer, http://www.microsoft.com/Windows/MediaPlayer/, http://jeroenwijering.com/?item=Flash_Media_Player, http://www.real.com/player/, http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=, http://www.apple.com/quicktime/download/, http://www.apple.com/quicktime/download, http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version, http://msdn2.microsoft.com/en-us/library/bb412401.aspx, http://www.therossman.org/experiments/wmp_play.html, http://www.adobe.com/go/getflashplayer]
+2024/03/07 00:28:44: 当前还有1 个任务等待运行
+2024/03/07 00:28:45: 当前还有1 个任务等待运行
+[+]无法识别指纹url: http://www.real.com/player
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js
+ URL result: []
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default
+ URL result: [http://pw.cnzz.com/c.php?id=, http://sentsin.com?from=layer, http://pw.cnzz.com/c.php?id, http://sentsin.com?]
+[+]无法识别指纹url: http://pw.cnzz.com/c.php?id=
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122
+ URL result: []
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js
+ URL result: []
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js
+[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
+ URL result: [http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
+[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
 The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
 [+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:08:08: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/jdgroup/index/index.html]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-[+] Finger Print is loaded
-[+] #####################################
-[+] Finger Print vv2024-03
-[+] anthor: Shaun
-[+] ####################################
-[+] Please enjoy it!
-[+] Successfully loaded the configuration file finger.json
-BBBB
-2024/03/05 01:09:40: 当前还有0 个任务等待运行
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-BBBB
-2024/03/05 01:09:40: 当前还有0 个任务等待运行
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-2024/03/05 01:09:40: 当前还有0 个任务等待运行
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-2024/03/05 01:09:40: 当前还有0 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-2024/03/05 01:09:40: 当前还有0 个任务等待运行
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-BBBB
-[http://jqueryui.com, http://jqueryui.com/themeroller/?ffDefault=Trebuchet%20MS]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-BBBB
-[http://t.qq.com/yisibl, http://creativecommons.org/licenses/LGPL/2.1]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:09:40: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, http://www.w3.org/1999/xhtml]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-[https://www.xcc.edu.cn:443/eportal/uiFramework/css/tip.css, https://www.xcc.edu.cn:443/eportal/uiFramework/images/picNews/tip.png]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:09:41: 当前还有2 个任务等待运行
-2024/03/05 01:09:41: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:09:41: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:09:41: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.js?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/chanelCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/swiper.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/logo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/search.png, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/jquery.media.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/js/showPdf.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/js/counting/articleCounting.js, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weixin.png, https://www.xcc.edu.cn:443/xy/uiFramework/commonResource/zip/xy/img/foot_ewm.jpg, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/weibo.png, https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/image/mkszyxy/qq.png]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-BBBB
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-BBBB
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-[http://jqueryui.com, http://jqueryui.com/themeroller/?ffDefault=Trebuchet%20MS]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-BBBB
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-[http://t.qq.com/yisibl, http://creativecommons.org/licenses/LGPL/2.1]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-2024/03/05 01:09:58: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:09:59: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, http://www.w3.org/1999/xhtml]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-[https://www.xcc.edu.cn:443/eportal/uiFramework/css/tip.css, https://www.xcc.edu.cn:443/eportal/uiFramework/images/picNews/tip.png]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:09:59: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:09:59: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:09:59: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[]
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:09:59: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css, https://www.xcc.edu.cn:443/xcxy/uiFramework/huilan-jquery-ui/js/huilan-jquery-ui.js?self=true&skin=default, https://www.xcc.edu.cn:443/xcxy/template/xcxy.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/xcxy.js?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/template/page/notf/skin.css?timestamp=1655965860192, https://www.xcc.edu.cn:443/xcxy/uiFramework/js/counting/chanelCounting.js]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html
-[+] Finger Print is loaded
-[+] #####################################
-[+] Finger Print vv2024-03
-[+] anthor: Shaun
-[+] ####################################
-[+] Please enjoy it!
-[+] Successfully loaded the configuration file finger.json
-BBBB
-2024/03/05 01:11:32: 当前还有0 个任务等待运行
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, https://oa.xcc.edu.cn/seeyon/common/print/print.jsp?isEdge=false&amp, https://weibo.com/xcxyxsjzt]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/mkszyxy/index/tzgg94/692878/index.html
-[https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/mkszyxy/index/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyjj/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/gzzd7/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxgl33/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyfx9/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/shfwgk/index.html, https://www.xcc.edu.cn:443/mkszyxy/llxx50/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xyxz10/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/xyld/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/zzjg92/index.html, https://www.xcc.edu.cn:443/mkszyxy/xygk22/szdw13/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/zbsz/index.html, https://www.xcc.edu.cn:443/mkszyxy/djgz24/djdt41/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jxcg/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/kcjs57/index.html, https://www.xcc.edu.cn:443/mkszyxy/jxgz93/jyjg/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kytd/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyxm24/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kycg48/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/xssl/index.html, https://www.xcc.edu.cn:443/mkszyxy/xsky/kyjd/index.html, https://www.xcc.edu.cn:443/mkszyxy/shfw/tshd/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/jsxz16/index.html, https://www.xcc.edu.cn:443/mkszyxy/zlxz49/xsxz73/index.html]
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-BBBB
-2024/03/05 01:11:32: 当前还有0 个任务等待运行
-2024/03/05 01:11:32: 当前还有0 个任务等待运行
-[http://jqueryui.com, http://jqueryui.com/themeroller/?ffDefault=Trebuchet%20MS]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-2024/03/05 01:11:32: 当前还有0 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/animate.min.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-BBBB
-2024/03/05 01:11:32: 当前还有0 个任务等待运行
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/css/huilan-jquery-ui.css
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/commonResource/css/swiper.css
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/page/xxPage/skin.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/mkszyxy.css?timestamp=1678609318122
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[http://t.qq.com/yisibl, http://creativecommons.org/licenses/LGPL/2.1]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skins/default.css
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/uiFramework/huilan-jquery-ui/js/skin/layer.css
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/cms.css?timestamp=1683862241875
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/mkszyxy/template/detail/xx/skin.css?timestamp=1683862241875
-BBBB
-[]
-CCCC
-[+]静态文件，不进行url识别：https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd, http://www.w3.org/1999/xhtml]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-[]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/fileDir/xjbsdc/resource/cms/2016/11/gbym.jpg
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=1&struts.portlet.action=/portlet/article!getPreOrNextArticle.action&urlType=
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[]
-CCCC
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/eportal/ui?pageId=673471&moduleId=3&columnId=673592&articleKey=692878&struts.portlet.action=/app/counting-front!saveInfo.action
-2024/03/05 01:11:32: 当前还有2 个任务等待运行
-BBBB
-[https://www.xcc.edu.cn/xcxy/404/index.html, https://www.xcc.edu.cn/xcxy/404/index.html]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/favicon.ico
-[https://www.xcc.edu.cn/xcxy/404/index.html]
-The MurmurHash3 of the image is: https://www.xcc.edu.cn:443/favicon.ico:-2087488518
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/favicon.ico
-2024/03/05 01:11:33: 当前还有2 个任务等待运行
-BBBB
-[http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd]
-CCCC
-[+] 进入网页提取URL页面： https://www.xcc.edu.cn:443/xcxy/404/index.html
-[https://www.xcc.edu.cn:443/eportal, https://www.xcc.edu.cn:443/jdgroup/index/index.html]
-[+]无法识别指纹url: https://www.xcc.edu.cn:443/xcxy/404/index.html

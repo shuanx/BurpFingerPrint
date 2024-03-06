@@ -21,11 +21,6 @@
       "method": "keyword",
       "location": "header",
       "keyword": ["TP-LINK"]
-    },
-    {
-      "cms": "www.w3.org",
-      "method": "keyword",
-      "location": "body",
-      "keyword": ["www.baidu.com"]
-    }]
+    }
+]
 }

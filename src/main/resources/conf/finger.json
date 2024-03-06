@@ -9,7 +9,13 @@
     "method": "keyword",
     "location": "body",
     "keyword": ["/seeyon/common/"]
-  }, {
+  },
+    {
+      "cms": "致远OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": ["165601673"]
+    },{
     "cms": "通用企业管理软件",
     "method": "keyword",
     "location": "body",
@@ -2474,7 +2480,13 @@
     "method": "faviconhash",
     "location": "body",
     "keyword": ["1064742722"]
-  }, {
+  },{
+    "cms": "RabbitMQ",
+    "method": "faviconhash",
+    "location": "body",
+    "keyword": ["-1015107330"]
+  },
+    {
     "cms": "openmediavault (NAS)",
     "method": "faviconhash",
     "location": "body",
