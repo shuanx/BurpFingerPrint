@@ -244,7 +244,7 @@ public class Utils {
             try {
                 URL subURL = new URL(singerurl);
                 String subdomain = subURL.getHost();
-                if(!subdomain.equalsIgnoreCase(domain)){
+                if(!subdomain.equalsIgnoreCase(domain) && !isStaticFile(singerurl) && !singerurl.endsWith(".js") && !singerurl.contains(".js?") ){
                     result.add(singerurl);
                     }
 
@@ -330,16 +330,7 @@ public class Utils {
         // 使用正则表达式提取文本内容中的 URL
         List<String> urlList = new ArrayList<String>();
         Pattern pattern = Pattern.compile(
-                "\\b(((ht|f)tp(s?)\\:\\/\\/|~\\/|\\/)|www.)" +
-                        "(\\w+:\\w+@)?(([-\\w]+\\.)+(com|org|net|gov" +
-                        "|mil|biz|info|mobi|name|aero|jobs|museum" +
-                        "|travel|[a-z]{2}))(:\\d{1,5})?" +
-                        "(((\\/([-\\w~!$+|.,=]|%[a-f\\d]{2})+)+|\\/)+|\\?|#)?" +
-                        "((\\?([-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
-                        "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)" +
-                        "(&(?:[-\\w~!$+|.,*:]|%[a-f\\d{2}])+=?" +
-                        "([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)*)*" +
-                        "(#([-\\w~!$+|.,*:=]|%[a-f\\d]{2})*)?\\b");
+                "(http|https|ftp)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
         Matcher matcher = pattern.matcher(html);
         while (matcher.find()) {
             String url = matcher.group();
