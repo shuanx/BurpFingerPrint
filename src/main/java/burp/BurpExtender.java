@@ -42,6 +42,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     public static GUI gui;
     public static final List<LogEntry> log = new ArrayList<LogEntry>();
     public static List<FingerPrintRule> fingerprintRules;
+    public static Set<String> hasScanDomainSet = new HashSet<>();
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -171,7 +172,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 // 返回结果为空则退出
                                 if (oneResponseBytes == null || oneResponseBytes.length == 0) {
                                     stdout.println("返回结果为空: " + oneUrl);
-                                    return;
+                                    continue;
                                 }
                                 String oneMethod = (String) oneResult.get("method");
                                 IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
@@ -182,7 +183,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                 // 无法识别出指纹的，则不添加
                                 if (!mapResult.containsKey("result")) {
                                     stdout.println("[+]无法识别指纹url: " + oneUrl);
-                                    return;
+                                    continue;
                                 }
 
                                 mapResult.put("status", Short.toString(responseInfo.getStatusCode()));

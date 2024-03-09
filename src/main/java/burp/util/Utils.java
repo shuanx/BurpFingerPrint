@@ -2,21 +2,20 @@ package burp.util;
 
 import burp.BurpExtender;
 
+import java.net.*;
 import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import burp.ui.LogEntry;
-import java.net.URL;
+
 import java.util.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import javax.net.ssl.*;
 import java.security.cert.X509Certificate;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -28,6 +27,7 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URL;
 
 
 /**
@@ -78,6 +78,16 @@ public class Utils {
             "cvs"
     };
 
+    // 不对下面URL进行指纹识别
+    public final static  String[] UNCEKCK_DOMAINS = new String[]{
+            ".baidu.com",
+            ".google.com",
+            ".bing.com",
+            ".yahoo.com",
+            ".aliyun.com",
+            ".alibaba.com"
+    };
+
     public static String getBanner(){
         String bannerInfo =
                 "[+] " + BurpExtender.extensionName + " is loaded\n"
@@ -114,6 +124,13 @@ public class Utils {
     public  static boolean isGetUrlExt(String url){
         for (String ext : STATIC_URl_EXT){
             if (ext.equalsIgnoreCase(Utils.getUriExt(url))) return true;
+        }
+        return false;
+    }
+
+    public static boolean isWhiteDomain(String url){
+        for (String uncheckDomains : UNCEKCK_DOMAINS){
+            if (url.contains(uncheckDomains)) return true;
         }
         return false;
     }
@@ -244,7 +261,8 @@ public class Utils {
             try {
                 URL subURL = new URL(singerurl);
                 String subdomain = subURL.getHost();
-                if(!subdomain.equalsIgnoreCase(domain) && !isStaticFile(singerurl) && !singerurl.endsWith(".js") && !singerurl.contains(".js?") ){
+                if(!subdomain.equalsIgnoreCase(domain) && !isStaticFile(singerurl) && !singerurl.endsWith(".js") && !singerurl.contains(".js?") && !isWhiteDomain(singerurl) && !BurpExtender.hasScanDomainSet.contains(Utils.getUriFromUrl(singerurl))){
+                    BurpExtender.hasScanDomainSet.add(Utils.getUriFromUrl(singerurl));
                     result.add(singerurl);
                     }
 
@@ -342,7 +360,18 @@ public class Utils {
                     continue;
                 }
             }
-            if (!isStaticFile(url) && !url.endsWith(".js") && !url.contains(".js?")){
+            try{
+                String subdomain = (new URL(uri)).getHost() + ":" + (new URL(uri)).getPort();
+                String domain = (new URL(url)).getHost() + ":" + (new URL(uri)).getPort();
+                if (subdomain.equalsIgnoreCase(domain)){
+                    continue;
+                }
+            } catch (Exception e) {
+                continue;
+            }
+
+            if (!isStaticFile(url) && !url.endsWith(".js") && !url.contains(".js?") && !isWhiteDomain(url) && !BurpExtender.hasScanDomainSet.contains(Utils.getUriFromUrl(url))){
+                BurpExtender.hasScanDomainSet.add(Utils.getUriFromUrl(url));
                 urlList.add(url);
             }
         }
