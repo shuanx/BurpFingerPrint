@@ -4,8 +4,6 @@ import burp.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -136,6 +134,7 @@ public class GUI implements IMessageEditorController {
 
         HttpLogTableModel model = new HttpLogTableModel();
         logTable = new HttpLogTable(model);
+        logTable.setAutoCreateRowSorter(true);  // 添加这一行来启用自动创建行排序器
         logTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         logTable.setRowSelectionAllowed(true);
 
