@@ -9,6 +9,7 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashSet;
 
 
 public class GUI implements IMessageEditorController {
@@ -163,6 +164,7 @@ public class GUI implements IMessageEditorController {
                 lbRequestCount.setText("0");
                 lbSuccessCount.setText("0");
                 model.setRowCount();
+                BurpExtender.hasScanDomainSet = new HashSet<>();
             }
         });
 

@@ -70,7 +70,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         // 获取类加载器
         ClassLoader classLoader = getClass().getClassLoader();
 
-        InputStream inputStream = classLoader.getResourceAsStream("conf/finger.json");
+        InputStream inputStream = classLoader.getResourceAsStream("conf/finger-important.json");
         if (inputStream == null) {
             stderr.println("[!] Failed to load the configuration file finger.json, because config/finger.json not found");
             return;
@@ -126,69 +126,69 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-                    synchronized (log) {
-                        int row = log.size();
 
-                        // 存储url和对应的response值
-                        Map<String, Object> totalUrlResponse = new HashMap<String, Object>();
+                    // 存储url和对应的response值
+                    Map<String, Object> totalUrlResponse = new HashMap<String, Object>();
 
-                        // 当前请求的URL，requests，Response，以及findUrl来区别是否为提取出来的URL
-                        Map<String, Object> originalData = new HashMap<String, Object>();
-                        originalData.put("responseRequest", requestResponse);
-                        originalData.put("isFindUrl", false);
-                        originalData.put("method", method);
-                        totalUrlResponse.put(url, originalData);
+                    // 当前请求的URL，requests，Response，以及findUrl来区别是否为提取出来的URL
+                    Map<String, Object> originalData = new HashMap<String, Object>();
+                    originalData.put("responseRequest", requestResponse);
+                    originalData.put("isFindUrl", false);
+                    originalData.put("method", method);
+                    totalUrlResponse.put(url, originalData);
 
-                        if (!url.contains("favicon.") && !url.contains(".ico")) {
-                            String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
-                            URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
-                            // 针对html页面提取
-                            Set<String> urlSet = new HashSet<>(Utils.extractUrlsFromHtml(url, new String(responseBytes)));
-                            // 针对JS页面提取
-                            if (mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || Utils.isGetUrlExt(url)) {
-                                urlSet.addAll(Utils.findUrl(urlUrl, new String(responseBytes)));
-                            }
-                            stdout.println("[+] 进入网页提取URL页面： " + url + "\r\n URL result: " + urlSet);
-
-                            // 依次遍历urlSet获取其返回的response值
-                            for (String getUrl : urlSet) {
-                                totalUrlResponse.put(getUrl, HTTPUtils.makeGetRequest(getUrl));
-                            }
+                    if (!url.contains("favicon.") && !url.contains(".ico")) {
+                        String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
+                        URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
+                        // 针对html页面提取
+                        Set<String> urlSet = new HashSet<>(Utils.extractUrlsFromHtml(url, new String(responseBytes)));
+                        // 针对JS页面提取
+                        if (mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || Utils.isGetUrlExt(url)) {
+                            urlSet.addAll(Utils.findUrl(urlUrl, new String(responseBytes)));
                         }
-                        stdout.println("[+]指纹识别开始： " + totalUrlResponse);
+                        stdout.println("[+] 进入网页提取URL页面： " + url + "\r\n URL result: " + urlSet);
 
-                        // 依次提取url和对应的response值进行指纹识别
-                        for (Map.Entry<String, Object> entry : totalUrlResponse.entrySet()) {
+                        // 依次遍历urlSet获取其返回的response值
+                        for (String getUrl : urlSet) {
+                            totalUrlResponse.put(getUrl, HTTPUtils.makeGetRequest(getUrl));
+                        }
+                    }
+                    stdout.println("[+]指纹识别开始： " + totalUrlResponse);
+
+                    // 依次提取url和对应的response值进行指纹识别
+                    for (Map.Entry<String, Object> entry : totalUrlResponse.entrySet()) {
 
 
-                            String oneUrl = entry.getKey();
-                            Object value = entry.getValue();
-                            if (value instanceof Map) {
-                                @SuppressWarnings("unchecked")
-                                Map<String, Object> oneResult = (Map<String, Object>) value;
-                                // Now it's safe to use oneResult
-                                IHttpRequestResponse oneRequestsResponse = (IHttpRequestResponse) oneResult.get("responseRequest");
-                                byte[] oneResponseBytes = oneRequestsResponse.getResponse();
-                                // 返回结果为空则退出
-                                if (oneResponseBytes == null || oneResponseBytes.length == 0) {
-                                    stdout.println("返回结果为空: " + oneUrl);
-                                    continue;
-                                }
-                                String oneMethod = (String) oneResult.get("method");
-                                IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
+                        String oneUrl = entry.getKey();
+                        Object value = entry.getValue();
+                        if (value instanceof Map) {
+                            @SuppressWarnings("unchecked")
+                            Map<String, Object> oneResult = (Map<String, Object>) value;
+                            // Now it's safe to use oneResult
+                            IHttpRequestResponse oneRequestsResponse = (IHttpRequestResponse) oneResult.get("responseRequest");
+                            byte[] oneResponseBytes = oneRequestsResponse.getResponse();
+                            // 返回结果为空则退出
+                            if (oneResponseBytes == null || oneResponseBytes.length == 0) {
+                                stdout.println("返回结果为空: " + oneUrl);
+                                continue;
+                            }
+                            String oneMethod = (String) oneResult.get("method");
+                            IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
 
-                                // 指纹识别并存储匹配结果
-                                Map<String, String> mapResult = FingerUtils.FingerFilter(oneUrl, oneResponseBytes, helpers);
+                            // 指纹识别并存储匹配结果
+                            Map<String, String> mapResult = FingerUtils.FingerFilter(oneUrl, oneResponseBytes, helpers);
 
-                                // 无法识别出指纹的，则不添加
-                                if (!mapResult.containsKey("result")) {
-                                    stdout.println("[+]无法识别指纹url: " + oneUrl);
-                                    continue;
-                                }
+                            // 无法识别出指纹的，则不添加
+                            if (!mapResult.containsKey("result")) {
+                                stdout.println("[+]无法识别指纹url: " + oneUrl);
+                                continue;
+                            }
 
-                                mapResult.put("status", Short.toString(responseInfo.getStatusCode()));
-                                stdout.println(mapResult);
-
+                            mapResult.put("status", Short.toString(responseInfo.getStatusCode()));
+                            stdout.println(mapResult);
+                            synchronized (log) {
+                                stdout.println("[+] 数据添加开始。。");
+                                int row = log.size();
                                 // 对log添加数据
                                 if (!Utils.urlExistsInLog(log, Utils.getUriFromUrl(oneUrl))) {
                                     log.add(0, new LogEntry(iInterceptedProxyMessage.getMessageReference(),
@@ -233,6 +233,7 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                     // 更新表格数据，表格数据对接log
                                     GUI.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
                                 }
+                                stdout.println("[+] 数据添加结束。。");
                             }
                         }
                         stdout.println("[END]指纹识别结束: " + totalUrlResponse);
