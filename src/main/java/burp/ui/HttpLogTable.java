@@ -77,4 +77,40 @@ public class HttpLogTable extends JTable {
         GUI.currentlyDisplayedItem = logEntry.requestResponse;
 
     }
+    public void incrementResultCount(String result) {
+        GUI.addNewResultLabel(result);  // 添加这一行来创建新的标签
+        JLabel label = GUI.resultMap.get(result);
+        if (label == null) {
+            label = new JLabel(result + ": 0");
+            label.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    // 当用户点击某个标签时，只展示该标签对应的结果
+                    ((TableRowSorter<TableModel>)getRowSorter()).setRowFilter(RowFilter.regexFilter(result, 5));
+                }
+            });
+            GUI.tagsPanel.add(label);
+            GUI.resultMap.put(result, label);
+            GUI.tagsPanel.revalidate();
+            GUI.tagsPanel.repaint();
+        }
+        int count = Integer.parseInt(label.getText().split(": ")[1]);
+        label.setText(result + ": " + (count + 1));
+    }
+
+    public void decrementResultCount(String result) {
+        JLabel label = GUI.resultMap.get(result);
+        if (label != null) {
+            int count = Integer.parseInt(label.getText().split(": ")[1]);
+            if (count > 1) {
+                label.setText(result + ": " + (count - 1));
+            } else {
+                GUI.tagsPanel.remove(label);
+                GUI.resultMap.remove(result);
+                GUI.tagsPanel.revalidate();
+                GUI.tagsPanel.repaint();
+            }
+        }
+    }
+
 }

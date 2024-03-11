@@ -8,6 +8,20 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashSet;
+import java.util.HashMap;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TableModelEvent;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 
 
 public class GUI implements IMessageEditorController {
@@ -39,6 +53,9 @@ public class GUI implements IMessageEditorController {
     public static IMessageEditor requestViewer;
     public static IMessageEditor responseViewer;
     public static ITextEditor resultDeViewer;
+
+    public static HashMap<String, JLabel> resultMap = new HashMap<>();
+    public static JPanel tagsPanel;
 
 
     public GUI() {
@@ -128,6 +145,36 @@ public class GUI implements IMessageEditorController {
 
         contentPane.add(topPanel,BorderLayout.NORTH);
 
+        tagsPanel = new JPanel();
+        tagsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        GridBagConstraints gbc_tagsPanel = new GridBagConstraints();
+        gbc_tagsPanel.insets = new Insets(0, 0, 5, 0);
+        gbc_tagsPanel.fill = GridBagConstraints.HORIZONTAL;
+        gbc_tagsPanel.gridx = 0;
+        gbc_tagsPanel.gridy = 1;  // 新的行
+        topPanel.add(tagsPanel, gbc_tagsPanel);
+
+        JLabel allLabel = new JLabel("全部");
+        allLabel.setOpaque(true);  // 设置为不透明
+        allLabel.setBackground(new Color(200, 200, 200));  // 设置背景颜色为浅灰色
+        allLabel.setForeground(Color.BLACK);  // 设置字体颜色为黑色
+
+        // 为标签添加一个有颜色的边框，边框内有5像素的填充
+        allLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(100, 100, 100), 1),  // 外部边框，颜色为深灰色，宽度为2像素
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)  // 内部填充，宽度为5像素
+        ));
+        allLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 当用户点击 "全部"，展示所有的数据
+                ((TableRowSorter<TableModel>)logTable.getRowSorter()).setRowFilter(null);
+            }
+        });
+        tagsPanel.add(allLabel);
+
+        contentPane.add(topPanel,BorderLayout.NORTH);  // 只在 contentPane 的北部添加一个组件
+
         splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         splitPane.setDividerLocation(0.5);
         contentPane.add(splitPane, BorderLayout.CENTER);
@@ -137,6 +184,37 @@ public class GUI implements IMessageEditorController {
         logTable.setAutoCreateRowSorter(true);  // 添加这一行来启用自动创建行排序器
         logTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         logTable.setRowSelectionAllowed(true);
+
+        model.addTableModelListener(new TableModelListener() {
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                HashMap<String, Integer> resultCounts = new HashMap<>();
+                // 遍历表格中所有行
+                for(int i = 0; i < model.getRowCount(); i++) {
+                    String result = (String) model.getValueAt(i, 5); // 获取结果值
+                    String[] parts = result.split(", "); // 根据", "进行切分
+                    for(String part : parts) {
+                        resultCounts.put(part, resultCounts.getOrDefault(part, 0) + 1); // 添加到映射中进行去重，并计数
+                    }
+                }
+                clearAllResultLabels();
+
+                // 创建一个 TreeMap 并进行反向排序
+                TreeMap<Integer, LinkedList<String>> sortedResults = new TreeMap<>(Collections.reverseOrder());
+                for(Map.Entry<String, Integer> entry : resultCounts.entrySet()) {
+                    sortedResults.computeIfAbsent(entry.getValue(), k -> new LinkedList<>()).add(entry.getKey());
+                }
+
+                // 添加新的结果标签
+                for(Map.Entry<Integer, LinkedList<String>> entry : sortedResults.entrySet()) {
+                    Integer count = entry.getKey();
+                    for(String result : entry.getValue()) {
+                        GUI.addNewResultLabel(result + " (" + count + ")");
+                    }
+                }
+            }
+        });
+
 
         // 创建右键菜单
         JPopupMenu popupMenu = new JPopupMenu();
@@ -155,6 +233,9 @@ public class GUI implements IMessageEditorController {
             }
         });
 
+        JScrollPane jspLogTable = new JScrollPane(logTable);
+        splitPane.setTopComponent(jspLogTable);
+
         // 添加点击事件监听器
         btnClear.addActionListener(new ActionListener() {
             @Override
@@ -164,11 +245,9 @@ public class GUI implements IMessageEditorController {
                 lbSuccessCount.setText("0");
                 model.setRowCount();
                 BurpExtender.hasScanDomainSet = new HashSet<>();
+                clearAllResultLabels();
             }
         });
-
-        JScrollPane jspLogTable = new JScrollPane(logTable);
-        splitPane.setTopComponent(jspLogTable);
 
 
         JTabbedPane tabs = new JTabbedPane();
@@ -199,6 +278,52 @@ public class GUI implements IMessageEditorController {
     public byte[] getResponse() {
         return currentlyDisplayedItem.getResponse();
     }
+
+    public static void addNewResultLabel(String result) {
+        // 创建新的标签
+        JLabel newLabel = new JLabel(result);
+        newLabel.setOpaque(true);  // 设置为不透明
+        newLabel.setBackground(new Color(200, 200, 200));  // 设置背景颜色为浅灰色
+        newLabel.setForeground(Color.BLACK);  // 设置字体颜色为黑色
+
+        // 为标签添加一个有颜色的边框，边框内有5像素的填充
+        newLabel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(100, 100, 100), 1),  // 外部边框，颜色为深灰色，宽度为2像素
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)  // 内部填充，宽度为5像素
+        ));
+
+        newLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 当用户点击某个标签时，展示所有包含该标签文本的结果
+                String filterWithoutCount = result.replaceAll("\\(.*\\)", "").trim();
+                ((TableRowSorter<TableModel>)logTable.getRowSorter())
+                        .setRowFilter(RowFilter.regexFilter(filterWithoutCount, 5));
+            }
+        });
+
+        // 添加新的标签到面板和 resultMap
+        tagsPanel.add(newLabel);
+        resultMap.put(result, newLabel);
+        // 重新验证和重绘面板
+        tagsPanel.revalidate();
+        tagsPanel.repaint();
+    }
+
+    public void clearAllResultLabels() {
+        for (Component component : tagsPanel.getComponents()) {
+            if (component instanceof JLabel) {
+                JLabel label = (JLabel) component;
+                // 如果标签的文本不是"全部"，则移除
+                if (!"全部".equals(label.getText())) {
+                    tagsPanel.remove(component);
+                }
+            }
+        }
+        tagsPanel.revalidate();
+        tagsPanel.repaint();
+    }
+
 
 
 }

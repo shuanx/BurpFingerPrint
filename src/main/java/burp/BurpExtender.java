@@ -206,8 +206,10 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                     for (int i = 0; i < log.size(); i++) {
                                         LogEntry logEntry = log.get(i);
                                         if (logEntry.getUrl().equals(Utils.getUriFromUrl(oneUrl))) {
-                                            if (!logEntry.getResult().contains(mapResult.get("result"))) {
-                                                logEntry.setResult(logEntry.getResult() + ", " + mapResult.get("result"));
+                                            for (String oneRs : mapResult.get("result").split(", ")){
+                                                if (!logEntry.getResult().contains(oneRs)) {
+                                                    logEntry.setResult(logEntry.getResult() + ", " + oneRs);
+                                                }
                                             }
                                             logEntry.setDate(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
                                             logEntry.setResultDetail(mapResult.get("resultDetail") + "\r\n\r\n" + logEntry.getResultDetail());

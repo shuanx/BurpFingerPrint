@@ -70,6 +70,9 @@ public class HttpLogTableModel extends AbstractTableModel {
     }
 
     public void setRowCount() {
+        for (LogEntry logEntry : BurpExtender.log) {
+            GUI.logTable.decrementResultCount(logEntry.result);
+        }
         BurpExtender.log.clear();
         fireTableDataChanged();
     }
@@ -77,8 +80,31 @@ public class HttpLogTableModel extends AbstractTableModel {
     public void removeSelectedRows(JTable table) {
         int[] selectedRows = table.getSelectedRows();
         for (int i = selectedRows.length - 1; i >= 0; i--) {
+            String result = getResultAt(selectedRows[i]);
+            GUI.logTable.decrementResultCount(result);
             BurpExtender.log.remove(selectedRows[i]);
         }
         fireTableDataChanged();
     }
+
+    public String getResultAt(int rowIndex) {
+        return BurpExtender.log.get(rowIndex).result;
+    }
+
+    public void addRow(LogEntry logEntry) {
+        BurpExtender.log.add(logEntry);
+        GUI.logTable.incrementResultCount(logEntry.result);
+        fireTableRowsInserted(BurpExtender.log.size() - 1, BurpExtender.log.size() - 1);
+    }
+
+    public void addLogEntry(LogEntry logEntry) {
+        synchronized (BurpExtender.log) {
+            int row = BurpExtender.log.size();
+            BurpExtender.log.add(logEntry);
+            fireTableRowsInserted(row, row);
+            GUI.logTable.incrementResultCount(logEntry.result);
+        }
+    }
+
+
 }
