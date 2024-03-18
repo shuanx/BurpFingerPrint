@@ -16,16 +16,13 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 
 
-public class GUI implements IMessageEditorController {
-    private JPanel contentPane;
+public class FingerTab implements IMessageEditorController {
+    public static JPanel contentPane;
     private JLabel lbHost;
     private JTextField tfHost;
     private JLabel lbPort;
@@ -57,8 +54,13 @@ public class GUI implements IMessageEditorController {
     public static HashMap<String, JLabel> resultMap = new HashMap<>();
     public static JPanel tagsPanel;
 
+    // 菜单页面
+    public static JMenuBar menuBar;
+    public static JMenu menuMainPage;
+    public static JMenu menuConfigPage;
 
-    public GUI() {
+
+    public FingerTab() {
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -209,7 +211,7 @@ public class GUI implements IMessageEditorController {
                 for(Map.Entry<Integer, LinkedList<String>> entry : sortedResults.entrySet()) {
                     Integer count = entry.getKey();
                     for(String result : entry.getValue()) {
-                        GUI.addNewResultLabel(result + " (" + count + ")");
+                        FingerTab.addNewResultLabel(result + " (" + count + ")", model);
                     }
                 }
             }
@@ -279,7 +281,7 @@ public class GUI implements IMessageEditorController {
         return currentlyDisplayedItem.getResponse();
     }
 
-    public static void addNewResultLabel(String result) {
+    public static void addNewResultLabel(String result, HttpLogTableModel model) {
         // 创建新的标签
         JLabel newLabel = new JLabel(result);
         newLabel.setOpaque(true);  // 设置为不透明

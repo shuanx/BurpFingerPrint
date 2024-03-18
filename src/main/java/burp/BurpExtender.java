@@ -1,22 +1,20 @@
 package burp;
 
 import burp.ui.LogEntry;
+import burp.ui.Tags;
 import burp.util.Utils;
 import burp.util.HTTPUtils;
-import burp.ui.GUI;
+import burp.ui.FingerTab;
 import burp.Wrapper.FingerPrintRulesWrapper;
 import burp.model.FingerPrintRule;
 import burp.util.FingerUtils;
 
-import java.awt.Component;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
 import javax.swing.*;
-import javax.xml.stream.FactoryConfigurationError;
 
-import com.alibaba.fastjson2.reader.ObjectReaderImplJSONP;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,11 +23,9 @@ import java.io.InputStreamReader;
 import java.util.concurrent.*;
 import java.net.URL;
 import java.util.HashMap;
-import java.nio.charset.StandardCharsets;
 
 
-
-public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
+public class BurpExtender implements IBurpExtender, IProxyListener {
     public final static String extensionName = "Finger Print";
     public final static String version = "v2024-03";
     public final static String author = "Shaun";
@@ -39,10 +35,11 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
     public static PrintWriter stderr;
     public static BurpExtender burpExtender;
     private ThreadPoolExecutor executorService;  // 修改这行
-    public static GUI gui;
+    public static FingerTab fingerTab;
     public static final List<LogEntry> log = new ArrayList<LogEntry>();
     public static List<FingerPrintRule> fingerprintRules;
     public static Set<String> hasScanDomainSet = new HashSet<>();
+    private Tags tags;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -51,21 +48,6 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         this.helpers = callbacks.getHelpers();
         this.stdout = new PrintWriter(callbacks.getStdout(),true);
         this.stderr = new PrintWriter(callbacks.getStderr(),true);
-
-        //  注册菜单拓展
-        callbacks.setExtensionName(extensionName + " " + version);
-        BurpExtender.this.gui = new GUI();
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // 添加一个标签页
-                BurpExtender.this.callbacks.addSuiteTab(BurpExtender.this);
-                // 继承IProxyListener，必须进行注册，才能正常使用processProxyMessage模块
-                BurpExtender.this.callbacks.registerProxyListener(BurpExtender.this);
-                stdout.println(Utils.getBanner());
-            }
-        });
-        // 先新建一个进程用于后续处理任务
-        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);  // 修改这行
 
         // 获取类加载器
         ClassLoader classLoader = getClass().getClassLoader();
@@ -85,6 +67,27 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
             stderr.println("[!] Failed to load the configuration file finger.json, because: " + e.getMessage());
         }
 
+        //  注册菜单拓展
+        callbacks.setExtensionName(extensionName + " " + version);
+        BurpExtender.this.fingerTab = new FingerTab();
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                // 添加一个标签页
+                try {
+                    tags = new Tags(callbacks, extensionName);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                // 继承IProxyListener，必须进行注册，才能正常使用processProxyMessage模块
+                BurpExtender.this.callbacks.registerProxyListener(BurpExtender.this);
+                stdout.println(Utils.getBanner());
+            }
+        });
+        // 先新建一个进程用于后续处理任务
+        executorService = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);  // 修改这行
+
+
+
         // 信任证书，方便进行URL访问
         try {
             Utils.trustAllCertificates();
@@ -93,22 +96,12 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
         }
     }
 
-    @Override
-    public Component getUiComponent() {
-        return gui.getComponet();
-    }
-
-    @Override
-    public String getTabCaption() {
-        return extensionName;
-    }
-
     //    IHttpRequestResponse 接口包含了每个请求和响应的细节，在 brupsuite 中的每个请求或者响应都是 IHttpRequestResponse 实例。通过 getRequest()可以获取请求和响应的细节信息。
     public void processProxyMessage(boolean messageIsRequest, final IInterceptedProxyMessage iInterceptedProxyMessage) {
         if (!messageIsRequest) {
             // 更新总数
-            int newRequestsCount = Integer.parseInt(GUI.lbRequestCount.getText()) + 1;
-            GUI.lbRequestCount.setText(Integer.toString(newRequestsCount));
+            int newRequestsCount = Integer.parseInt(FingerTab.lbRequestCount.getText()) + 1;
+            FingerTab.lbRequestCount.setText(Integer.toString(newRequestsCount));
             IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
             String method = helpers.analyzeRequest(resrsp).getMethod();
@@ -196,10 +189,10 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                             oneMethod,
                                             mapResult)
                                     );
-                                    int successRequestsCount = Integer.parseInt(GUI.lbSuccessCount.getText()) + 1;
-                                    GUI.lbSuccessCount.setText(Integer.toString(successRequestsCount));
+                                    int successRequestsCount = Integer.parseInt(FingerTab.lbSuccessCount.getText()) + 1;
+                                    FingerTab.lbSuccessCount.setText(Integer.toString(successRequestsCount));
                                     // 更新表格数据，表格数据对接log
-                                    GUI.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
+                                    FingerTab.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
                                 } else {
                                     LogEntry existingEntry = null;
                                     int existingIndex = -1;
@@ -227,13 +220,13 @@ public class BurpExtender implements IBurpExtender, ITab, IProxyListener {
                                     if (existingEntry != null) {
                                         log.remove(existingIndex);
                                         log.add(0, existingEntry);
-                                        GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(0, 0);
+                                        FingerTab.logTable.getHttpLogTableModel().fireTableRowsUpdated(0, 0);
                                         if (existingIndex + 1 < log.size()) {
-                                            GUI.logTable.getHttpLogTableModel().fireTableRowsUpdated(existingIndex, existingIndex);
+                                            FingerTab.logTable.getHttpLogTableModel().fireTableRowsUpdated(existingIndex, existingIndex);
                                         }
                                     }
                                     // 更新表格数据，表格数据对接log
-                                    GUI.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
+                                    FingerTab.logTable.getHttpLogTableModel().fireTableRowsInserted(row, row);
                                 }
                                 stdout.println("[+] 数据添加结束。。");
                             }
