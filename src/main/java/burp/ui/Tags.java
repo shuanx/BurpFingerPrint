@@ -21,8 +21,8 @@ public class Tags implements ITab {
         this.tagName = name;
         // 定义tab标签页
         tabs = new JTabbedPane();
-        tabs.add("指纹识别页面", fingerTab.contentPane);
         tabs.add("指纹配置", new FingerConfigTab());
+        tabs.add("指纹识别页面", fingerTab.contentPane);
 
         // 修改选中的标签页名字颜色
 

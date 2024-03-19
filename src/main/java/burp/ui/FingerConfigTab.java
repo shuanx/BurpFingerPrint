@@ -10,11 +10,12 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Arrays;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.DefaultTableCellRenderer;
+import java.net.URL;
+import java.awt.event.*;
+import javax.swing.event.*;
 
 
 
@@ -27,65 +28,49 @@ public class FingerConfigTab extends JPanel {
     public FingerConfigTab() {
         setLayout(new BorderLayout());
 
-
-        // Create the toolbar panel
         JPanel toolbar = new JPanel();
-
-        // 在工具栏上添加一个“新增”按钮
+        toolbar.setLayout(new BorderLayout());
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // 新增按钮
         JButton addButton = new JButton("新增");
-        toolbar.add(addButton, 0); // 将按钮添加到工具栏的最左边
-
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // 清空编辑面板的文本字段
-                cmsField.setText("");
-                methodField.setText("");
-                locationField.setText("");
-                keywordField.setText("");
-
-                // 设置编辑面板的位置并显示
-                Point locationOnScreen = ((Component)e.getSource()).getLocationOnScreen();
-                editPanel.setLocation(locationOnScreen.x + 70, locationOnScreen.y);  // 设置编辑面板的位置
-                editPanel.setVisible(true);  // 显示编辑面板
-            }
-        });
-
-        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        addButton.setIcon(getImageIcon("/icon/addButtonIcon.png"));
+        // 创建一个面板来放置放在最左边的按钮
+        leftPanel.add(addButton);
+        // 全部按钮
         JButton allButton = new JButton("全部");
-        toolbar.add(allButton);
-
-
-
-        allButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                // 清除表格的所有行
-                model.setRowCount(0);
-
-                // 添加所有的行
-                int counter = 1;
-                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
-                    model.addRow(new Object[]{
-                            counter,
-                            rule.getCms(), // 获取cms信息
-                            rule.getMethod(), // 获取method信息
-                            rule.getLocation(), // 获取location信息
-                            String.join(",", rule.getKeyword()),
-                            new String[] {"Edit", "Delete"} // 操作按钮
-                    });
-                    counter ++;
-                }
-            }
-        });
-
-
-//        JButton focusButton = new JButton("重点指纹");
-//        toolbar.add(focusButton);
+        // 检索框
         JTextField searchField = new JTextField(15);
-        toolbar.add(searchField);
+        // 检索按钮
+        JButton searchButton = new JButton();
+        searchButton.setIcon(getImageIcon("/icon/searchButton.png"));
+        searchButton.setToolTipText("搜索");
+        // 功能按钮
+        JPopupMenu popupMenu = new JPopupMenu("功能");
+        JMenuItem importItem = new JMenuItem("导入");
+        importItem.setIcon(getImageIcon("/icon/importItem.png"));
+        JMenuItem exportItem = new JMenuItem("导出");
+        exportItem.setIcon(getImageIcon("/icon/exportItem.png"));
+        JMenuItem resetItem = new JMenuItem("重置");
+        resetItem.setIcon(getImageIcon("/icon/resetItem.png"));
+        popupMenu.add(importItem);
+        popupMenu.add(exportItem);
+        popupMenu.add(resetItem);
+        JButton moreButton = new JButton();
+        moreButton.setIcon(getImageIcon("/icon/moreButton.png"));
 
+        // 布局
+        rightPanel.add(allButton);
+        rightPanel.add(searchField);
+        rightPanel.add(searchButton);
+        rightPanel.add(moreButton);
+        // 将左右面板添加到总的toolbar面板中
+        toolbar.add(leftPanel, BorderLayout.WEST);
+        toolbar.add(rightPanel, BorderLayout.EAST);
+        add(toolbar, BorderLayout.NORTH);
+
+
+        // 输入”检索区域“的监听事件
         searchField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,10 +96,74 @@ public class FingerConfigTab extends JPanel {
                 }
             }
         });
+        searchButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                String searchText = searchField.getText(); // 获取用户输入的搜索文本
+                // 清除表格的所有行
+                model.setRowCount(0);
+                // 重新添加匹配搜索文本的行
+                int counter = 1;
+                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                    if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
+                        model.addRow(new Object[]{
+                                counter,
+                                rule.getCms(), // 获取cms信息
+                                rule.getMethod(), // 获取method信息
+                                rule.getLocation(), // 获取location信息
+                                rule.getKeyword(),
+                                new String[] {"Edit", "Delete"} // 操作按钮
+                        });
+                        counter ++;
+                    }
+                }
+            }
+        });
+        // 点击“全部“的监听事件
+        allButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
+                // 清除表格的所有行
+                model.setRowCount(0);
 
-        add(toolbar, BorderLayout.NORTH);
+                // 添加所有的行
+                int counter = 1;
+                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                    model.addRow(new Object[]{
+                            counter,
+                            rule.getCms(), // 获取cms信息
+                            rule.getMethod(), // 获取method信息
+                            rule.getLocation(), // 获取location信息
+                            String.join(",", rule.getKeyword()),
+                            new String[] {"Edit", "Delete"} // 操作按钮
+                    });
+                    counter ++;
+                }
+            }
+        });
+        // 点击“新增”的监听事件
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 清空编辑面板的文本字段
+                cmsField.setText("");
+                methodField.setText("");
+                locationField.setText("");
+                keywordField.setText("");
 
+                // 设置编辑面板的位置并显示
+                Point locationOnScreen = ((Component)e.getSource()).getLocationOnScreen();
+                editPanel.setLocation(locationOnScreen.x + 70, locationOnScreen.y);  // 设置编辑面板的位置
+                editPanel.setVisible(true);  // 显示编辑面板
+            }
+        });
+        // 点击”功能“的监听事件
+        moreButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                popupMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+        // 表格数据
         model = new DefaultTableModel(new Object[]{"#", "CMS", "Method", "location", "keyword", "Action"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
@@ -156,6 +205,7 @@ public class FingerConfigTab extends JPanel {
         table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor());
 
+        // 编辑页面框
         editPanel = new JDialog();
         editPanel.setLayout(new GridBagLayout());  // 更改为 GridBagLayout
         editPanel.setSize(500, 200);
@@ -238,6 +288,15 @@ public class FingerConfigTab extends JPanel {
         editPanel.add(saveButton);
 
 
+    }
+
+    public ImageIcon getImageIcon(String iconPath){
+        // 根据按钮的大小缩放图标
+        URL iconURL = getClass().getResource(iconPath);
+        ImageIcon originalIcon = new ImageIcon(iconURL);
+        Image img = originalIcon.getImage();
+        Image newImg = img.getScaledInstance(17, 17, Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
     }
 
     class ButtonRenderer implements TableCellRenderer {
