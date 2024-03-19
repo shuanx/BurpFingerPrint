@@ -5,6 +5,7 @@ import burp.IExtensionHelpers;
 import burp.IResponseInfo;
 import burp.model.FingerPrintRule;
 
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,7 +22,7 @@ public class FingerUtils {
         Map<String, String> mapResult =  new HashMap<String, String>();
         IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
         // 响应的body值
-        String responseBody = new String(oneResponseBytes);
+        String responseBody = new String(oneResponseBytes, StandardCharsets.UTF_8);
         // 响应的头部字段
         String responseHeaders = responseInfo.getHeaders().toString();
         // 提取title

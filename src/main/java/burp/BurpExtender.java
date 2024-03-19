@@ -10,6 +10,7 @@ import burp.model.FingerPrintRule;
 import burp.util.FingerUtils;
 
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -58,7 +59,7 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
             return;
         }
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
             Gson gson = new Gson();
             FingerPrintRulesWrapper rulesWrapper = gson.fromJson(reader, FingerPrintRulesWrapper.class);
             fingerprintRules = rulesWrapper.getFingerprint();
