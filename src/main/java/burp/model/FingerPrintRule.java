@@ -11,6 +11,13 @@ public class FingerPrintRule {
     private String method;
     private String location;
     private List<String> keyword;
+    // 新添加的构造函数
+    public FingerPrintRule(String cms, String method, String location, List<String> keyword) {
+        this.cms = cms;
+        this.method = method;
+        this.location = location;
+        this.keyword = keyword;
+    }
 
     public String getCms() {
         return cms;

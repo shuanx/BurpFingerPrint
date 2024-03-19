@@ -3,6 +3,8 @@ package burp.ui;
 import burp.BurpExtender;
 import burp.model.FingerPrintRule;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -25,11 +27,35 @@ public class FingerConfigTab extends JPanel {
     public FingerConfigTab() {
         setLayout(new BorderLayout());
 
+
         // Create the toolbar panel
         JPanel toolbar = new JPanel();
+
+        // 在工具栏上添加一个“新增”按钮
+        JButton addButton = new JButton("新增");
+        toolbar.add(addButton, 0); // 将按钮添加到工具栏的最左边
+
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 清空编辑面板的文本字段
+                cmsField.setText("");
+                methodField.setText("");
+                locationField.setText("");
+                keywordField.setText("");
+
+                // 设置编辑面板的位置并显示
+                Point locationOnScreen = ((Component)e.getSource()).getLocationOnScreen();
+                editPanel.setLocation(locationOnScreen.x + 70, locationOnScreen.y);  // 设置编辑面板的位置
+                editPanel.setVisible(true);  // 显示编辑面板
+            }
+        });
+
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JButton allButton = new JButton("全部");
         toolbar.add(allButton);
+
+
 
         allButton.addActionListener(new ActionListener() {
             @Override
@@ -181,26 +207,33 @@ public class FingerConfigTab extends JPanel {
 
 
         JButton saveButton = new JButton("Save");
+        // 修改保存按钮的点击事件监听器
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int row = table.getSelectedRow();
-                FingerPrintRule rule = BurpExtender.fingerprintRules.get(row);
+                // 获取用户输入的数据
+                String cms = cmsField.getText();
+                String method = methodField.getText();
+                String location = locationField.getText();
+                List<String> keyword = Arrays.asList(keywordField.getText().split(","));
 
-                rule.setCms(cmsField.getText());
-                rule.setMethod(methodField.getText());
-                rule.setLocation(locationField.getText());
-                rule.setKeyword(Arrays.asList(keywordField.getText().split(",")));
+                // 创建新的 FingerPrintRule 并添加到列表中
+                FingerPrintRule rule = new FingerPrintRule(cms, method, location, keyword);
+                BurpExtender.fingerprintRules.add(rule);
 
-                model.setValueAt(rule.getCms(), row, 1);
-                model.setValueAt(rule.getMethod(), row, 2);
-                model.setValueAt(rule.getLocation(), row, 3);
-                model.setValueAt(String.join(",", rule.getKeyword()), row, 4);
+                // 在表格中添加一行新的数据
+                model.addRow(new Object[]{
+                        BurpExtender.fingerprintRules.size(),
+                        rule.getCms(),
+                        rule.getMethod(),
+                        rule.getLocation(),
+                        String.join(",", rule.getKeyword()),
+                        new String[] {"Edit", "Delete"}
+                });
 
-                editPanel.setVisible(false);  // 隐藏编辑面板
+                // 隐藏编辑面板
+                editPanel.setVisible(false);
             }
-
-
         });
         editPanel.add(saveButton);
 
