@@ -23,6 +23,7 @@ public class FingerConfigTab extends JPanel {
     private DefaultTableModel model;
     private JTable table;
     private JDialog editPanel;  // 新增：编辑面板
+    private Integer editingRow = null;
     private JTextField cmsField, methodField, locationField, keywordField;  // 新增：编辑面板的文本字段
 
     public FingerConfigTab() {
@@ -88,7 +89,7 @@ public class FingerConfigTab extends JPanel {
                                 rule.getCms(), // 获取cms信息
                                 rule.getMethod(), // 获取method信息
                                 rule.getLocation(), // 获取location信息
-                                rule.getKeyword(),
+                                String.join(",", rule.getKeyword()),
                                 new String[] {"Edit", "Delete"} // 操作按钮
                         });
                         counter ++;
@@ -110,7 +111,7 @@ public class FingerConfigTab extends JPanel {
                                 rule.getCms(), // 获取cms信息
                                 rule.getMethod(), // 获取method信息
                                 rule.getLocation(), // 获取location信息
-                                rule.getKeyword(),
+                                String.join(",", rule.getKeyword()),
                                 new String[] {"Edit", "Delete"} // 操作按钮
                         });
                         counter ++;
@@ -197,13 +198,14 @@ public class FingerConfigTab extends JPanel {
         table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-//        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        // 设置操作列的宽度以适应两个按钮
+        int actionColumnWidth = 200;  // 假设每个按钮宽度为70，中间间隔10
+        table.getColumnModel().getColumn(5).setPreferredWidth(actionColumnWidth);
+        table.getColumnModel().getColumn(5).setMaxWidth(actionColumnWidth);
         table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
+        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(table));
 
         add(new JScrollPane(table), BorderLayout.CENTER);
-
-        table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
-        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor());
 
         // 编辑页面框
         editPanel = new JDialog();
@@ -257,6 +259,7 @@ public class FingerConfigTab extends JPanel {
 
 
         JButton saveButton = new JButton("Save");
+
         // 修改保存按钮的点击事件监听器
         saveButton.addActionListener(new ActionListener() {
             @Override
@@ -267,19 +270,34 @@ public class FingerConfigTab extends JPanel {
                 String location = locationField.getText();
                 List<String> keyword = Arrays.asList(keywordField.getText().split(","));
 
-                // 创建新的 FingerPrintRule 并添加到列表中
-                FingerPrintRule rule = new FingerPrintRule(cms, method, location, keyword);
-                BurpExtender.fingerprintRules.add(rule);
+                if (editingRow != null) {
+                    // 如果是编辑现有规则，更新数据源和表格模型中的数据
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(editingRow);
+                    rule.setCms(cms);
+                    rule.setMethod(method);
+                    rule.setLocation(location);
+                    rule.setKeyword(keyword);
 
-                // 在表格中添加一行新的数据
-                model.addRow(new Object[]{
-                        BurpExtender.fingerprintRules.size(),
-                        rule.getCms(),
-                        rule.getMethod(),
-                        rule.getLocation(),
-                        String.join(",", rule.getKeyword()),
-                        new String[] {"Edit", "Delete"}
-                });
+                    model.setValueAt(cms, editingRow, 1);
+                    model.setValueAt(method, editingRow, 2);
+                    model.setValueAt(location, editingRow, 3);
+                    model.setValueAt(String.join(",", keyword), editingRow, 4);
+
+                    // 重置当前编辑行为null
+                    editingRow = null;
+                } else {
+                    // 如果是添加新规则，创建新的 FingerPrintRule 并添加到列表和表格模型中
+                    FingerPrintRule newRule = new FingerPrintRule(cms, method, location, keyword);
+                    BurpExtender.fingerprintRules.add(newRule);
+                    model.addRow(new Object[]{
+                            BurpExtender.fingerprintRules.size(),
+                            newRule.getCms(),
+                            newRule.getMethod(),
+                            newRule.getLocation(),
+                            String.join(",", newRule.getKeyword()),
+                            new String[]{"Edit", "Delete"}
+                    });
+                }
 
                 // 隐藏编辑面板
                 editPanel.setVisible(false);
@@ -299,83 +317,104 @@ public class FingerConfigTab extends JPanel {
         return new ImageIcon(newImg);
     }
 
-    class ButtonRenderer implements TableCellRenderer {
+    class ButtonRenderer extends JPanel implements TableCellRenderer {
+        private final JButton editButton;
+        private final JButton deleteButton;
+
+        public ButtonRenderer() {
+            setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            editButton = new JButton();
+            editButton.setIcon(getImageIcon("/icon/editButton.png"));
+            deleteButton = new JButton();
+            deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
+
+            editButton.setPreferredSize(new Dimension(70, 20));
+            deleteButton.setPreferredSize(new Dimension(70, 20));
+
+            add(editButton);
+            add(deleteButton);
+            setBorder(BorderFactory.createEmptyBorder());
+        }
+
+        @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            JPanel panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-            if (value instanceof String[]) {
-                for (String text : (String[]) value) {
-                    JButton button = new JButton(text);
-                    button.setPreferredSize(new Dimension(70, 30));
-                    panel.add(button);
-                }
+            if (isSelected) {
+                setBackground(table.getSelectionBackground());
+            } else {
+                setBackground(table.getBackground());
             }
-            return panel;
+            return this;
         }
     }
 
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
-        private JPanel panel;
-        private String label;
+        private final JPanel panel;
+        private final JButton editButton;
+        private final JButton deleteButton;
+        private JTable table;
         private int row;
 
-        public ButtonEditor() {
-            panel = new JPanel();
-            panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-            JButton editButton = new JButton("Edit");
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    label = "Edit";
-                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(row);
+        public ButtonEditor(JTable table) {
+            this.table = table;
+            panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+            editButton = new JButton();
+            editButton.setIcon(getImageIcon("/icon/editButton.png"));
+            deleteButton = new JButton();
+            deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
 
+            editButton.setPreferredSize(new Dimension(70, 20));
+            deleteButton.setPreferredSize(new Dimension(70, 20));
+
+            editButton.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    // 编辑按钮的逻辑
+                    int modelRow = table.convertRowIndexToModel(row);
+                    editingRow = modelRow; // 保存当前编辑的行索引
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(modelRow);
                     cmsField.setText(rule.getCms());
                     methodField.setText(rule.getMethod());
                     locationField.setText(rule.getLocation());
                     keywordField.setText(String.join(",", rule.getKeyword()));
 
-                    // 设置编辑面板的位置并显示
-                    Point locationOnScreen = ((Component)e.getSource()).getLocationOnScreen();
-                    editPanel.setLocation(locationOnScreen.x + 70, locationOnScreen.y);  // 设置编辑面板的位置
-                    editPanel.setVisible(true);  // 显示编辑面板
+                    // 显示编辑面板
+                    Point btnLocation = ((JButton)e.getSource()).getLocationOnScreen();
+                    editPanel.setLocation(btnLocation.x - editPanel.getWidth() / 2, btnLocation.y + ((JButton)e.getSource()).getHeight());
 
-
+                    editPanel.setVisible(true);
                     fireEditingStopped();
                 }
-
-
-
-
             });
-            panel.add(editButton);
-            JButton deleteButton = new JButton("Delete");
+
             deleteButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    label = "Delete";
-                    fireEditingStopped();
+                    // 删除按钮的逻辑
+                    int modelRow = table.convertRowIndexToModel(row);
+                    BurpExtender.fingerprintRules.remove(modelRow);  // 从数据源中删除
+                    ((DefaultTableModel)table.getModel()).removeRow(modelRow); // 从表格视图中删除
+
+                    fireEditingStopped(); // 结束编辑状态
                 }
             });
+
+            panel.add(editButton);
             panel.add(deleteButton);
+            panel.setBorder(BorderFactory.createEmptyBorder());
         }
 
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+
+        @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            this.row = row; // 记住当前行
+            this.row = table.convertRowIndexToModel(row); // 转换为模型索引，以防有排序
             return panel;
         }
-
-        public Object getCellEditorValue() {
-            if (label.equals("Delete")) {
-                // 删除相应的 FingerPrintRule
-                BurpExtender.fingerprintRules.remove(row);
-
-                // 从表格中删除该行
-                model.removeRow(row);
-
-                // 注意：如果你的 FingerPrintRule 列表是从某个持久化的地方（如文件或数据库）加载的，你需要同步更新那个地方的数据
-            }
-            return new String[] {"Edit", "Delete"};
-        }
     }
+
+
 
     class CenterRenderer extends DefaultTableCellRenderer {
         public CenterRenderer() {
