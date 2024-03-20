@@ -1,8 +1,12 @@
 package burp.ui;
 
 import burp.BurpExtender;
+import burp.Wrapper.FingerPrintRulesWrapper;
 import burp.model.FingerPrintRule;
 
+import java.io.*;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
@@ -17,15 +21,12 @@ import java.net.URL;
 import java.awt.event.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.io.FileOutputStream;
-
 
 
 public class FingerConfigTab extends JPanel {
@@ -179,9 +180,13 @@ public class FingerConfigTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 List<FingerPrintRule> rulesToExport = BurpExtender.fingerprintRules;
 
-                // 将数据转换为JSON格式
+                // 创建一个新的 FingerPrintRulesWrapper 并设置 fingerprint 列表
+                FingerPrintRulesWrapper wrapper = new FingerPrintRulesWrapper();
+                wrapper.setFingerprint(rulesToExport);
+
+                // 将 wrapper 对象转换为 JSON 格式
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String json = gson.toJson(rulesToExport);
+                String json = gson.toJson(wrapper);
 
                 // 弹出文件选择对话框，让用户选择保存位置
                 JFileChooser fileChooser = new JFileChooser();
@@ -210,7 +215,114 @@ public class FingerConfigTab extends JPanel {
             }
         });
         // 点击导入按钮
+        importItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 弹出文件选择对话框，让用户选择 JSON 文件
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("请选择文件");
+                fileChooser.setFileFilter(new FileNameExtensionFilter("JSON文件 (*.json)", "json"));
+                int userSelection = fileChooser.showOpenDialog(FingerConfigTab.this);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToOpen = fileChooser.getSelectedFile();
+
+                    try {
+                        // 使用UTF-8编码读取文件
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileToOpen), StandardCharsets.UTF_8));
+                        StringBuilder sb = new StringBuilder();
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            sb.append(line);
+                        }
+                        reader.close();
+
+                        // 将文件内容转换为 JSON 格式
+                        Gson gson = new Gson();
+                        FingerPrintRulesWrapper wrapper = gson.fromJson(sb.toString(), FingerPrintRulesWrapper.class);
+                        List<FingerPrintRule> rules = wrapper.getFingerprint();
+
+                        wrapper.setFingerprint(rules);
+
+                        // 清空原列表，并将新数据添加到原列表
+                        synchronized (BurpExtender.fingerprintRules) {
+                            // 清空原列表，并将新数据添加到原列表
+                            BurpExtender.fingerprintRules.clear();
+                            BurpExtender.fingerprintRules.addAll(wrapper.getFingerprint());
+                        }
+
+                        // 清除表格的所有行
+                        model.setRowCount(0);
+
+                        // 添加所有的行
+                        int counter = 1;
+                        for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                            model.addRow(new Object[]{
+                                    counter,
+                                    rule.getCms(), // 获取 cms 信息
+                                    rule.getMethod(), // 获取 method 信息
+                                    rule.getLocation(), // 获取 location 信息
+                                    String.join(",", rule.getKeyword()),
+                                    new String[] {"Edit", "Delete"} // 操作按钮
+                            });
+                            counter ++;
+                        }
+
+
+                        JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已从: " + fileToOpen.getAbsolutePath() + " 导入", "导入成功", JOptionPane.INFORMATION_MESSAGE);
+                        model.fireTableDataChanged();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(FingerConfigTab.this, "读取文件或解析 JSON 数据时发生错误: " + ex.getMessage(), "导入失败", JOptionPane.ERROR_MESSAGE);
+                        BurpExtender.stdout.println(ex.getMessage());
+                    }
+
+                }
+            }
+        });
         // 点击重置按钮
+        resetItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 获取类加载器
+                ClassLoader classLoader = getClass().getClassLoader();
+
+                InputStream inputStream = classLoader.getResourceAsStream("conf/finger-important.json");
+
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    Gson gson = new Gson();
+                    FingerPrintRulesWrapper rulesWrapper = gson.fromJson(reader, FingerPrintRulesWrapper.class);
+                    // 清空原列表，并将新数据添加到原列表
+                    synchronized (BurpExtender.fingerprintRules) {
+                        // 清空原列表，并将新数据添加到原列表
+                        BurpExtender.fingerprintRules.clear();
+                        BurpExtender.fingerprintRules.addAll(rulesWrapper.getFingerprint());
+                    }
+
+                    // 清除表格的所有行
+                    model.setRowCount(0);
+
+                    // 添加所有的行
+                    int counter = 1;
+                    for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                        model.addRow(new Object[]{
+                                counter,
+                                rule.getCms(), // 获取 cms 信息
+                                rule.getMethod(), // 获取 method 信息
+                                rule.getLocation(), // 获取 location 信息
+                                String.join(",", rule.getKeyword()),
+                                new String[] {"Edit", "Delete"} // 操作按钮
+                        });
+                        counter ++;
+                    }
+
+
+                    JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置到最原始状态", "重置成功",  JOptionPane.INFORMATION_MESSAGE);
+                    model.fireTableDataChanged();
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置失败", "重置失败", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
 
         // 表格数据

@@ -39,3 +39,6 @@ build/
 
 ### build
 out/
+
+### log
+log/*.log
