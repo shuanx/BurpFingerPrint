@@ -15,7 +15,16 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.net.URL;
 import java.awt.event.*;
-import javax.swing.event.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
+import java.io.FileOutputStream;
 
 
 
@@ -165,6 +174,41 @@ public class FingerConfigTab extends JPanel {
             }
         });
         // 点击导出按钮
+        exportItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<FingerPrintRule> rulesToExport = BurpExtender.fingerprintRules;
+
+                // 将数据转换为JSON格式
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String json = gson.toJson(rulesToExport);
+
+                // 弹出文件选择对话框，让用户选择保存位置
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("保存为");
+                fileChooser.setFileFilter(new FileNameExtensionFilter("JSON文件 (*.json)", "json"));
+                int userSelection = fileChooser.showSaveDialog(FingerConfigTab.this);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    // 确保文件有.json扩展名
+                    if (!fileToSave.getAbsolutePath().endsWith(".json")) {
+                        fileToSave = new File(fileToSave + ".json");
+                    }
+
+                    try {
+                        // 使用UTF-8编码写入文件
+                        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileToSave), StandardCharsets.UTF_8);
+                        writer.write(json);
+                        writer.close();
+
+                        JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已导出至: " + fileToSave.getAbsolutePath(), "导出成功", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(FingerConfigTab.this, "写入文件时发生错误: " + ex.getMessage(), "导出失败", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        });
         // 点击导入按钮
         // 点击重置按钮
 
