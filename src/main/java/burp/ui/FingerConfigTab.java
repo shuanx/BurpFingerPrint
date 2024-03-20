@@ -164,6 +164,11 @@ public class FingerConfigTab extends JPanel {
                 popupMenu.show(e.getComponent(), e.getX(), e.getY());
             }
         });
+        // 点击导出按钮
+        // 点击导入按钮
+        // 点击重置按钮
+
+
         // 表格数据
         model = new DefaultTableModel(new Object[]{"#", "CMS", "Method", "location", "keyword", "Action"}, 0) {
             @Override
@@ -199,7 +204,7 @@ public class FingerConfigTab extends JPanel {
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
         // 设置操作列的宽度以适应两个按钮
-        int actionColumnWidth = 200;  // 假设每个按钮宽度为70，中间间隔10
+        int actionColumnWidth = 100;  // 假设每个按钮宽度为70，中间间隔10
         table.getColumnModel().getColumn(5).setPreferredWidth(actionColumnWidth);
         table.getColumnModel().getColumn(5).setMaxWidth(actionColumnWidth);
         table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
@@ -209,6 +214,7 @@ public class FingerConfigTab extends JPanel {
 
         // 编辑页面框
         editPanel = new JDialog();
+        editPanel.setTitle("新增指纹");
         editPanel.setLayout(new GridBagLayout());  // 更改为 GridBagLayout
         editPanel.setSize(500, 200);
         editPanel.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
@@ -224,41 +230,61 @@ public class FingerConfigTab extends JPanel {
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.WEST;  // 紧靠左边
         constraints.fill = GridBagConstraints.HORIZONTAL;  // 水平填充
-        constraints.weightx = 1.0;  // 水平扩展的权重为1
         constraints.insets = new Insets(10, 10, 10, 10);  // 设置内边距为10像素
 
-        // 添加 "CMS" 标签和文本字段
-        constraints.gridx = 0;  // 在网格的第一列添加组件（索引从0开始）
+        // 添加 "CMS" 标签
+        constraints.gridx = 0;  // 在网格的第一列添加组件
         constraints.gridy = 0;  // 在网格的第一行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("CMS:"), constraints);
+
+        // 添加 "CMS" 输入框
         constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
         editPanel.add(cmsField, constraints);
 
-        // 添加 "Method" 标签和文本字段
+        // 添加 "Method" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
         constraints.gridy = 1;  // 在网格的第二行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Method:"), constraints);
+
+        // 添加 "Method" 输入框
         constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
         editPanel.add(methodField, constraints);
 
-        // 添加 "Location" 标签和文本字段
+        // 添加 "Location" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
         constraints.gridy = 2;  // 在网格的第三行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Location:"), constraints);
+
+        // 添加 "Location" 输入框
         constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
         editPanel.add(locationField, constraints);
 
-        // 添加 "Keyword" 标签和文本字段
+        // 添加 "Keyword" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
         constraints.gridy = 3;  // 在网格的第四行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Keyword:"), constraints);
+
+        // 添加 "Keyword" 输入框
         constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
         editPanel.add(keywordField, constraints);
 
-
+        // 根据需要，为 Location 和 Keyword 输入框设置首选大小
+        cmsField.setPreferredSize(new Dimension(100, cmsField.getPreferredSize().height));
+        methodField.setPreferredSize(new Dimension(100, methodField.getPreferredSize().height));
+        locationField.setPreferredSize(new Dimension(100, locationField.getPreferredSize().height));
+        keywordField.setPreferredSize(new Dimension(100, keywordField.getPreferredSize().height));
 
 
         JButton saveButton = new JButton("Save");
+        saveButton.setIcon(getImageIcon("/icon/saveButton.png"));
 
         // 修改保存按钮的点击事件监听器
         saveButton.addActionListener(new ActionListener() {
@@ -269,6 +295,17 @@ public class FingerConfigTab extends JPanel {
                 String method = methodField.getText();
                 String location = locationField.getText();
                 List<String> keyword = Arrays.asList(keywordField.getText().split(","));
+
+                // 检查输入框是否都不为空
+                if (cms.trim().isEmpty() || method.trim().isEmpty() ||
+                        location.trim().isEmpty() ||  keyword.stream().allMatch(String::isEmpty)) {
+                    // 显示错误消息
+                    JOptionPane.showMessageDialog(editPanel,
+                            "所有输入框都必须填写。",
+                            "输入错误",
+                            JOptionPane.ERROR_MESSAGE);
+                    return; // 不再继续执行后面的代码
+                }
 
                 if (editingRow != null) {
                     // 如果是编辑现有规则，更新数据源和表格模型中的数据
@@ -329,8 +366,8 @@ public class FingerConfigTab extends JPanel {
             deleteButton = new JButton();
             deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
 
-            editButton.setPreferredSize(new Dimension(70, 20));
-            deleteButton.setPreferredSize(new Dimension(70, 20));
+            editButton.setPreferredSize(new Dimension(40, 20));
+            deleteButton.setPreferredSize(new Dimension(40, 20));
 
             add(editButton);
             add(deleteButton);
@@ -363,8 +400,8 @@ public class FingerConfigTab extends JPanel {
             deleteButton = new JButton();
             deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
 
-            editButton.setPreferredSize(new Dimension(70, 20));
-            deleteButton.setPreferredSize(new Dimension(70, 20));
+            editButton.setPreferredSize(new Dimension(40, 20));
+            deleteButton.setPreferredSize(new Dimension(40, 20));
 
             editButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -388,12 +425,14 @@ public class FingerConfigTab extends JPanel {
 
             deleteButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    // 删除按钮的逻辑
+                    fireEditingStopped(); // 确保停止编辑状态
                     int modelRow = table.convertRowIndexToModel(row);
-                    BurpExtender.fingerprintRules.remove(modelRow);  // 从数据源中删除
-                    ((DefaultTableModel)table.getModel()).removeRow(modelRow); // 从表格视图中删除
+                    BurpExtender.fingerprintRules.remove(modelRow); // 删除数据源中的数据
+                    ((DefaultTableModel) table.getModel()).removeRow(modelRow); // 删除表格模型中的数据
 
-                    fireEditingStopped(); // 结束编辑状态
+                    // 在删除行之后，重新验证和重绘表格
+                    table.revalidate();
+                    table.repaint();
                 }
             });
 
