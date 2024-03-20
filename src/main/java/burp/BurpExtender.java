@@ -9,7 +9,7 @@ import burp.Wrapper.FingerPrintRulesWrapper;
 import burp.model.FingerPrintRule;
 import burp.util.FingerUtils;
 
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,10 +17,7 @@ import java.util.concurrent.Executors;
 import javax.swing.*;
 
 import com.google.gson.Gson;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.util.concurrent.*;
 import java.net.URL;
 import java.util.HashMap;
@@ -52,8 +49,19 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
 
         // 获取类加载器
         ClassLoader classLoader = getClass().getClassLoader();
-
-        InputStream inputStream = classLoader.getResourceAsStream("conf/finger-important.json");
+        String extensionPath = Utils.getExtensionFilePath(BurpExtender.callbacks);
+        File tmpFile = new File(extensionPath, "finger-tmp.json");
+        InputStream inputStream = null;
+        if (tmpFile.exists()) {
+            try {
+                inputStream = new FileInputStream(tmpFile);
+            } catch (FileNotFoundException e) {
+                stderr.println("[!] Failed to load the configuration file finger.json, because finger-tmp.json not found");
+                return;
+            }
+        } else {
+            inputStream = classLoader.getResourceAsStream("conf/finger-important.json");
+        }
         if (inputStream == null) {
             stderr.println("[!] Failed to load the configuration file finger.json, because config/finger.json not found");
             return;

@@ -19,6 +19,8 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.net.URL;
 import java.awt.event.*;
+
+import burp.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -58,12 +60,15 @@ public class FingerConfigTab extends JPanel {
         searchButton.setToolTipText("搜索");
         // 功能按钮
         JPopupMenu popupMenu = new JPopupMenu("功能");
+        JMenuItem saveItem = new JMenuItem("保存");
+        saveItem.setIcon(getImageIcon("/icon/saveItem.png"));
         JMenuItem importItem = new JMenuItem("导入");
         importItem.setIcon(getImageIcon("/icon/importItem.png"));
         JMenuItem exportItem = new JMenuItem("导出");
         exportItem.setIcon(getImageIcon("/icon/exportItem.png"));
         JMenuItem resetItem = new JMenuItem("重置");
         resetItem.setIcon(getImageIcon("/icon/resetItem.png"));
+        popupMenu.add(saveItem);
         popupMenu.add(importItem);
         popupMenu.add(exportItem);
         popupMenu.add(resetItem);
@@ -319,11 +324,36 @@ public class FingerConfigTab extends JPanel {
                     JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置到最原始状态", "重置成功",  JOptionPane.INFORMATION_MESSAGE);
                     model.fireTableDataChanged();
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置失败", "重置失败", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置失败： " + ex.getMessage(), "重置失败", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
+        // 点击保存按钮
+        saveItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                List<FingerPrintRule> rulesToExport = BurpExtender.fingerprintRules;
 
+                // 创建一个新的 FingerPrintRulesWrapper 并设置 fingerprint 列表
+                FingerPrintRulesWrapper wrapper = new FingerPrintRulesWrapper();
+                wrapper.setFingerprint(rulesToExport);
+
+                // 将 wrapper 对象转换为 JSON 格式
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String json = gson.toJson(wrapper);
+
+                try {
+                    // 使用UTF-8编码写入文件
+                    File fileToSave = new File(Utils.getExtensionFilePath(BurpExtender.callbacks), "finger-tmp.json");
+                    OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileToSave), StandardCharsets.UTF_8);
+                    writer.write(json);
+                    writer.close();
+                    JOptionPane.showMessageDialog(FingerConfigTab.this, "指纹已保存，下次启动使用该指纹", "保存成功",  JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(FingerConfigTab.this, "指纹保存失败： " + ex.getMessage(), "保存失败", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         // 表格数据
         model = new DefaultTableModel(new Object[]{"#", "CMS", "Method", "location", "keyword", "Action"}, 0) {

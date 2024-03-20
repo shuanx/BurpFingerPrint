@@ -2,19 +2,20 @@ package burp.util;
 
 import burp.BurpExtender;
 
+import java.io.*;
 import java.net.*;
 import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import burp.IBurpExtenderCallbacks;
 import burp.ui.LogEntry;
 
 import java.util.*;
 import java.util.ArrayList;
 import javax.net.ssl.*;
 import java.security.cert.X509Certificate;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -26,7 +27,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URL;
 
 
@@ -444,6 +444,18 @@ public class Utils {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * 获取-插件运行路径
+     *
+     * @return
+     */
+    public static String getExtensionFilePath(IBurpExtenderCallbacks callbacks) {
+        String path = "";
+        Integer lastIndex = callbacks.getExtensionFilename().lastIndexOf(File.separator);
+        path = callbacks.getExtensionFilename().substring(0, lastIndex) + File.separator;
+        return path;
     }
 
 }
