@@ -28,7 +28,7 @@ import java.util.HashMap;
 
 public class BurpExtender implements IBurpExtender, IProxyListener {
     public final static String extensionName = "Finger Print";
-    public final static String version = "v2024-03";
+    public final static String version = "2024-03";
     public final static String author = "Shaun";
     public static IBurpExtenderCallbacks callbacks;
     public static IExtensionHelpers helpers;
