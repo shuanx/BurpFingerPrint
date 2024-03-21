@@ -11,14 +11,21 @@ public class FingerPrintRule {
     private String method;
     private String location;
     private List<String> keyword;
+    private boolean isImportant;
+    private String type;
     // 新添加的构造函数
-    public FingerPrintRule(String cms, String method, String location, List<String> keyword) {
+    public FingerPrintRule(String type, boolean isImportant, String cms, String method, String location, List<String> keyword) {
         this.cms = cms;
         this.method = method;
         this.location = location;
         this.keyword = keyword;
+        this.type = type;
+        this.isImportant = isImportant;
     }
-
+    public String getType(){return type;}
+    public void setType(String type){this.cms = type;}
+    public boolean getIsImportant(){return isImportant;}
+    public void setIsImportant(boolean isImportant){this.isImportant = isImportant;}
     public String getCms() {
         return cms;
     }

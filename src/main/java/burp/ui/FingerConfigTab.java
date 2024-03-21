@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.DefaultTableCellRenderer;
 import java.net.URL;
 import java.awt.event.*;
 
@@ -101,7 +98,9 @@ public class FingerConfigTab extends JPanel {
                     if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
                         model.addRow(new Object[]{
                                 counter,
+                                rule.getType(),
                                 rule.getCms(), // 获取cms信息
+                                rule.getIsImportant(),
                                 rule.getMethod(), // 获取method信息
                                 rule.getLocation(), // 获取location信息
                                 String.join(",", rule.getKeyword()),
@@ -123,7 +122,9 @@ public class FingerConfigTab extends JPanel {
                     if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
                         model.addRow(new Object[]{
                                 counter,
+                                rule.getType(),
                                 rule.getCms(), // 获取cms信息
+                                rule.getIsImportant(),
                                 rule.getMethod(), // 获取method信息
                                 rule.getLocation(), // 获取location信息
                                 String.join(",", rule.getKeyword()),
@@ -147,7 +148,9 @@ public class FingerConfigTab extends JPanel {
                 for (FingerPrintRule rule : BurpExtender.fingerprintRules){
                     model.addRow(new Object[]{
                             counter,
+                            rule.getType(),
                             rule.getCms(), // 获取cms信息
+                            rule.getIsImportant(),
                             rule.getMethod(), // 获取method信息
                             rule.getLocation(), // 获取location信息
                             String.join(",", rule.getKeyword()),
@@ -264,7 +267,9 @@ public class FingerConfigTab extends JPanel {
                         for (FingerPrintRule rule : BurpExtender.fingerprintRules){
                             model.addRow(new Object[]{
                                     counter,
+                                    rule.getType(),
                                     rule.getCms(), // 获取 cms 信息
+                                    rule.getIsImportant(),
                                     rule.getMethod(), // 获取 method 信息
                                     rule.getLocation(), // 获取 location 信息
                                     String.join(",", rule.getKeyword()),
@@ -311,7 +316,9 @@ public class FingerConfigTab extends JPanel {
                     for (FingerPrintRule rule : BurpExtender.fingerprintRules){
                         model.addRow(new Object[]{
                                 counter,
+                                rule.getType(),
                                 rule.getCms(), // 获取 cms 信息
+                                rule.getIsImportant(),
                                 rule.getMethod(), // 获取 method 信息
                                 rule.getLocation(), // 获取 location 信息
                                 String.join(",", rule.getKeyword()),
@@ -356,7 +363,7 @@ public class FingerConfigTab extends JPanel {
         });
 
         // 表格数据
-        model = new DefaultTableModel(new Object[]{"#", "CMS", "Method", "location", "keyword", "Action"}, 0) {
+        model = new DefaultTableModel(new Object[]{"#", "type", "CMS", "isImportant", "Method", "location", "keyword", "Action"}, 0) {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
@@ -371,7 +378,9 @@ public class FingerConfigTab extends JPanel {
         for (FingerPrintRule rule : BurpExtender.fingerprintRules){
             model.addRow(new Object[]{
                     counter,
+                    rule.getType(),
                     rule.getCms(), // 获取cms信息
+                    rule.getIsImportant(),
                     rule.getMethod(), // 获取method信息
                     rule.getLocation(), // 获取location信息
                     String.join(",", rule.getKeyword()),
@@ -382,21 +391,62 @@ public class FingerConfigTab extends JPanel {
         }
 
 
+
+
         table = new JTable(model);
         CenterRenderer centerRenderer = new CenterRenderer();
+        int maxColumnWidth = 100;
+        int cmsColumnWidth = 180;
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(0).setPreferredWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(0).setMaxWidth(maxColumnWidth);
         table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setPreferredWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(1).setMaxWidth(maxColumnWidth);
         table.getColumnModel().getColumn(2).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(2).setPreferredWidth(cmsColumnWidth);
+        table.getColumnModel().getColumn(2).setMaxWidth(cmsColumnWidth);
         table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(3).setPreferredWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(3).setMaxWidth(maxColumnWidth);
         table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setPreferredWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(4).setMaxWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(5).setPreferredWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(5).setMaxWidth(maxColumnWidth);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
         // 设置操作列的宽度以适应两个按钮
         int actionColumnWidth = 100;  // 假设每个按钮宽度为70，中间间隔10
-        table.getColumnModel().getColumn(5).setPreferredWidth(actionColumnWidth);
-        table.getColumnModel().getColumn(5).setMaxWidth(actionColumnWidth);
-        table.getColumnModel().getColumn(5).setCellRenderer(new ButtonRenderer());
-        table.getColumnModel().getColumn(5).setCellEditor(new ButtonEditor(table));
+        table.getColumnModel().getColumn(7).setPreferredWidth(actionColumnWidth);
+        table.getColumnModel().getColumn(7).setMaxWidth(actionColumnWidth);
+        table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
+        table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(table));
+
+        class HeaderIconRenderer extends JLabel implements TableCellRenderer {
+            public HeaderIconRenderer() {
+                setIcon(getImageIcon("/icon/filterIcon.png")); // 使用你的筛选图标
+                setHorizontalTextPosition(JLabel.LEFT); // 将文本放在图标的左边
+                setHorizontalAlignment(JLabel.CENTER); // 将标签内容（文本和图标）水平居中
+                setIconTextGap(2); // 设置文本和图标之间的间距
+            }
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                setText(value != null ? value.toString() : "");
+                return this;
+            }
+        }
+
+        JTableHeader header = table.getTableHeader();
+        TableColumnModel columnModel = header.getColumnModel();
+        TableColumn column = columnModel.getColumn(1); // 你要添加图标的列
+        column.setHeaderRenderer(new HeaderIconRenderer());
+        TableColumn isImportIndex = columnModel.getColumn(3); // 你要添加图标的列
+        isImportIndex.setHeaderRenderer(new HeaderIconRenderer());
 
         add(new JScrollPane(table), BorderLayout.CENTER);
+
 
         // 编辑页面框
         editPanel = new JDialog();
@@ -510,11 +560,13 @@ public class FingerConfigTab extends JPanel {
                     editingRow = null;
                 } else {
                     // 如果是添加新规则，创建新的 FingerPrintRule 并添加到列表和表格模型中
-                    FingerPrintRule newRule = new FingerPrintRule(cms, method, location, keyword);
+                    FingerPrintRule newRule = new FingerPrintRule("-", false, cms, method, location, keyword);
                     BurpExtender.fingerprintRules.add(newRule);
                     model.addRow(new Object[]{
                             BurpExtender.fingerprintRules.size(),
+                            '-',
                             newRule.getCms(),
+                            false,
                             newRule.getMethod(),
                             newRule.getLocation(),
                             String.join(",", newRule.getKeyword()),
