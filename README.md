@@ -9,6 +9,7 @@
 - [x] 浏览器被动指纹识别，已集成Ehole指纹识别库
 - [x] 提取网站的URL链接和解析JS文件中的URL链接后进行指纹识别
 - [x] 开放前段指纹库修改，可导入、导出、重置
+![img_1.png](images/fingerPrintConfig.png)
 - [ ] 优化已有指纹库，区分重点指纹和常见指纹
 - [ ] OA类弱口令爆破
 - [ ] 与本地Packer Fuzzer JS扫描器配合发现隐秘漏洞
@@ -34,7 +35,7 @@
 - [ ] 信呼OA
 
 ## 优化/建议/问题反馈群
-![img.png](img.png)
+![img.png](images/weixinqun.png)
 
 
 ## 免责声明
