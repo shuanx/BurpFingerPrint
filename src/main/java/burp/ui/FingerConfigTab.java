@@ -26,6 +26,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import java.nio.charset.StandardCharsets;
+import javax.swing.border.EmptyBorder;
+
 
 
 public class FingerConfigTab extends JPanel {
@@ -47,6 +49,42 @@ public class FingerConfigTab extends JPanel {
         addButton.setIcon(getImageIcon("/icon/addButtonIcon.png"));
         // 创建一个面板来放置放在最左边的按钮
         leftPanel.add(addButton);
+
+        // 居中，设置指纹识别的开关按钮
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+
+        // 调整 centerPanel 的位置
+        int leftPadding = 150;  // 调整这个值来改变左边距
+        centerPanel.setBorder(new EmptyBorder(0, leftPadding, 0, 0));
+        // 所有指纹和重点指纹的选择
+        ImageIcon allFingerprintsIcon = getImageIcon("/icon/allButtonIcon.png", 40, 24);
+        ImageIcon allFingerprintsSelectedIcon = getImageIcon("/icon/importantButtonIcon.png", 40, 24);
+
+        JToggleButton allFingerprintsButton = new JToggleButton(allFingerprintsIcon);
+        allFingerprintsButton.setSelectedIcon(allFingerprintsSelectedIcon);
+        allFingerprintsButton.setPreferredSize(new Dimension(40, 24));
+        allFingerprintsButton.setBorder(null);  // 设置无边框
+        allFingerprintsButton.setFocusPainted(false);  // 移除焦点边框
+        allFingerprintsButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
+
+
+        ImageIcon shutdownIcon = getImageIcon("/icon/shutdownButtonIcon.png", 50, 24);
+        ImageIcon openIcon = getImageIcon("/icon/openButtonIcon.png", 50, 24);
+
+
+        JToggleButton toggleButton = new JToggleButton(openIcon);
+        toggleButton.setSelectedIcon(shutdownIcon);
+        toggleButton.setPreferredSize(new Dimension(50, 24));
+        toggleButton.setBorder(null);  // 设置无边框
+        toggleButton.setFocusPainted(false);  // 移除焦点边框
+        toggleButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        toggleButton.setToolTipText("指纹识别功能开");
+
+        centerPanel.add(allFingerprintsButton);
+        centerPanel.add(toggleButton);
+
+
         // 全部按钮
         JButton allButton = new JButton("全部");
         // 检索框
@@ -79,6 +117,7 @@ public class FingerConfigTab extends JPanel {
         rightPanel.add(moreButton);
         // 将左右面板添加到总的toolbar面板中
         toolbar.add(leftPanel, BorderLayout.WEST);
+        toolbar.add(centerPanel, BorderLayout.CENTER);
         toolbar.add(rightPanel, BorderLayout.EAST);
         add(toolbar, BorderLayout.NORTH);
 
@@ -390,6 +429,27 @@ public class FingerConfigTab extends JPanel {
 
         }
 
+        // Adding an action listener to the toggle button
+        allFingerprintsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(toggleButton.isSelected()){
+                    toggleButton.setToolTipText("指纹匹配：重点指纹");
+                }else{
+                    toggleButton.setToolTipText("指纹匹配：所有指纹");
+                }
+            }
+        });
+        toggleButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if(toggleButton.isSelected()){
+                    toggleButton.setToolTipText("指纹识别功能关");
+                }else{
+                    toggleButton.setToolTipText("指纹识别功能开");
+                }
+            }
+        });
+
+
 
 
 
@@ -589,6 +649,15 @@ public class FingerConfigTab extends JPanel {
         ImageIcon originalIcon = new ImageIcon(iconURL);
         Image img = originalIcon.getImage();
         Image newImg = img.getScaledInstance(17, 17, Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
+    }
+
+    public ImageIcon getImageIcon(String iconPath, int xWidth, int yWidth){
+        // 根据按钮的大小缩放图标
+        URL iconURL = getClass().getResource(iconPath);
+        ImageIcon originalIcon = new ImageIcon(iconURL);
+        Image img = originalIcon.getImage();
+        Image newImg = img.getScaledInstance(xWidth, yWidth, Image.SCALE_SMOOTH);
         return new ImageIcon(newImg);
     }
 
