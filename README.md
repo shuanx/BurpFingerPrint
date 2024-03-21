@@ -7,6 +7,7 @@
 ## 功能如下
 > 下述功能会在2024年5月底完成，新发布版本会在下面微信群里第一时间发布(近期加班加点写代码)，如果有更好的建议都可以提，然后再麻烦点个Star
 - [x] 浏览器被动指纹识别，已集成Ehole指纹识别库
+![img.png](images/fingerPrint.png)
 - [x] 提取网站的URL链接和解析JS文件中的URL链接后进行指纹识别
 - [x] 开放前段指纹库修改，可导入、导出、重置
 ![img_1.png](images/fingerPrintConfig.png)

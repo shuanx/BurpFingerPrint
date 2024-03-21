@@ -4572,3 +4572,20 @@ Switch is off
 [+] anthor: Shaun
 [+] ####################################
 [+] Please enjoy it!
+2024/03/22 00:17:43: 当前还有0 个任务等待运行
+[+] 进入网页提取URL页面： http://192.168.70.128:8080/phpinfo.php
+ URL result: [http://www.w3.org/1999/xhtml, http://www.php.net/, http://www.zend.com/]
+[+]指纹识别开始： {http://192.168.70.128:8080/phpinfo.php={responseRequest=burp.aap@6eb3a7dc, method=GET, isFindUrl=false}, http://www.w3.org/1999/xhtml={responseRequest=burp.aap@6d5b71d7, method=GET, isFindUrl=true}, http://www.php.net/={responseRequest=burp.aap@4a9048f2, method=GET, isFindUrl=true}, http://www.zend.com/={responseRequest=burp.aap@2123764f, method=GET, isFindUrl=true}}
+{result=phpinfo, resultDetail=Time: 2024/03/22 00:17:46
+Url:http://192.168.70.128:8080/phpinfo.php
+指纹详细信息如下：
+cms: phpinfo
+method: keyword
+location: body
+keyword: [<title>phpinfo, Virtual Directory Support], title=phpinfo(), status=200}
+[+] 数据添加开始。。
+[+] 数据添加结束。。
+[END]指纹识别结束: {http://192.168.70.128:8080/phpinfo.php={responseRequest=burp.aap@6eb3a7dc, method=GET, isFindUrl=false}, http://www.w3.org/1999/xhtml={responseRequest=burp.aap@6d5b71d7, method=GET, isFindUrl=true}, http://www.php.net/={responseRequest=burp.aap@4a9048f2, method=GET, isFindUrl=true}, http://www.zend.com/={responseRequest=burp.aap@2123764f, method=GET, isFindUrl=true}}
+[+]无法识别指纹url: http://www.w3.org/1999/xhtml
+[+]无法识别指纹url: http://www.php.net/
+[+]无法识别指纹url: http://www.zend.com/
