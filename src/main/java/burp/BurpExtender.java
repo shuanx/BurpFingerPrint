@@ -37,7 +37,7 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
     public static final List<LogEntry> log = new ArrayList<LogEntry>();
     public static List<FingerPrintRule> fingerprintRules;
     public static Set<String> hasScanDomainSet = new HashSet<>();
-    private Tags tags;
+    public static Tags tags;
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
@@ -78,7 +78,6 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
 
         //  注册菜单拓展
         callbacks.setExtensionName(extensionName + " " + version);
-        BurpExtender.this.fingerTab = new FingerTab();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // 添加一个标签页
@@ -111,6 +110,12 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
             // 更新总数
             int newRequestsCount = Integer.parseInt(FingerTab.lbRequestCount.getText()) + 1;
             FingerTab.lbRequestCount.setText(Integer.toString(newRequestsCount));
+
+            // 判断是否要进行指纹识别，如果关闭，则只展示数量
+            if (tags.fingerConfigTab.toggleButton.isSelected()){
+                return;
+            }
+
             IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
             String method = helpers.analyzeRequest(resrsp).getMethod();

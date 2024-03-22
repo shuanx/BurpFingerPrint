@@ -13,8 +13,8 @@ public class Tags implements ITab {
 
     private final JTabbedPane tabs;
     private String tagName;
-    private HashMap tabsName;
     private FingerTab fingerTab = new FingerTab();
+    public FingerConfigTab fingerConfigTab = new FingerConfigTab();
 
     public Tags(IBurpExtenderCallbacks callbacks, String name) throws Exception{
 
@@ -22,7 +22,6 @@ public class Tags implements ITab {
         // 定义tab标签页
         tabs = new JTabbedPane();
         tabs.add("指纹识别", fingerTab.contentPane);
-        tabs.add("指纹配置", new FingerConfigTab());
 
         // 修改选中的标签页名字颜色
 

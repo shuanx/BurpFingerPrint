@@ -36,6 +36,8 @@ public class FingerConfigTab extends JPanel {
     private JDialog editPanel;  // 新增：编辑面板
     private Integer editingRow = null;
     private JTextField cmsField, methodField, locationField, keywordField;  // 新增：编辑面板的文本字段
+    public JToggleButton toggleButton;
+    public JToggleButton allFingerprintsButton;
 
     public FingerConfigTab() {
         setLayout(new BorderLayout());
@@ -60,7 +62,7 @@ public class FingerConfigTab extends JPanel {
         ImageIcon allFingerprintsIcon = getImageIcon("/icon/allButtonIcon.png", 40, 24);
         ImageIcon allFingerprintsSelectedIcon = getImageIcon("/icon/importantButtonIcon.png", 40, 24);
 
-        JToggleButton allFingerprintsButton = new JToggleButton(allFingerprintsIcon);
+        allFingerprintsButton = new JToggleButton(allFingerprintsIcon);
         allFingerprintsButton.setSelectedIcon(allFingerprintsSelectedIcon);
         allFingerprintsButton.setPreferredSize(new Dimension(40, 24));
         allFingerprintsButton.setBorder(null);  // 设置无边框
@@ -73,7 +75,7 @@ public class FingerConfigTab extends JPanel {
         ImageIcon openIcon = getImageIcon("/icon/openButtonIcon.png", 50, 24);
 
 
-        JToggleButton toggleButton = new JToggleButton(openIcon);
+        toggleButton = new JToggleButton(openIcon);
         toggleButton.setSelectedIcon(shutdownIcon);
         toggleButton.setPreferredSize(new Dimension(50, 24));
         toggleButton.setBorder(null);  // 设置无边框

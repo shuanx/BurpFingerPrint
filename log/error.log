@@ -8,3 +8,14 @@ java.io.FileNotFoundException: Unable to load JAR file
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
 	at java.base/java.lang.Thread.run(Thread.java:834)
 [!] Failed to load the configuration file finger.json, because config/finger.json not found
+java.lang.IllegalArgumentException: Invalid host: clogistics-t.lenovo.com,http
+	at burp.p1.buildHttpService(Unknown Source)
+	at burp.p1.buildHttpService(Unknown Source)
+	at burp.wu.buildHttpService(Unknown Source)
+	at burp.util.HTTPUtils.makeGetRequest(HTTPUtils.java:41)
+	at burp.BurpExtender$2.run(BurpExtender.java:155)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:834)

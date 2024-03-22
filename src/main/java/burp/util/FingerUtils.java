@@ -49,6 +49,10 @@ public class FingerUtils {
 
 
         for (FingerPrintRule rule : BurpExtender.fingerprintRules) {
+            // 看是否只对重点指纹进行匹配
+            if (BurpExtender.tags.fingerConfigTab.allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                continue;
+            }
             String locationContent = "";
             if ("body".equals(rule.getLocation())) {
                 locationContent = responseBody;
