@@ -130,10 +130,15 @@ public class FingerConfigTab extends JPanel {
 
                 // 清除表格的所有行
                 model.setRowCount(0);
-
+                if (toggleButton.isSelected()){
+                    return;
+                }
                 // 重新添加匹配搜索文本的行
                 int counter = 1;
                 for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                        continue;
+                    }
                     if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
                         model.addRow(new Object[]{
                                 counter,
@@ -155,9 +160,15 @@ public class FingerConfigTab extends JPanel {
                 String searchText = searchField.getText(); // 获取用户输入的搜索文本
                 // 清除表格的所有行
                 model.setRowCount(0);
+                if (toggleButton.isSelected()){
+                    return;
+                }
                 // 重新添加匹配搜索文本的行
                 int counter = 1;
                 for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                        continue;
+                    }
                     if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
                         model.addRow(new Object[]{
                                 counter,
@@ -181,10 +192,16 @@ public class FingerConfigTab extends JPanel {
 
                 // 清除表格的所有行
                 model.setRowCount(0);
+                if (toggleButton.isSelected()){
+                    return;
+                }
 
                 // 添加所有的行
                 int counter = 1;
                 for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                        continue;
+                    }
                     model.addRow(new Object[]{
                             counter,
                             rule.getType(),
@@ -326,6 +343,7 @@ public class FingerConfigTab extends JPanel {
                     }
 
                 }
+                toggleButton.setSelected(false);
             }
         });
         // 点击重置按钮
@@ -372,6 +390,7 @@ public class FingerConfigTab extends JPanel {
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置失败： " + ex.getMessage(), "重置失败", JOptionPane.ERROR_MESSAGE);
                 }
+                toggleButton.setSelected(false);
             }
         });
         // 点击保存按钮
@@ -432,10 +451,52 @@ public class FingerConfigTab extends JPanel {
         // Adding an action listener to the toggle button
         allFingerprintsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if(toggleButton.isSelected()){
-                    toggleButton.setToolTipText("指纹匹配：重点指纹");
+                if (toggleButton.isSelected()){
+                    return;
+                }
+                if(allFingerprintsButton.isSelected()){
+                    allFingerprintsButton.setToolTipText("指纹匹配：重点指纹");
+                    // 清除表格的所有行
+                    model.setRowCount(0);
+
+                    // 重新添加匹配搜索文本的行
+                    int counter = 1;
+                    for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                        if (rule.getIsImportant()) { // 如果 CMS 包含搜索文本
+                            model.addRow(new Object[]{
+                                    counter,
+                                    rule.getType(),
+                                    rule.getCms(), // 获取cms信息
+                                    rule.getIsImportant(),
+                                    rule.getMethod(), // 获取method信息
+                                    rule.getLocation(), // 获取location信息
+                                    String.join(",", rule.getKeyword()),
+                                    new String[] {"Edit", "Delete"} // 操作按钮
+                            });
+                            counter ++;
+                        }
+                    }
                 }else{
-                    toggleButton.setToolTipText("指纹匹配：所有指纹");
+                    allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
+
+                    // 清除表格的所有行
+                    model.setRowCount(0);
+
+                    // 添加所有的行
+                    int counter = 1;
+                    for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                        model.addRow(new Object[]{
+                                counter,
+                                rule.getType(),
+                                rule.getCms(), // 获取cms信息
+                                rule.getIsImportant(),
+                                rule.getMethod(), // 获取method信息
+                                rule.getLocation(), // 获取location信息
+                                String.join(",", rule.getKeyword()),
+                                new String[] {"Edit", "Delete"} // 操作按钮
+                        });
+                        counter ++;
+                    }
                 }
             }
         });
@@ -443,8 +504,31 @@ public class FingerConfigTab extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 if(toggleButton.isSelected()){
                     toggleButton.setToolTipText("指纹识别功能关");
+                    // 清除表格的所有行
+                    model.setRowCount(0);
                 }else{
                     toggleButton.setToolTipText("指纹识别功能开");
+                    // 清除表格的所有行
+                    model.setRowCount(0);
+
+                    // 添加所有的行
+                    int counter = 1;
+                    for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+                        if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                            continue;
+                        }
+                        model.addRow(new Object[]{
+                                counter,
+                                rule.getType(),
+                                rule.getCms(), // 获取cms信息
+                                rule.getIsImportant(),
+                                rule.getMethod(), // 获取method信息
+                                rule.getLocation(), // 获取location信息
+                                String.join(",", rule.getKeyword()),
+                                new String[] {"Edit", "Delete"} // 操作按钮
+                        });
+                        counter ++;
+                    }
                 }
             }
         });
