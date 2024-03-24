@@ -33,7 +33,7 @@ import javax.swing.border.EmptyBorder;
 
 
 public class FingerConfigTab extends JPanel {
-    private DefaultTableModel model;
+    private static DefaultTableModel model;
     private JTable table;
     private JDialog editPanel;  // 新增：编辑面板
     private Integer editingRow = null;
@@ -41,9 +41,9 @@ public class FingerConfigTab extends JPanel {
     private JComboBox<Boolean> isImportantField;
     private JComboBox<String> methodField, locationField, typeField;
 
-    public JToggleButton toggleButton;
-    public JToggleButton allFingerprintsButton;
-    private List<Integer> tableToModelIndexMap = new ArrayList<>();
+    public static JToggleButton toggleButton;
+    public static JToggleButton allFingerprintsButton;
+    private static List<Integer> tableToModelIndexMap = new ArrayList<>();
     private Set<String> uniqueTypes = new HashSet<>();
 
 
@@ -974,6 +974,41 @@ public class FingerConfigTab extends JPanel {
         filterMenu.show(invoker, x, y); // 显示菜单
     }
 
+    public static void toggleFingerprintsDisplay(boolean showImportantOnly) {
+        // 清空当前表格数据
+        model.setRowCount(0);
+
+        // 临时计数器，用于表格中的序号
+        int counter = 1;
+
+        // 清空映射
+        tableToModelIndexMap.clear();
+
+        // 遍历所有指纹规则，并根据条件添加到表格模型中
+        for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+            FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+
+            // 如果showImportantOnly为true，则只显示重要的指纹
+            if (!showImportantOnly || rule.getIsImportant()) {
+                // 添加行到表格模型
+                model.addRow(new Object[]{
+                        counter,
+                        rule.getType(),
+                        rule.getCms(),
+                        rule.getIsImportant(),
+                        rule.getMethod(),
+                        rule.getLocation(),
+                        String.join(",", rule.getKeyword()),
+                        new String[]{"Edit", "Delete"} // 假设这是操作列的按钮
+                });
+
+                // 更新tableToModelIndexMap，以便我们知道每个表行对应的数据模型索引
+                tableToModelIndexMap.add(i);
+
+                counter++;
+            }
+        }
+    }
 
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {

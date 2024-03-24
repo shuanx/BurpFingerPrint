@@ -7,6 +7,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.awt.event.MouseAdapter;
@@ -58,7 +59,9 @@ public class FingerTab implements IMessageEditorController {
     public static JMenuBar menuBar;
     public static JMenu menuMainPage;
     public static JMenu menuConfigPage;
-
+    // 在FingerTab类中添加成员变量
+    private JToggleButton allFingerprintsButton;
+    private JToggleButton toggleButton;
 
     public FingerTab() {
         contentPane = new JPanel();
@@ -135,6 +138,72 @@ public class FingerTab implements IMessageEditorController {
         gbc_lbSuccessCount.gridx = 3;
         gbc_lbSuccessCount.gridy = 0;
         FilterPanel.add(lbSuccessCount, gbc_lbSuccessCount);
+
+        // 初始化按钮
+        allFingerprintsButton = new JToggleButton(getImageIcon("/icon/allButtonIcon.png", 40, 24));
+        allFingerprintsButton.setSelectedIcon(getImageIcon("/icon/importantButtonIcon.png", 40, 24));
+        allFingerprintsButton.setPreferredSize(new Dimension(40, 24));
+        allFingerprintsButton.setBorder(null);  // 设置无边框
+        allFingerprintsButton.setFocusPainted(false);  // 移除焦点边框
+        allFingerprintsButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
+        toggleButton = new JToggleButton(getImageIcon("/icon/openButtonIcon.png", 40, 24));
+        toggleButton.setSelectedIcon(getImageIcon("/icon/shutdownButtonIcon.png", 40, 24));
+        toggleButton.setPreferredSize(new Dimension(50, 24));
+        toggleButton.setBorder(null);  // 设置无边框
+        toggleButton.setFocusPainted(false);  // 移除焦点边框
+        toggleButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        toggleButton.setToolTipText("指纹识别功能开");
+
+        // 添加填充以在左侧占位
+        GridBagConstraints gbc_leftFiller = new GridBagConstraints();
+        gbc_leftFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
+        gbc_leftFiller.gridx = 5; // 位置设置为第一个单元格
+        gbc_leftFiller.gridy = 0; // 第一行
+        gbc_leftFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
+        FilterPanel.add(Box.createHorizontalGlue(), gbc_leftFiller);
+
+        // 设置按钮的 GridBagConstraints
+        GridBagConstraints gbc_buttons = new GridBagConstraints();
+        gbc_buttons.insets = new Insets(0, 5, 0, 5);
+        gbc_buttons.gridx = 6; // 设置按钮的横坐标位置
+        gbc_buttons.gridy = 0; // 设置按钮的纵坐标位置
+        gbc_buttons.fill = GridBagConstraints.NONE; // 不填充
+
+        // 在 FilterPanel 中添加 allFingerprintsButton
+        FilterPanel.add(allFingerprintsButton, gbc_buttons);
+
+        // 在 FilterPanel 中添加 toggleButton
+        gbc_buttons.gridx = 7; // 将横坐标位置移动到下一个单元格
+        FilterPanel.add(toggleButton, gbc_buttons);
+
+        // 添加填充以在右侧占位
+        GridBagConstraints gbc_rightFiller = new GridBagConstraints();
+        gbc_rightFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
+        gbc_rightFiller.gridx = 8; // 位置设置为最后一个单元格
+        gbc_rightFiller.gridy = 0; // 第一行
+        gbc_rightFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
+        FilterPanel.add(Box.createHorizontalGlue(), gbc_rightFiller);
+
+        // 在FingerTab类中添加事件监听器
+        allFingerprintsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 更新FingerConfigTab中的按钮状态
+                FingerConfigTab.allFingerprintsButton.setSelected(allFingerprintsButton.isSelected());
+                // 调用FingerConfigTab中的toggleFingerprintsDisplay方法
+                FingerConfigTab.toggleFingerprintsDisplay(allFingerprintsButton.isSelected());
+            }
+        });
+
+        toggleButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 例如，更新FingerConfigTab中的按钮状态
+                BurpExtender.tags.fingerConfigTab.toggleButton.setSelected(toggleButton.isSelected());
+            }
+        });
+
 
         // 添加一个 "清除" 按钮
         JButton btnClear = new JButton("清除");
@@ -326,6 +395,15 @@ public class FingerTab implements IMessageEditorController {
         tagsPanel.repaint();
     }
 
+
+    public ImageIcon getImageIcon(String iconPath, int xWidth, int yWidth){
+        // 根据按钮的大小缩放图标
+        URL iconURL = getClass().getResource(iconPath);
+        ImageIcon originalIcon = new ImageIcon(iconURL);
+        Image img = originalIcon.getImage();
+        Image newImg = img.getScaledInstance(xWidth, yWidth, Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
+    }
 
 
 }
