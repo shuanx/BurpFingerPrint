@@ -16,6 +16,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
 import java.awt.event.*;
+import java.util.Set;
+import java.util.HashSet;
 
 import burp.util.Utils;
 import com.google.gson.Gson;
@@ -35,9 +37,16 @@ public class FingerConfigTab extends JPanel {
     private JTable table;
     private JDialog editPanel;  // 新增：编辑面板
     private Integer editingRow = null;
-    private JTextField cmsField, methodField, locationField, keywordField;  // 新增：编辑面板的文本字段
+    private JTextField cmsField, keywordField;  // 新增：编辑面板的文本字段
+    private JComboBox<Boolean> isImportantField;
+    private JComboBox<String> methodField, locationField, typeField;
+
     public JToggleButton toggleButton;
     public JToggleButton allFingerprintsButton;
+    private List<Integer> tableToModelIndexMap = new ArrayList<>();
+    private Set<String> uniqueTypes = new HashSet<>();
+
+
 
     public FingerConfigTab() {
         setLayout(new BorderLayout());
@@ -135,13 +144,20 @@ public class FingerConfigTab extends JPanel {
                 if (toggleButton.isSelected()){
                     return;
                 }
-                // 重新添加匹配搜索文本的行
-                int counter = 1;
-                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
-                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                int counter=1;
+                // 清空映射
+                tableToModelIndexMap.clear();
+
+                // 重新添加匹配搜索文本的行，并更新映射
+                for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+                    // 判断规则是否符合搜索条件
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()) {
                         continue;
                     }
-                    if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
+                    if (rule.getCms().contains(searchText)) {
+                        // 保存当前规则在模型列表中的索引
+                        tableToModelIndexMap.add(i);
                         model.addRow(new Object[]{
                                 counter,
                                 rule.getType(),
@@ -166,12 +182,20 @@ public class FingerConfigTab extends JPanel {
                     return;
                 }
                 // 重新添加匹配搜索文本的行
-                int counter = 1;
-                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
-                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                int counter=1;
+                // 清空映射
+                tableToModelIndexMap.clear();
+
+                // 重新添加匹配搜索文本的行，并更新映射
+                for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+                    // 判断规则是否符合搜索条件
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()) {
                         continue;
                     }
-                    if (rule.getCms().contains(searchText)) { // 如果 CMS 包含搜索文本
+                    if (rule.getCms().contains(searchText)) {
+                        // 保存当前规则在模型列表中的索引
+                        tableToModelIndexMap.add(i);
                         model.addRow(new Object[]{
                                 counter,
                                 rule.getType(),
@@ -198,12 +222,19 @@ public class FingerConfigTab extends JPanel {
                     return;
                 }
 
-                // 添加所有的行
-                int counter = 1;
-                for (FingerPrintRule rule : BurpExtender.fingerprintRules){
-                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+                int counter=1;
+                // 清空映射
+                tableToModelIndexMap.clear();
+
+                // 重新添加匹配搜索文本的行，并更新映射
+                for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+                    // 判断规则是否符合搜索条件
+                    if (allFingerprintsButton.isSelected() && !rule.getIsImportant()) {
                         continue;
                     }
+                    // 保存当前规则在模型列表中的索引
+                    tableToModelIndexMap.add(i);
                     model.addRow(new Object[]{
                             counter,
                             rule.getType(),
@@ -218,15 +249,19 @@ public class FingerConfigTab extends JPanel {
                 }
             }
         });
-        // 点击“新增”的监听事件
+        // 在新增按钮的点击事件中添加以下代码来设置 typeField 的值
         addButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 清空编辑面板的文本字段
                 cmsField.setText("");
-                methodField.setText("");
-                locationField.setText("");
+                isImportantField.setSelectedItem(Boolean.FALSE); // 默认设置为非重要
+                methodField.setSelectedItem("keyword"); // 默认方法设置为 keyword
+                updateLocationField("keyword"); // 根据默认的方法更新 locationField
                 keywordField.setText("");
+
+                // 更新 typeField 下拉选项
+                updateTypeField(); // 确保调用此方法以更新 JComboBox 的选项
 
                 // 设置编辑面板的位置并显示
                 Point locationOnScreen = ((Component)e.getSource()).getLocationOnScreen();
@@ -234,6 +269,7 @@ public class FingerConfigTab extends JPanel {
                 editPanel.setVisible(true);  // 显示编辑面板
             }
         });
+
         // 点击”功能“的监听事件
         moreButton.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
@@ -435,7 +471,11 @@ public class FingerConfigTab extends JPanel {
             }
         };
         int counter = 1;
-        for (FingerPrintRule rule : BurpExtender.fingerprintRules){
+        tableToModelIndexMap.clear();
+        for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+            FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+            tableToModelIndexMap.add(i);
+            uniqueTypes.add(rule.getType());
             model.addRow(new Object[]{
                     counter,
                     rule.getType(),
@@ -588,8 +628,6 @@ public class FingerConfigTab extends JPanel {
         TableColumnModel columnModel = header.getColumnModel();
         TableColumn column = columnModel.getColumn(1); // 你要添加图标的列
         column.setHeaderRenderer(new HeaderIconRenderer());
-        TableColumn isImportIndex = columnModel.getColumn(3); // 你要添加图标的列
-        isImportIndex.setHeaderRenderer(new HeaderIconRenderer());
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -598,15 +636,20 @@ public class FingerConfigTab extends JPanel {
         editPanel = new JDialog();
         editPanel.setTitle("新增指纹");
         editPanel.setLayout(new GridBagLayout());  // 更改为 GridBagLayout
-        editPanel.setSize(500, 200);
+        editPanel.setSize(500, 300);
         editPanel.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
         editPanel.setModal(false);
         editPanel.setResizable(true);
 
+        typeField = new JComboBox<>();
+        typeField.setEditable(true);
         cmsField = new JTextField();
-        methodField = new JTextField();
-        locationField = new JTextField();
+        isImportantField = new JComboBox<>(new Boolean[]{true, false});
+        methodField = new JComboBox<>(new String[]{"keyword", "faviconhash"});
+        locationField = new JComboBox<>();
         keywordField = new JTextField();
+        methodField.setSelectedItem("keyword");
+        updateLocationField("keyword");
 
         // 创建 GridBagConstraints 对象来控制每个组件的布局
         GridBagConstraints constraints = new GridBagConstraints();
@@ -614,9 +657,20 @@ public class FingerConfigTab extends JPanel {
         constraints.fill = GridBagConstraints.HORIZONTAL;  // 水平填充
         constraints.insets = new Insets(10, 10, 10, 10);  // 设置内边距为10像素
 
-        // 添加 "CMS" 标签
+        // 添加 "Type" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
         constraints.gridy = 0;  // 在网格的第一行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
+        editPanel.add(new JLabel("Type:"), constraints);
+
+        // 添加 "Type" 输入框
+        constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
+        editPanel.add(typeField, constraints);
+
+        // 添加 "CMS" 标签
+        constraints.gridx = 0;  // 在网格的第一列添加组件
+        constraints.gridy = 1;  // 在网格的第一行添加组件
         constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("CMS:"), constraints);
 
@@ -625,9 +679,20 @@ public class FingerConfigTab extends JPanel {
         constraints.weightx = 1.0;  // 允许横向扩展
         editPanel.add(cmsField, constraints);
 
+        // 添加 "isImportant" 标签
+        constraints.gridx = 0;  // 在网格的第一列添加组件
+        constraints.gridy = 2;  // 在网格的第一行添加组件
+        constraints.weightx = 0;  // 不允许横向扩展
+        editPanel.add(new JLabel("IsImportant:"), constraints);
+
+        // 添加 "isImportant" 输入框
+        constraints.gridx = 1;  // 在网格的第二列添加组件
+        constraints.weightx = 1.0;  // 允许横向扩展
+        editPanel.add(isImportantField, constraints);
+
         // 添加 "Method" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
-        constraints.gridy = 1;  // 在网格的第二行添加组件
+        constraints.gridy = 3;  // 在网格的第二行添加组件
         constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Method:"), constraints);
 
@@ -638,7 +703,7 @@ public class FingerConfigTab extends JPanel {
 
         // 添加 "Location" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
-        constraints.gridy = 2;  // 在网格的第三行添加组件
+        constraints.gridy = 4;  // 在网格的第三行添加组件
         constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Location:"), constraints);
 
@@ -649,7 +714,7 @@ public class FingerConfigTab extends JPanel {
 
         // 添加 "Keyword" 标签
         constraints.gridx = 0;  // 在网格的第一列添加组件
-        constraints.gridy = 3;  // 在网格的第四行添加组件
+        constraints.gridy = 5;  // 在网格的第四行添加组件
         constraints.weightx = 0;  // 不允许横向扩展
         editPanel.add(new JLabel("Keyword:"), constraints);
 
@@ -659,6 +724,8 @@ public class FingerConfigTab extends JPanel {
         editPanel.add(keywordField, constraints);
 
         // 根据需要，为 Location 和 Keyword 输入框设置首选大小
+        typeField.setPreferredSize(new Dimension(100, cmsField.getPreferredSize().height));
+        isImportantField.setPreferredSize(new Dimension(100, cmsField.getPreferredSize().height));
         cmsField.setPreferredSize(new Dimension(100, cmsField.getPreferredSize().height));
         methodField.setPreferredSize(new Dimension(100, methodField.getPreferredSize().height));
         locationField.setPreferredSize(new Dimension(100, locationField.getPreferredSize().height));
@@ -668,65 +735,117 @@ public class FingerConfigTab extends JPanel {
         JButton saveButton = new JButton("Save");
         saveButton.setIcon(getImageIcon("/icon/saveButton.png"));
 
+        // 在构造函数中为 methodField 添加事件监听器，以便动态更新 locationField 的选项
+        methodField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JComboBox<String> methodCombo = (JComboBox<String>) e.getSource();
+                String selectedMethod = (String) methodCombo.getSelectedItem();
+                updateLocationField(selectedMethod); // 根据选择更新 locationField
+            }
+        });
+
         // 修改保存按钮的点击事件监听器
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // 获取用户输入的数据
+                // 获取用户选择或输入的type值
+                String type = (String) typeField.getEditor().getItem(); // 对于可编辑的JComboBox，使用getEditor().getItem()来获取文本字段中的值
+                uniqueTypes.add(type);
+                if (type != null) {
+                    type = type.trim(); // 清除前后空格
+                }
+                Boolean isImportant = (Boolean) isImportantField.getSelectedItem();
                 String cms = cmsField.getText();
-                String method = methodField.getText();
-                String location = locationField.getText();
+                String method = (String) methodField.getSelectedItem();
+                String location = (String) locationField.getSelectedItem();
                 List<String> keyword = Arrays.asList(keywordField.getText().split(","));
 
-                // 检查输入框是否都不为空
-                if (cms.trim().isEmpty() || method.trim().isEmpty() ||
-                        location.trim().isEmpty() ||  keyword.stream().allMatch(String::isEmpty)) {
-                    // 显示错误消息
-                    JOptionPane.showMessageDialog(editPanel,
-                            "所有输入框都必须填写。",
-                            "输入错误",
-                            JOptionPane.ERROR_MESSAGE);
-                    return; // 不再继续执行后面的代码
+                if (type.trim().isEmpty() || cms.trim().isEmpty() || method.trim().isEmpty() ||
+                        location.trim().isEmpty() || keyword.stream().allMatch(String::isEmpty)) {
+                    JOptionPane.showMessageDialog(editPanel, "所有输入框都必须填写。", "输入错误", JOptionPane.ERROR_MESSAGE);
+                    return;
                 }
 
                 if (editingRow != null) {
                     // 如果是编辑现有规则，更新数据源和表格模型中的数据
                     FingerPrintRule rule = BurpExtender.fingerprintRules.get(editingRow);
+                    rule.setType(type);
+                    rule.setIsImportant(isImportant);
                     rule.setCms(cms);
                     rule.setMethod(method);
                     rule.setLocation(location);
                     rule.setKeyword(keyword);
 
-                    model.setValueAt(cms, editingRow, 1);
-                    model.setValueAt(method, editingRow, 2);
-                    model.setValueAt(location, editingRow, 3);
-                    model.setValueAt(String.join(",", keyword), editingRow, 4);
+                    // 更新表格模型
+                    model.setValueAt(type, table.getSelectedRow(), 1);
+                    model.setValueAt(cms, table.getSelectedRow(), 2); // 假设CMS列是第2列
+                    model.setValueAt(isImportant, table.getSelectedRow(), 3);
+                    model.setValueAt(method, table.getSelectedRow(), 4); // 假设Method列是第4列
+                    model.setValueAt(location, table.getSelectedRow(), 5); // 假设Location列是第5列
+                    model.setValueAt(String.join(",", keyword), table.getSelectedRow(), 6); // 假设Keyword列是第6列
 
-                    // 重置当前编辑行为null
+                    // 通知模型数据已更新，触发表格重绘
+                    model.fireTableRowsUpdated(table.getSelectedRow(), table.getSelectedRow());
+                    // 关闭编辑面板
+                    editPanel.setVisible(false);
+
+                    // 重置编辑行索引
                     editingRow = null;
                 } else {
-                    // 如果是添加新规则，创建新的 FingerPrintRule 并添加到列表和表格模型中
-                    FingerPrintRule newRule = new FingerPrintRule("-", false, cms, method, location, keyword);
-                    BurpExtender.fingerprintRules.add(newRule);
-                    model.addRow(new Object[]{
-                            BurpExtender.fingerprintRules.size(),
-                            '-',
-                            newRule.getCms(),
-                            false,
-                            newRule.getMethod(),
-                            newRule.getLocation(),
-                            String.join(",", newRule.getKeyword()),
-                            new String[]{"Edit", "Delete"}
-                    });
-                }
+                    // 创建新的 FingerPrintRule 对象
+                    FingerPrintRule newRule = new FingerPrintRule(type, isImportant, cms, method, location, keyword);
+                    synchronized (BurpExtender.fingerprintRules) {
+                        // 将新规则添加到数据源的开始位置
+                        BurpExtender.fingerprintRules.add(0, newRule);
+                        // 更新表格模型
+                        ((DefaultTableModel) table.getModel()).insertRow(0, new Object[]{
+                                1, // 新行的序号始终为1
+                                newRule.getType(),
+                                newRule.getCms(),
+                                newRule.getIsImportant(),
+                                newRule.getMethod(),
+                                newRule.getLocation(),
+                                String.join(",", newRule.getKeyword()),
+                                new String[]{"Edit", "Delete"} // 操作按钮
+                        });
+                        // 更新映射列表，因为添加了新的数据项
+                        tableToModelIndexMap.add(0, 0); // 在映射列表的开始位置添加新项
+                        // 由于添加了新元素，更新所有行的序号
+                        for (int i = 1; i < table.getRowCount(); i++) {
+                            table.getModel().setValueAt(i + 1, i, 0);
+                        }
+                        // 更新后续映射的索引
+                        for (int i = 1; i < tableToModelIndexMap.size(); i++) {
+                            tableToModelIndexMap.set(i, tableToModelIndexMap.get(i) + 1);
+                        }
+                    }
 
-                // 隐藏编辑面板
-                editPanel.setVisible(false);
+                    // 关闭编辑面板
+                    editPanel.setVisible(false);
+                    // 通知模型数据已更新，触发表格重绘
+                    model.fireTableDataChanged();
+                }
             }
         });
+
         editPanel.add(saveButton);
 
 
+    }
+
+
+    // 添加一个新的方法来更新 locationField 的选项
+    private void updateLocationField(String method) {
+        locationField.removeAllItems(); // 清除之前的选项
+        if ("keyword".equals(method)) {
+            locationField.addItem("title");
+            locationField.addItem("header");
+            locationField.addItem("body");
+        } else if ("faviconhash".equals(method)) {
+            locationField.addItem("body");
+        }
+        locationField.setSelectedItem("body"); // 默认选中 "body"
     }
 
     public ImageIcon getImageIcon(String iconPath){
@@ -745,6 +864,20 @@ public class FingerConfigTab extends JPanel {
         Image img = originalIcon.getImage();
         Image newImg = img.getScaledInstance(xWidth, yWidth, Image.SCALE_SMOOTH);
         return new ImageIcon(newImg);
+    }
+
+    // 创建或更新typeField下拉框的方法
+    public void updateTypeField() {
+        // 将集合转换为数组
+        String[] defaultTypes = uniqueTypes.toArray(new String[0]);
+        // 如果typeField已经存在，那么更新它的模型
+        if (typeField != null) {
+            typeField.setModel(new DefaultComboBoxModel<>(defaultTypes));
+        } else {
+            // 否则创建新的typeField
+            typeField = new JComboBox<>(defaultTypes);
+            typeField.setEditable(true);
+        }
     }
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
@@ -796,38 +929,69 @@ public class FingerConfigTab extends JPanel {
             editButton.setPreferredSize(new Dimension(40, 20));
             deleteButton.setPreferredSize(new Dimension(40, 20));
 
+            // 在编辑按钮的 ActionListener 中添加以下代码来设置 keywordField 的值
             editButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    // 编辑按钮的逻辑
-                    int modelRow = table.convertRowIndexToModel(row);
-                    editingRow = modelRow; // 保存当前编辑的行索引
-                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(modelRow);
+                    int viewRow = table.getSelectedRow(); // 获取视图中选中的行
+                    if (viewRow < 0) {
+                        return; // 如果没有选中任何行，就不执行编辑操作
+                    }
+                    int modelRow = table.convertRowIndexToModel(viewRow); // 转换为模型索引
+                    int dataIndex = tableToModelIndexMap.get(modelRow); // 使用模型索引查找原始数据列表中的索引
+
+                    // 使用原始数据列表中的索引来获取和编辑正确的规则
+                    editingRow = dataIndex; // 更新编辑行索引为原始数据列表中的索引
+                    FingerPrintRule rule = BurpExtender.fingerprintRules.get(dataIndex);
+
+                    // 填充编辑面板的字段
+                    typeField.getEditor().setItem(rule.getType());
                     cmsField.setText(rule.getCms());
-                    methodField.setText(rule.getMethod());
-                    locationField.setText(rule.getLocation());
-                    keywordField.setText(String.join(",", rule.getKeyword()));
+                    isImportantField.setSelectedItem(rule.getIsImportant());
+                    methodField.setSelectedItem(rule.getMethod());
+                    updateLocationField(rule.getMethod()); // 根据 rule 的 method 更新 locationField
+                    keywordField.setText(String.join(",", rule.getKeyword())); // 设置 keywordField 的值
 
                     // 显示编辑面板
-                    Point btnLocation = ((JButton)e.getSource()).getLocationOnScreen();
-                    editPanel.setLocation(btnLocation.x - editPanel.getWidth() / 2, btnLocation.y + ((JButton)e.getSource()).getHeight());
-
+                    Point btnLocation = ((JButton) e.getSource()).getLocationOnScreen();
+                    editPanel.setLocation(btnLocation.x - editPanel.getWidth() / 2, btnLocation.y + ((JButton) e.getSource()).getHeight());
                     editPanel.setVisible(true);
+
+                    // 停止表格的编辑状态
                     fireEditingStopped();
                 }
             });
 
+
             deleteButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     fireEditingStopped(); // 确保停止编辑状态
-                    int modelRow = table.convertRowIndexToModel(row);
-                    BurpExtender.fingerprintRules.remove(modelRow); // 删除数据源中的数据
-                    ((DefaultTableModel) table.getModel()).removeRow(modelRow); // 删除表格模型中的数据
+                    int viewRow = table.getSelectedRow(); // 获取视图中选中的行
+                    if (viewRow < 0) {
+                        return; // 如果没有选中任何行，就不执行删除操作
+                    }
+                    int modelRow = table.convertRowIndexToModel(viewRow); // 转换为模型索引
+                    int dataIndex = tableToModelIndexMap.get(modelRow); // 获取实际数据索引
+
+                    // 删除数据源中的数据
+                    BurpExtender.fingerprintRules.remove(dataIndex);
+
+                    // 更新映射
+                    tableToModelIndexMap.remove(modelRow);
+
+                    // 由于删除了一个元素，需要更新所有后续元素的索引
+                    for (int i = modelRow; i < tableToModelIndexMap.size(); i++) {
+                        tableToModelIndexMap.set(i, tableToModelIndexMap.get(i) - 1);
+                    }
+
+                    // 删除表格模型中的数据
+                    ((DefaultTableModel) table.getModel()).removeRow(viewRow);
 
                     // 在删除行之后，重新验证和重绘表格
                     table.revalidate();
                     table.repaint();
                 }
             });
+
 
             panel.add(editButton);
             panel.add(deleteButton);
