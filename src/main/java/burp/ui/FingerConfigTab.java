@@ -609,25 +609,47 @@ public class FingerConfigTab extends JPanel {
         table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(table));
 
-        class HeaderIconRenderer extends JLabel implements TableCellRenderer {
-            public HeaderIconRenderer() {
-                setIcon(getImageIcon("/icon/filterIcon.png")); // 使用你的筛选图标
-                setHorizontalTextPosition(JLabel.LEFT); // 将文本放在图标的左边
-                setHorizontalAlignment(JLabel.CENTER); // 将标签内容（文本和图标）水平居中
-                setIconTextGap(2); // 设置文本和图标之间的间距
-            }
-
+        // 更新HeaderIconRenderer类
+        class HeaderIconRenderer extends DefaultTableCellRenderer {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                setText(value != null ? value.toString() : "");
-                return this;
+                // 保留原始行为
+                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                // 如果是类型列
+                if (column == 1) {
+                    setIcon(getImageIcon("/icon/filterIcon.png"));
+                    setHorizontalAlignment(JLabel.CENTER);
+                    setHorizontalTextPosition(JLabel.LEFT);
+                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                } else {
+                    setIcon(null);
+                }
+                return comp;
             }
         }
 
+
+
+        // 在 FingerConfigTab 构造函数中，设置表头渲染器的代码部分
+        // 在FingerConfigTab构造函数中设置表头渲染器和监听器的代码
         JTableHeader header = table.getTableHeader();
         TableColumnModel columnModel = header.getColumnModel();
-        TableColumn column = columnModel.getColumn(1); // 你要添加图标的列
-        column.setHeaderRenderer(new HeaderIconRenderer());
+        TableColumn typeColumn = columnModel.getColumn(1); // 假定类型列的索引是1
+
+        // 设置表头渲染器
+        // 设置表头渲染器
+        typeColumn.setHeaderRenderer(new HeaderIconRenderer());
+
+        // 在您的FingerConfigTab构造函数中
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (table.getColumnModel().getColumnIndexAtX(e.getX()) == 1) { // 假设类型列的索引是1
+                    showFilterPopup(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
         add(new JScrollPane(table), BorderLayout.CENTER);
 
@@ -848,6 +870,22 @@ public class FingerConfigTab extends JPanel {
         locationField.setSelectedItem("body"); // 默认选中 "body"
     }
 
+    private void showFilterMenu(int x, int y) {
+        JPopupMenu filterMenu = new JPopupMenu();
+        for (String type : uniqueTypes) {
+            JMenuItem menuItem = new JMenuItem(type);
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    filterTableByType(type);
+                }
+            });
+            filterMenu.add(menuItem);
+        }
+        filterMenu.show(table.getTableHeader(), x, y);
+    }
+
+
     public ImageIcon getImageIcon(String iconPath){
         // 根据按钮的大小缩放图标
         URL iconURL = getClass().getResource(iconPath);
@@ -879,6 +917,64 @@ public class FingerConfigTab extends JPanel {
             typeField.setEditable(true);
         }
     }
+
+    private void filterTableByType(String type) {
+        model.setRowCount(0); // 清空表格
+        tableToModelIndexMap.clear(); // 清空索引映射
+
+        int counter = 1;
+        for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
+            FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
+            // 如果type为null或者与规则类型匹配，添加到表格中
+            if (type == null || "全部".equals(type) || rule.getType().equals(type)) {
+                model.addRow(new Object[]{
+                        counter++,
+                        rule.getType(),
+                        rule.getCms(),
+                        rule.getIsImportant(),
+                        rule.getMethod(),
+                        rule.getLocation(),
+                        String.join(",", rule.getKeyword()),
+                        new String[]{"Edit", "Delete"}
+                });
+                tableToModelIndexMap.add(i); // 将原始列表的索引添加到映射中
+            }
+        }
+    }
+
+
+
+    private void showFilterPopup(Component invoker, int x, int y) {
+        JPopupMenu filterMenu = new JPopupMenu();
+
+        // “全部”选项用于移除过滤
+        JMenuItem allItem = new JMenuItem("全部");
+        allItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filterTableByType(null); // 移除过滤，显示全部
+            }
+        });
+        filterMenu.add(allItem);
+
+        filterMenu.add(new JSeparator()); // 分隔线
+
+        // 为每个独特的类型创建菜单项
+        for (String type : uniqueTypes) {
+            JMenuItem menuItem = new JMenuItem(type);
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    filterTableByType(type); // 根据选中的类型过滤表格
+                }
+            });
+            filterMenu.add(menuItem);
+        }
+
+        filterMenu.show(invoker, x, y); // 显示菜单
+    }
+
+
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
         private final JButton editButton;
