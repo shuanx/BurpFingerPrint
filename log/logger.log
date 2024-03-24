@@ -738,3 +738,10 @@ keyword: [/seeyon/USER-DATA/IMAGES/LOGIN/login.gif], title=-, status=200}
 [+] 数据添加开始。。
 [+] 数据添加结束。。
 [END]指纹识别结束: {http://oa.tongda.com:8080/123123={responseRequest=burp.aap@3f8cab26, method=GET, isFindUrl=true}, http://192.168.70.128:8080/index.php={responseRequest=burp.aap@314b52a7, method=GET, isFindUrl=false}}
+[+] Successfully loaded the configuration file finger.json
+[+] Finger Print is loaded
+[+] #####################################
+[+] Finger Print v2024-03
+[+] anthor: Shaun
+[+] ####################################
+[+] Please enjoy it!

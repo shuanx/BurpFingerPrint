@@ -140,9 +140,9 @@ public class FingerTab implements IMessageEditorController {
         FilterPanel.add(lbSuccessCount, gbc_lbSuccessCount);
 
         // 初始化按钮
-        allFingerprintsButton = new JToggleButton(getImageIcon("/icon/allButtonIcon.png", 40, 24));
-        allFingerprintsButton.setSelectedIcon(getImageIcon("/icon/importantButtonIcon.png", 40, 24));
-        allFingerprintsButton.setPreferredSize(new Dimension(40, 24));
+        allFingerprintsButton = new JToggleButton(getImageIcon("/icon/allButtonIcon.png", 30, 30));
+        allFingerprintsButton.setSelectedIcon(getImageIcon("/icon/importantButtonIcon.png", 30, 30));
+        allFingerprintsButton.setPreferredSize(new Dimension(30, 30));
         allFingerprintsButton.setBorder(null);  // 设置无边框
         allFingerprintsButton.setFocusPainted(false);  // 移除焦点边框
         allFingerprintsButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
