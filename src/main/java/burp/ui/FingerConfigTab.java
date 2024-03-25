@@ -1079,7 +1079,8 @@ public class FingerConfigTab extends JPanel {
                     cmsField.setText(rule.getCms());
                     isImportantField.setSelectedItem(rule.getIsImportant());
                     methodField.setSelectedItem(rule.getMethod());
-                    updateLocationField(rule.getMethod()); // 根据 rule 的 method 更新 locationField
+                    locationField.setSelectedItem(rule.getLocation());
+//                    updateLocationField(rule.getMethod()); // 根据 rule 的 method 更新 locationField
                     keywordField.setText(String.join(",", rule.getKeyword())); // 设置 keywordField 的值
 
                     // 显示编辑面板
