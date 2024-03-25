@@ -162,6 +162,15 @@ public class Utils {
             return urlString;
         }
     }
+
+    public static String removeBackSlash(String urlString){
+        if (urlString.endsWith("/")) {
+            return urlString.substring(0, urlString.length() - 1);
+        } else {
+            return urlString;
+        }
+    }
+
     public static String getFaviconHash(byte[] faviconBytes) {
 
             String base64Favicon = Base64.getEncoder().encodeToString(faviconBytes);

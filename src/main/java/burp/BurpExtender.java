@@ -197,9 +197,9 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
                                 stdout.println("[+] 数据添加开始。。");
                                 int row = log.size();
                                 // 对log添加数据
-                                if (!Utils.urlExistsInLog(log, Utils.getUriFromUrl(oneUrl))) {
+                                if (!Utils.urlExistsInLog(log, Utils.removeBackSlash(Utils.getUriFromUrl(oneUrl)))) {
                                     log.add(0, new LogEntry(iInterceptedProxyMessage.getMessageReference(),
-                                            callbacks.saveBuffersToTempFiles(oneRequestsResponse), Utils.getUriFromUrl(oneUrl),
+                                            callbacks.saveBuffersToTempFiles(oneRequestsResponse), Utils.removeBackSlash(Utils.getUriFromUrl(oneUrl)),
                                             oneMethod,
                                             mapResult)
                                     );
@@ -212,7 +212,7 @@ public class BurpExtender implements IBurpExtender, IProxyListener {
                                     int existingIndex = -1;
                                     for (int i = 0; i < log.size(); i++) {
                                         LogEntry logEntry = log.get(i);
-                                        if (logEntry.getUrl().equals(Utils.getUriFromUrl(oneUrl))) {
+                                        if (logEntry.getUrl().equals(Utils.removeBackSlash(Utils.getUriFromUrl(oneUrl)))) {
                                             for (String oneRs : mapResult.get("result").split(", ")){
                                                 if (!logEntry.getResult().contains(oneRs)) {
                                                     logEntry.setResult(logEntry.getResult() + ", " + oneRs);
