@@ -104,6 +104,25 @@ public class FingerUtils {
                     // 如果resultDetail键不存在，那么直接添加新的result
                     mapResult.put("resultDetail", detailInfo);
                 }
+                if(mapResult.containsKey("isImportant")){
+                    if (rule.getIsImportant()){
+                        mapResult.put("isImportant", Boolean.toString(rule.getIsImportant()));
+                    }
+                } else{
+                    mapResult.put("isImportant", Boolean.toString(rule.getIsImportant()));
+                }
+                if (mapResult.containsKey("type")) {
+                    // 如果result键已经存在，那么获取它的值并进行拼接
+                    String existingType = mapResult.get("type");
+                    if (existingType.equals("-") && !rule.getType().equals("-")){
+                        mapResult.put("type", rule.getType());
+                    } else if (!existingType.contains(rule.getType()) && !rule.getType().equals("-")) {
+                        mapResult.put("type", existingType + ", " + rule.getType());
+                    }
+                } else {
+                    // 如果result键不存在，那么直接添加新的result
+                    mapResult.put("type", rule.getType());
+                }
             }
         }
         return mapResult;

@@ -5,15 +5,19 @@ import burp.IHttpRequestResponsePersisted;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 public class LogEntry {
     final int id;
     IHttpRequestResponsePersisted requestResponse;
+    Boolean isImportant;
     String url;
     String method;
     String title;
     String status;
     String result;
+    String type;
     String resultDetail;
     String requestTime;
 
@@ -25,6 +29,8 @@ public class LogEntry {
         this.title = mapResult.get("title");
         this.status = mapResult.get("status");
         this.result = mapResult.get("result");
+        this.type = mapResult.get("type");
+        this.isImportant = Boolean.parseBoolean(mapResult.get("isImportant"));
         this.resultDetail = mapResult.get("resultDetail");
         this.requestTime = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
     }

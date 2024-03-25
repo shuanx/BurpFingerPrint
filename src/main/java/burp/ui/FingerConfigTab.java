@@ -44,8 +44,7 @@ public class FingerConfigTab extends JPanel {
     public static JToggleButton toggleButton;
     public static JToggleButton allFingerprintsButton;
     private static List<Integer> tableToModelIndexMap = new ArrayList<>();
-    private Set<String> uniqueTypes = new HashSet<>();
-
+    Set<String> uniqueTypes = new HashSet<>();
 
 
     public FingerConfigTab() {

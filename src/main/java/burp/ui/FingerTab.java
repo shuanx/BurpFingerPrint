@@ -1,10 +1,12 @@
 package burp.ui;
 
 import burp.*;
+import burp.model.FingerPrintRule;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -12,14 +14,22 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.*;
 import javax.swing.event.TableModelListener;
 import javax.swing.event.TableModelEvent;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+import java.awt.Component;
+import javax.swing.JTable;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class FingerTab implements IMessageEditorController {
@@ -189,6 +199,22 @@ public class FingerTab implements IMessageEditorController {
         allFingerprintsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // 检查按钮状态并切换
+                if (allFingerprintsButton.isSelected()) {
+                    // 按钮选中状态，应用过滤器以仅显示 isImportant 列为 true 的行
+                    RowFilter<TableModel, Integer> importanceFilter = new RowFilter<TableModel, Integer>() {
+                        @Override
+                        public boolean include(Entry<? extends TableModel, ? extends Integer> entry) {
+                            // 假设 isImportant 是第7列（注意列索引从0开始计数）
+                            Boolean isImportant = (Boolean) entry.getValue(7); // 根据您的表格实际的列索引来调整
+                            return isImportant != null && isImportant;
+                        }
+                    };
+                    ((TableRowSorter<TableModel>) logTable.getRowSorter()).setRowFilter(importanceFilter);
+                } else {
+                    // 按钮未选中状态，移除过滤器以显示所有行
+                    ((TableRowSorter<TableModel>) logTable.getRowSorter()).setRowFilter(null);
+                }
                 // 更新FingerConfigTab中的按钮状态
                 FingerConfigTab.allFingerprintsButton.setSelected(allFingerprintsButton.isSelected());
                 // 调用FingerConfigTab中的toggleFingerprintsDisplay方法
@@ -213,6 +239,57 @@ public class FingerTab implements IMessageEditorController {
         gbc_btnClear.gridx = 11;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(btnClear, gbc_btnClear);
+
+        // 功能按钮
+        JPopupMenu moreMenu = new JPopupMenu("功能");
+        JMenuItem exportItem = new JMenuItem("导出");
+        moreMenu.add(exportItem);
+        exportItem.setIcon(getImageIcon("/icon/exportItem.png", 17, 17));
+        moreMenu.add(exportItem);
+        JButton moreButton = new JButton();
+        moreButton.setIcon(getImageIcon("/icon/moreButton.png", 17, 17));
+        GridBagConstraints gbc_btnMore = new GridBagConstraints();
+        gbc_btnClear.insets = new Insets(0, 0, 0, 5);
+        gbc_btnClear.fill = 0;
+        gbc_btnClear.gridx = 12;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridy = 0;
+        FilterPanel.add(moreButton, gbc_btnMore);
+
+        exportItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Specify a file to save");
+
+                // 设置默认文件名
+                fileChooser.setSelectedFile(new File("ExportedData.xlsx"));
+
+                // 限制文件类型为.xlsx
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xlsx");
+                fileChooser.setFileFilter(filter);
+
+                int userSelection = fileChooser.showSaveDialog(contentPane);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    // 确保文件有正确的扩展名
+                    if (!fileToSave.toString().toLowerCase().endsWith(".xlsx")) {
+                        fileToSave = new File(fileToSave.toString() + ".xlsx");
+                    }
+                    // 导出表格数据到Excel文件
+                    exportTableToExcel(fileToSave);
+
+                }
+            }
+        });
+
+
+        // 点击”功能“的监听事件
+        moreButton.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                moreMenu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
 
         contentPane.add(topPanel,BorderLayout.NORTH);
 
@@ -252,9 +329,36 @@ public class FingerTab implements IMessageEditorController {
 
         HttpLogTableModel model = new HttpLogTableModel();
         logTable = new HttpLogTable(model);
+        // 创建居中渲染器实例
+        CenterTableCellRenderer centerRenderer = new CenterTableCellRenderer();
+        // 创建自定义的单元格渲染器实例
+        IconTableCellRenderer iconRenderer = new IconTableCellRenderer();
+        logTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        logTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        logTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        logTable.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        logTable.getColumnModel().getColumn(7).setCellRenderer(iconRenderer);
+        logTable.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
         logTable.setAutoCreateRowSorter(true);  // 添加这一行来启用自动创建行排序器
         logTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         logTable.setRowSelectionAllowed(true);
+
+        // 在FingerConfigTab构造函数中设置表头渲染器和监听器的代码
+        JTableHeader header = logTable.getTableHeader();
+        TableColumnModel columnModel = header.getColumnModel();
+        TableColumn typeColumn = columnModel.getColumn(6); // 假定类型列的索引是1
+
+        // 设置表头渲染器
+        typeColumn.setHeaderRenderer(new HeaderIconRenderer());
+        // 在您的FingerConfigTab构造函数中
+        header.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (logTable.getColumnModel().getColumnIndexAtX(e.getX()) == 6) { // 假设类型列的索引是1
+                    showFilterPopup(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
 
         model.addTableModelListener(new TableModelListener() {
             @Override
@@ -405,6 +509,155 @@ public class FingerTab implements IMessageEditorController {
         return new ImageIcon(newImg);
     }
 
+    public class CenterTableCellRenderer extends DefaultTableCellRenderer {
+        public CenterTableCellRenderer() {
+            setHorizontalAlignment(JLabel.CENTER); // 设置水平对齐为居中
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            return this;
+        }
+    }
+
+    public class IconTableCellRenderer extends DefaultTableCellRenderer {
+
+        public IconTableCellRenderer() {
+            setHorizontalAlignment(CENTER); // 设置居中
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // 设置文本为空，因为我们只显示图标
+            setText("");
+
+            // 根据单元格值设置相应图标
+            if (value instanceof Boolean) {
+                if ((Boolean) value) {
+                    setIcon(getImageIcon("/icon/importantButtonIcon.png", 15, 15));
+                } else {
+                    setIcon(getImageIcon("/icon/normalIcon.png", 15, 15));
+                }
+            } else {
+                setIcon(null); // 如果值不是布尔类型，则不显示图标
+            }
+
+            return this;
+        }
+    }
+
+    class HeaderIconRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            // 保留原始行为
+            Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // 如果是类型列
+            if (column == 6) {
+                setIcon(getImageIcon("/icon/filterIcon.png", 17, 17));
+                setHorizontalAlignment(JLabel.CENTER);
+                setHorizontalTextPosition(JLabel.LEFT);
+                setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+            } else {
+                setIcon(null);
+            }
+            return comp;
+        }
+    }
+
+    private void showFilterPopup(Component invoker, int x, int y) {
+        JPopupMenu filterMenu = new JPopupMenu();
+
+        // “全部”选项用于移除过滤
+        JMenuItem allItem = new JMenuItem("全部");
+        allItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filterTableByType(null); // 移除过滤，显示全部
+            }
+        });
+        filterMenu.add(allItem);
+
+        filterMenu.add(new JSeparator()); // 分隔线
+
+        // 为每个独特的类型创建菜单项
+        for (String type : BurpExtender.tags.fingerConfigTab.uniqueTypes) {
+            JMenuItem menuItem = new JMenuItem(type);
+            menuItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    filterTableByType(type); // 根据选中的类型过滤表格
+                }
+            });
+            filterMenu.add(menuItem);
+        }
+
+        filterMenu.show(invoker, x, y); // 显示菜单
+    }
+
+    private void filterTableByType(String type) {
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>((TableModel) logTable.getModel());
+        logTable.setRowSorter(sorter);
+
+        if (type == null || type.equals("全部")) {
+            // 显示所有行
+            sorter.setRowFilter(null);
+        } else {
+            // 只显示type列符合条件的行
+            sorter.setRowFilter(RowFilter.regexFilter(type, 6)); // 假设类型列的索引是1
+        }
+    }
+    public void exportTableToExcel(File file) {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Table Data");
+        TableModel model = logTable.getModel();
+
+        // 创建表头
+        Row headerRow = sheet.createRow(0);
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(model.getColumnName(i));
+        }
+
+        // 填充数据
+        for (int j = 0; j < model.getRowCount(); j++) {
+            Row row = sheet.createRow(j + 1);
+            for (int k = 0; k < model.getColumnCount(); k++) {
+                Cell cell = row.createCell(k);
+                Object value = model.getValueAt(j, k);
+                if (value instanceof Boolean) {
+                    cell.setCellValue((Boolean) value);
+                } else if (value instanceof Number) {
+                    cell.setCellValue(((Number) value).doubleValue());
+                } else {
+                    cell.setCellValue(value.toString());
+                }
+            }
+        }
+
+        // 自动调整所有列的宽度
+        for (int i = 0; i < model.getColumnCount(); i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // 写入到文件
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            workbook.write(outputStream);
+            JOptionPane.showMessageDialog(contentPane, "导出成功！保存路径为：\n" + file.getAbsolutePath(), "导出成功", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(contentPane, "导出失败，原因：\n" + e.getMessage(), "导出失败", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
 
