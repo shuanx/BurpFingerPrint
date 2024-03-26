@@ -1,5 +1,191 @@
 {
-  "fingerprint": [
+  "fingerprint": [{
+    "cms": "通达OA",
+    "method": "keyword",
+    "location": "body",
+    "keyword": [
+      "/images/tongda.ico"
+    ],
+    "type": "OA类",
+    "isImportant": true
+  },
+    {
+      "cms": "通达OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "<title>Office Anywhere",
+        "网络智能办公系统"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+    "cms": "通达OA",
+    "method": "keyword",
+    "location": "body",
+    "keyword": [
+      "tongda2000.com",
+      "官网"
+    ],
+    "type": "OA类",
+    "isImportant": true
+    },
+    {
+      "cms": "通达OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "通达OA",
+        "login"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "通达OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-187813927"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "通达OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-759108386"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "泛微 OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "1578525679"
+      ],
+      "type": "OA类",
+      "isImportant": false
+    },
+    {
+      "cms": "泛微OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "/wui/common/page/sysRemind.jsp"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "泛微OA",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "ecology_JSessionid"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "泛微云桥 e-Bridge",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "wx.weaver"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+
+    {
+      "cms": "泛微云桥 e-Bridge",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "e-Bridge"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "泛微e-mobile",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "移动管理平台-企业管理"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "泛微emp-移动管理平台",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "2062026853"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "蓝凌 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "sys/ui/extend/theme/default/style/icon.css",
+        "sys/ui/extend/theme/default/style/profile.css"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "蓝凌 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "蓝凌软件",
+        "App_Themes/Login"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "蓝凌 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "login_single_horizontal"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "蓝凌 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "login_single_full_screen"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "蓝凌EIS智慧协同平台",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/scripts/jquery.landray.common.js",
+        "蓝凌软件"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
     {
       "cms": "致远OA",
       "method": "keyword",
@@ -17,8 +203,8 @@
       "keyword": [
         "/seeyon/common/"
       ],
-      "type": "-",
-      "isImportant": false
+      "type": "OA类",
+      "isImportant": true
     },
     {
       "cms": "致远OA",
@@ -27,8 +213,443 @@
       "keyword": [
         "165601673"
       ],
-      "type": "-",
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "致远OA M3 Server",
+      "method": "keyword",
+      "location": "title",
+      "keyword": [
+        "M3 Server"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "致远OA M1 Server",
+      "method": "keyword",
+      "location": "title",
+      "keyword": [
+        "M1-Server"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "致远 Analytics Cloud 分析云",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "410106848"
+      ],
+      "type": "其他",
       "isImportant": false
+    },
+    {
+      "cms": "万户 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "defaultroot",
+        "Logon!logon.action",
+        "domainAccount"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "万户 OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/defaultroot/public/edit/logindownload/Logindownload.jsp"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "万户ezOFFICE",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-1827521324"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "万户网络ezEIP",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "Powered By wanhu - www.wanhu.com.cn",
+        "ezEip"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "华天动力OA",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "OAapp/WebObjects/OAapp.woa",
+        "/htoa/js/jquery.js"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "用友软件",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "UFIDA Software CO.LTD all rights reserved"
+      ],
+      "type": "其他",
+      "isImportant": false
+    },
+    {
+      "cms": "用友NC",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "logo/images/ufida_nc.png",
+        "用友NC"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "用友 NC Cloud",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "platform/pub/welcome.do"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "用友GRP-U8 新政府会计制度专版",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-299520369"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "用友U8",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "U8远程接入官方网站",
+        "用友"
+      ],
+      "type": "OA类",
+      "isImportant": true
+    },
+    {
+      "cms": "用友-畅捷通OEM",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "GNRemote.dll",
+        "Web_sc/login.gn"
+      ],
+      "type": "其他",
+      "isImportant": false
+    },
+    {
+      "cms": "用友BIP 数据应用服务",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "1183274548"
+      ],
+      "type": "其他",
+      "isImportant": false
+    },
+    {
+      "cms": "奇安信自动化渗透测试系统",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-747580443"
+      ],
+      "type": "其他",
+      "isImportant": false
+    },
+    {
+      "cms": "奇安信VPN",
+      "method": "keyword",
+      "location": "title",
+      "keyword": [
+        "奇安信VPN"
+      ],
+      "type": "VPN类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信产品",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "<TITLE>Web User Login",
+        "loginCheck"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信VPN",
+      "method": "keyword",
+      "location": "header",
+      "keyword": [
+        "topsecsvportalstyle"
+      ],
+      "type": "VPN类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信VPN",
+      "method": "keyword",
+      "location": "header",
+      "keyword": [
+        "vone/pub/image/logo1.png"
+      ],
+      "type": "VPN类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信WEB应用安全防护系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "module=login",
+        "topsec",
+        "login"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信 Reporter",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "Login @ Reporter",
+        "topsec",
+        "login"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信防火墙",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "TOPSEC",
+        "image/aaa.png",
+        "username"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信TopAPP负载均衡系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "TopAPP负载均衡系统",
+        "天融信"
+      ],
+      "type": "负载均衡",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信-上网行为管理系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "images/logo3.gif",
+        "dkey_activex_download.php",
+        "login_commit.php"
+      ],
+      "type": "上网行为管理类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信设备",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-2019013898"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "天融信应用交付系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "TopApp-AD"
+      ],
+      "type": "安全设备类",
+      "isImportant": true
+    },
+    {
+      "cms": "ARRAY VPN",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/prx/000/http/localh/oauth_auth"
+      ],
+      "type": "VPN类",
+      "isImportant": true
+    },
+    {
+      "cms": "siteserver",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/sitefiles/assets/components/",
+        "siteid"
+      ],
+      "type": "官网类",
+      "isImportant": true
+    },
+    {
+      "cms": "siteserver",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "sitefiles",
+        "siteid"
+      ],
+      "type": "官网类",
+      "isImportant": true
+    },
+    {
+      "cms": "拓尔思",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/was5/web/",
+        "trs"
+      ],
+      "type": "官网类",
+      "isImportant": true
+    },
+    {
+      "cms": "契约锁",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "qyswebapp"
+      ],
+      "type": "合同类",
+      "isImportant": true
+    },
+    {
+      "cms": "明源云ERP",
+      "method": "faviconhash",
+      "location": "body",
+      "keyword": [
+        "-626335361"
+      ],
+      "type": "ERP系统",
+      "isImportant": true
+    },
+    {
+      "cms": "明源云ERP",
+      "method": "keyword",
+      "location": "title",
+      "keyword": [
+        "明源云ERP"
+      ],
+      "type": "ERP系统",
+      "isImportant": true
+    },
+    {
+      "cms": "明源云 ERP",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "PubPlatform",
+        "明源云",
+        "LoginHandler"
+      ],
+      "type": "ERP系统",
+      "isImportant": true
+    },
+    {
+      "cms": "明源云 ERP",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "#153290",
+        "明源软件"
+      ],
+      "type": "ERP系统",
+      "isImportant": true
+    },
+    {
+      "cms": "CoreMail",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "coremail/common"
+      ],
+      "type": "邮件类",
+      "isImportant": true
+    },
+    {
+      "cms": "宏景eHR人力资源信息管理系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "人力资源信息管理系统",
+        "hrlogon"
+      ],
+      "type": "其他",
+      "isImportant": true
+    },
+    {
+      "cms": "JeecgBoot",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "fileview.jeecg.com/onlinePreview"
+      ],
+      "type": "CMS",
+      "isImportant": true
+    },
+    {
+      "cms": "亿赛通(DLP)",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "CDGServer3",
+        "welcomebg.jpg"
+      ],
+      "type": "其他",
+      "isImportant": true
+    },
+    {
+      "cms": "亿赛通-电子文档安全管理系统",
+      "method": "keyword",
+      "location": "body",
+      "keyword": [
+        "/CDGServer3/SysConfig.jsp"
+      ],
+      "type": "其他",
+      "isImportant": true
     },
     {
       "cms": "通用企业管理软件",
@@ -40,16 +661,7 @@
       "type": "-",
       "isImportant": false
     },
-    {
-      "cms": "致远OA M3 Server",
-      "method": "keyword",
-      "location": "title",
-      "keyword": [
-        "M3 Server"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
+
     {
       "cms": "iDS联网数字标牌管理系统",
       "method": "keyword",
@@ -372,16 +984,6 @@
       "isImportant": false
     },
     {
-      "cms": "致远OA M1 Server",
-      "method": "keyword",
-      "location": "title",
-      "keyword": [
-        "M1-Server"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "顶讯科技-易宝OA系统",
       "method": "keyword",
       "location": "title",
@@ -588,16 +1190,6 @@
       "isImportant": false
     },
     {
-      "cms": "天融信VPN设备",
-      "method": "keyword",
-      "location": "header",
-      "keyword": [
-        "topsecsvportalname"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "PbootCMS",
       "method": "keyword",
       "location": "header",
@@ -721,16 +1313,6 @@
       "isImportant": false
     },
     {
-      "cms": "用友BIP 数据应用服务",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "1183274548"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "流量通 流量平台",
       "method": "faviconhash",
       "location": "body",
@@ -766,16 +1348,6 @@
       "location": "body",
       "keyword": [
         "2049187099"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "万户ezOFFICE",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "-1827521324"
       ],
       "type": "-",
       "isImportant": false
@@ -844,36 +1416,6 @@
       "isImportant": false
     },
     {
-      "cms": "泛微云桥 e-Bridge",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "wx.weaver"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "泛微 OA",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "1578525679"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "泛微云桥 e-Bridge",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "e-Bridge"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "Swagger UI",
       "method": "keyword",
       "location": "body",
@@ -924,37 +1466,6 @@
       "isImportant": false
     },
     {
-      "cms": "通达OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "/images/tongda.ico"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "通达OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "Office Anywhere"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "通达OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "通达OA",
-        "login"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "深信服 waf",
       "method": "keyword",
       "location": "body",
@@ -983,29 +1494,6 @@
       "keyword": [
         "cgi-bin/login.cgi",
         "/html/wz_tooltip.js"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信防火墙",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "TOPSEC",
-        "image/aaa.png",
-        "username"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信TopAPP负载均衡系统",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "TopAPP负载均衡系统",
-        "天融信"
       ],
       "type": "-",
       "isImportant": false
@@ -1068,28 +1556,6 @@
       "location": "body",
       "keyword": [
         "/cgi-bin/webui?op=get_product_model"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "蓝凌 OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "sys/ui/extend/theme/default/style/icon.css",
-        "sys/ui/extend/theme/default/style/profile.css"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "蓝凌 OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "蓝凌软件",
-        "App_Themes/Login"
       ],
       "type": "-",
       "isImportant": false
@@ -1163,16 +1629,6 @@
       "location": "body",
       "keyword": [
         "/ClientBin/Kingdee.BOS.XPF.App.xap"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "CoreMail",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "coremail/common"
       ],
       "type": "-",
       "isImportant": false
@@ -1326,27 +1782,6 @@
       "location": "header",
       "keyword": [
         "zentaosid"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "用友软件",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "UFIDA Software CO.LTD all rights reserved"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "用友NC",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "logo/images/ufida_nc.png",
-        "用友NC"
       ],
       "type": "-",
       "isImportant": false
@@ -7189,17 +7624,6 @@
       "isImportant": false
     },
     {
-      "cms": "JeecgBoot",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "JeecgBoot",
-        "polyfill_"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "帆软数据决策系统",
       "method": "keyword",
       "location": "body",
@@ -7349,17 +7773,6 @@
       "isImportant": false
     },
     {
-      "cms": "蓝凌EIS智慧协同平台",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "/scripts/jquery.landray.common.js",
-        "蓝凌软件"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "phpinfo",
       "method": "keyword",
       "location": "body",
@@ -7482,17 +7895,6 @@
       "keyword": [
         "interlib/common/",
         "self.location.href"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "华天动力OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "OAapp/WebObjects/OAapp.woa",
-        "window.location"
       ],
       "type": "-",
       "isImportant": false
@@ -7687,16 +8089,6 @@
       "isImportant": false
     },
     {
-      "cms": "致远 Analytics Cloud 分析云",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "410106848"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "景云网络防病毒系统",
       "method": "keyword",
       "location": "body",
@@ -7720,16 +8112,6 @@
       "isImportant": false
     },
     {
-      "cms": "用友 NC Cloud",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "platform/pub/welcome.do"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "GitBook",
       "method": "keyword",
       "location": "body",
@@ -7748,17 +8130,6 @@
         "owa/auth",
         "Outlook",
         "logonDiv"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "万户网络ezEIP",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "Powered By wanhu - www.wanhu.com.cn",
-        "ezEip"
       ],
       "type": "-",
       "isImportant": false
@@ -7833,69 +8204,12 @@
       "isImportant": false
     },
     {
-      "cms": "万户 OA",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "defaultroot",
-        "Logon!logon.action",
-        "domainAccount"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "全息AI弱电网络综合运维平台",
       "method": "keyword",
       "location": "body",
       "keyword": [
         "全息AI",
         "g_is_hk",
-        "login"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信产品",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "<TITLE>Web User Login",
-        "loginCheck"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信VPN",
-      "method": "keyword",
-      "location": "header",
-      "keyword": [
-        "topsecsvportalstyle"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信WEB应用安全防护系统",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "module=login",
-        "topsec",
-        "login"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信 Reporter",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "Login @ Reporter",
-        "topsec",
         "login"
       ],
       "type": "-",
@@ -8105,18 +8419,6 @@
       "isImportant": false
     },
     {
-      "cms": "天融信-上网行为管理系统",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "images/logo3.gif",
-        "dkey_activex_download.php",
-        "login_commit.php"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "Yii框架",
       "method": "keyword",
       "location": "body",
@@ -8178,31 +8480,11 @@
       "isImportant": false
     },
     {
-      "cms": "明源云ERP",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "-626335361"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "天智智慧医院综合质量监管平台",
       "method": "faviconhash",
       "location": "body",
       "keyword": [
         "1986460035"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "明源云ERP",
-      "method": "keyword",
-      "location": "title",
-      "keyword": [
-        "明源云ERP"
       ],
       "type": "-",
       "isImportant": false
@@ -8338,18 +8620,6 @@
         "VMware",
         "ui-page",
         "portal/favicon"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "明源云 ERP",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "PubPlatform",
-        "明源云",
-        "LoginHandler"
       ],
       "type": "-",
       "isImportant": false
@@ -8756,16 +9026,6 @@
       "isImportant": false
     },
     {
-      "cms": "用友GRP-U8 新政府会计制度专版",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "-299520369"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "e-cology 运维管理平台",
       "method": "faviconhash",
       "location": "body",
@@ -8823,16 +9083,6 @@
       "location": "body",
       "keyword": [
         "-525659379"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信设备",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "-2019013898"
       ],
       "type": "-",
       "isImportant": false
@@ -8939,17 +9189,6 @@
       "isImportant": false
     },
     {
-      "cms": "用友-畅捷通OEM",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "GNRemote.dll",
-        "Web_sc/login.gn"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "华为AR Web管理平台",
       "method": "keyword",
       "location": "body",
@@ -9001,16 +9240,6 @@
       "keyword": [
         "下一代防火墙",
         "锐捷网络"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "天融信应用交付系统",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "TopApp-AD"
       ],
       "type": "-",
       "isImportant": false
@@ -9110,17 +9339,6 @@
       "location": "header",
       "keyword": [
         "HowFor Web"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "亿赛通(DLP)",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "CDGServer3",
-        "welcomebg.jpg"
       ],
       "type": "-",
       "isImportant": false
@@ -9268,17 +9486,6 @@
       "location": "body",
       "keyword": [
         "JieLink<sup>+</sup>"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "宏景eHR人力资源信息管理系统",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "人力资源信息管理系统",
-        "hrlogon"
       ],
       "type": "-",
       "isImportant": false
@@ -9490,17 +9697,6 @@
       "location": "body",
       "keyword": [
         "webui/js/jquerylib/jquery-1.7.2.min.js"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "明源云 ERP",
-      "method": "keyword",
-      "location": "body",
-      "keyword": [
-        "#153290",
-        "明源软件"
       ],
       "type": "-",
       "isImportant": false
@@ -9793,16 +9989,6 @@
       "isImportant": false
     },
     {
-      "cms": "泛微emp-移动管理平台",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "2062026853"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
       "cms": "锐捷 SSL VPN",
       "method": "faviconhash",
       "location": "body",
@@ -9888,16 +10074,6 @@
       "location": "body",
       "keyword": [
         "-1234665500"
-      ],
-      "type": "-",
-      "isImportant": false
-    },
-    {
-      "cms": "奇安信自动化渗透测试系统",
-      "method": "faviconhash",
-      "location": "body",
-      "keyword": [
-        "-747580443"
       ],
       "type": "-",
       "isImportant": false
