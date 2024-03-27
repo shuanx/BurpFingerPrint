@@ -19,10 +19,13 @@ import java.awt.event.*;
 import java.util.Set;
 import java.util.HashSet;
 
+import burp.ui.renderer.ButtonRenderer;
+import burp.ui.renderer.CenterRenderer;
+import burp.util.UiUtils;
 import burp.util.Utils;
+import burp.ui.renderer.HeaderIconRenderer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
@@ -56,7 +59,7 @@ public class FingerConfigTab extends JPanel {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         // 新增按钮
         JButton addButton = new JButton("新增");
-        addButton.setIcon(getImageIcon("/icon/addButtonIcon.png"));
+        addButton.setIcon(UiUtils.getImageIcon("/icon/addButtonIcon.png"));
         // 创建一个面板来放置放在最左边的按钮
         leftPanel.add(addButton);
 
@@ -67,8 +70,8 @@ public class FingerConfigTab extends JPanel {
         int leftPadding = 150;  // 调整这个值来改变左边距
         centerPanel.setBorder(new EmptyBorder(0, leftPadding, 0, 0));
         // 所有指纹和重点指纹的选择
-        ImageIcon allFingerprintsIcon = getImageIcon("/icon/allButtonIcon.png", 40, 24);
-        ImageIcon allFingerprintsSelectedIcon = getImageIcon("/icon/importantButtonIcon.png", 40, 24);
+        ImageIcon allFingerprintsIcon = UiUtils.getImageIcon("/icon/allButtonIcon.png", 40, 24);
+        ImageIcon allFingerprintsSelectedIcon = UiUtils.getImageIcon("/icon/importantButtonIcon.png", 40, 24);
 
         allFingerprintsButton = new JToggleButton(allFingerprintsIcon);
         allFingerprintsButton.setSelectedIcon(allFingerprintsSelectedIcon);
@@ -79,8 +82,8 @@ public class FingerConfigTab extends JPanel {
         allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
 
 
-        ImageIcon shutdownIcon = getImageIcon("/icon/shutdownButtonIcon.png", 50, 24);
-        ImageIcon openIcon = getImageIcon("/icon/openButtonIcon.png", 50, 24);
+        ImageIcon shutdownIcon = UiUtils.getImageIcon("/icon/shutdownButtonIcon.png", 50, 24);
+        ImageIcon openIcon = UiUtils.getImageIcon("/icon/openButtonIcon.png", 50, 24);
 
 
         toggleButton = new JToggleButton(openIcon);
@@ -101,24 +104,24 @@ public class FingerConfigTab extends JPanel {
         JTextField searchField = new JTextField(15);
         // 检索按钮
         JButton searchButton = new JButton();
-        searchButton.setIcon(getImageIcon("/icon/searchButton.png"));
+        searchButton.setIcon(UiUtils.getImageIcon("/icon/searchButton.png"));
         searchButton.setToolTipText("搜索");
         // 功能按钮
         JPopupMenu popupMenu = new JPopupMenu("功能");
         JMenuItem saveItem = new JMenuItem("保存");
-        saveItem.setIcon(getImageIcon("/icon/saveItem.png"));
+        saveItem.setIcon(UiUtils.getImageIcon("/icon/saveItem.png"));
         JMenuItem importItem = new JMenuItem("导入");
-        importItem.setIcon(getImageIcon("/icon/importItem.png"));
+        importItem.setIcon(UiUtils.getImageIcon("/icon/importItem.png"));
         JMenuItem exportItem = new JMenuItem("导出");
-        exportItem.setIcon(getImageIcon("/icon/exportItem.png"));
+        exportItem.setIcon(UiUtils.getImageIcon("/icon/exportItem.png"));
         JMenuItem resetItem = new JMenuItem("重置");
-        resetItem.setIcon(getImageIcon("/icon/resetItem.png"));
+        resetItem.setIcon(UiUtils.getImageIcon("/icon/resetItem.png"));
         popupMenu.add(saveItem);
         popupMenu.add(importItem);
         popupMenu.add(exportItem);
         popupMenu.add(resetItem);
         JButton moreButton = new JButton();
-        moreButton.setIcon(getImageIcon("/icon/moreButton.png"));
+        moreButton.setIcon(UiUtils.getImageIcon("/icon/moreButton.png"));
 
         // 布局
         rightPanel.add(allButton);
@@ -610,27 +613,6 @@ public class FingerConfigTab extends JPanel {
         table.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
         table.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(table));
 
-        // 更新HeaderIconRenderer类
-        class HeaderIconRenderer extends DefaultTableCellRenderer {
-            @Override
-            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-                // 保留原始行为
-                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-
-                // 如果是类型列
-                if (column == 1) {
-                    setIcon(getImageIcon("/icon/filterIcon.png"));
-                    setHorizontalAlignment(JLabel.CENTER);
-                    setHorizontalTextPosition(JLabel.LEFT);
-                    setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                } else {
-                    setIcon(null);
-                }
-                return comp;
-            }
-        }
-
-
 
         // 在 FingerConfigTab 构造函数中，设置表头渲染器的代码部分
         // 在FingerConfigTab构造函数中设置表头渲染器和监听器的代码
@@ -756,7 +738,7 @@ public class FingerConfigTab extends JPanel {
 
 
         JButton saveButton = new JButton("Save");
-        saveButton.setIcon(getImageIcon("/icon/saveButton.png"));
+        saveButton.setIcon(UiUtils.getImageIcon("/icon/saveButton.png"));
 
         // 在构造函数中为 methodField 添加事件监听器，以便动态更新 locationField 的选项
         methodField.addActionListener(new ActionListener() {
@@ -887,24 +869,6 @@ public class FingerConfigTab extends JPanel {
     }
 
 
-    public ImageIcon getImageIcon(String iconPath){
-        // 根据按钮的大小缩放图标
-        URL iconURL = getClass().getResource(iconPath);
-        ImageIcon originalIcon = new ImageIcon(iconURL);
-        Image img = originalIcon.getImage();
-        Image newImg = img.getScaledInstance(17, 17, Image.SCALE_SMOOTH);
-        return new ImageIcon(newImg);
-    }
-
-    public ImageIcon getImageIcon(String iconPath, int xWidth, int yWidth){
-        // 根据按钮的大小缩放图标
-        URL iconURL = getClass().getResource(iconPath);
-        ImageIcon originalIcon = new ImageIcon(iconURL);
-        Image img = originalIcon.getImage();
-        Image newImg = img.getScaledInstance(xWidth, yWidth, Image.SCALE_SMOOTH);
-        return new ImageIcon(newImg);
-    }
-
     // 创建或更新typeField下拉框的方法
     public void updateTypeField() {
         // 将集合转换为数组
@@ -1016,36 +980,7 @@ public class FingerConfigTab extends JPanel {
     }
 
 
-    class ButtonRenderer extends JPanel implements TableCellRenderer {
-        private final JButton editButton;
-        private final JButton deleteButton;
 
-        public ButtonRenderer() {
-            setBorder(BorderFactory.createLineBorder(Color.BLACK));
-            setLayout(new FlowLayout(FlowLayout.CENTER, 5, 0));
-            editButton = new JButton();
-            editButton.setIcon(getImageIcon("/icon/editButton.png"));
-            deleteButton = new JButton();
-            deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
-
-            editButton.setPreferredSize(new Dimension(40, 20));
-            deleteButton.setPreferredSize(new Dimension(40, 20));
-
-            add(editButton);
-            add(deleteButton);
-            setBorder(BorderFactory.createEmptyBorder());
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if (isSelected) {
-                setBackground(table.getSelectionBackground());
-            } else {
-                setBackground(table.getBackground());
-            }
-            return this;
-        }
-    }
 
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {
         private final JPanel panel;
@@ -1058,9 +993,9 @@ public class FingerConfigTab extends JPanel {
             this.table = table;
             panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
             editButton = new JButton();
-            editButton.setIcon(getImageIcon("/icon/editButton.png"));
+            editButton.setIcon(UiUtils.getImageIcon("/icon/editButton.png"));
             deleteButton = new JButton();
-            deleteButton.setIcon(getImageIcon("/icon/deleteButton.png"));
+            deleteButton.setIcon(UiUtils.getImageIcon("/icon/deleteButton.png"));
 
             editButton.setPreferredSize(new Dimension(40, 20));
             deleteButton.setPreferredSize(new Dimension(40, 20));
@@ -1147,11 +1082,4 @@ public class FingerConfigTab extends JPanel {
         }
     }
 
-
-
-    class CenterRenderer extends DefaultTableCellRenderer {
-        public CenterRenderer() {
-            setHorizontalAlignment(JLabel.CENTER);
-        }
-    }
 }

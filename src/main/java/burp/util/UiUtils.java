@@ -31,6 +31,15 @@ public class UiUtils {
         return new ImageIcon(newImg);
     }
 
+    public static ImageIcon getImageIcon(String iconPath){
+        // 根据按钮的大小缩放图标
+        URL iconURL = UiUtils.class.getResource(iconPath);
+        ImageIcon originalIcon = new ImageIcon(iconURL);
+        Image img = originalIcon.getImage();
+        Image newImg = img.getScaledInstance(17, 17, Image.SCALE_SMOOTH);
+        return new ImageIcon(newImg);
+    }
+
     public static void exportTableToExcel(File file, JPanel contentPane, HttpLogTable logTable) {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Table Data");
