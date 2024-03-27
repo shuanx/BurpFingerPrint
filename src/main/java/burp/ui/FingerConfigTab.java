@@ -44,7 +44,7 @@ public class FingerConfigTab extends JPanel {
     public static JToggleButton toggleButton;
     public static JToggleButton allFingerprintsButton;
     private static List<Integer> tableToModelIndexMap = new ArrayList<>();
-    Set<String> uniqueTypes = new HashSet<>();
+    public Set<String> uniqueTypes = new HashSet<>();
 
 
     public FingerConfigTab() {
@@ -492,6 +492,7 @@ public class FingerConfigTab extends JPanel {
         // Adding an action listener to the toggle button
         allFingerprintsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                FingerTab.allFingerprintsButton.setSelected(allFingerprintsButton.isSelected());
                 if (toggleButton.isSelected()){
                     return;
                 }
@@ -543,6 +544,7 @@ public class FingerConfigTab extends JPanel {
         });
         toggleButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                FingerTab.toggleButton.setSelected(toggleButton.isSelected());
                 if(toggleButton.isSelected()){
                     toggleButton.setToolTipText("指纹识别功能关");
                     // 清除表格的所有行
@@ -973,9 +975,13 @@ public class FingerConfigTab extends JPanel {
         filterMenu.show(invoker, x, y); // 显示菜单
     }
 
-    public static void toggleFingerprintsDisplay(boolean showImportantOnly) {
+    public static void toggleFingerprintsDisplay(boolean isOpen, boolean showImportantOnly) {
         // 清空当前表格数据
         model.setRowCount(0);
+
+        if (isOpen){
+            return;
+        }
 
         // 临时计数器，用于表格中的序号
         int counter = 1;
