@@ -82,8 +82,8 @@ public class FingerTabEventHandlers {
     public static TableModelListener modelAddTableModelListener(HttpLogTableModel model, JPanel tagsPanel, HashMap<String, JLabel> resultMap, HttpLogTable logTable) {
         return new TableModelListener() {
             private static final int MAX_LABEL = 20;
-            private List<String> labelList = new ArrayList<>(); // 用来存储标签文本的列表
-            private JLabel ellipsisLabel = new JLabel("..."); // 省略号标签
+            List<String> labelList = new ArrayList<>();
+            int ADD_LABEL_NUMBER = 0;
             @Override
             public void tableChanged(TableModelEvent e) {
                 HashMap<String, Integer> resultCounts = new HashMap<>();
@@ -95,29 +95,37 @@ public class FingerTabEventHandlers {
                         resultCounts.put(part, resultCounts.getOrDefault(part, 0) + 1); // 添加到映射中进行去重，并计数
                     }
                 }
-                clearAllResultLabels(tagsPanel);
-
                 // 创建一个 TreeMap 并进行反向排序
                 TreeMap<Integer, LinkedList<String>> sortedResults = new TreeMap<>(Collections.reverseOrder());
                 for (Map.Entry<String, Integer> entry : resultCounts.entrySet()) {
                     sortedResults.computeIfAbsent(entry.getValue(), k -> new LinkedList<>()).add(entry.getKey());
                 }
-
+                List<String> tmpList = new ArrayList<>();
                 // 添加新的结果标签
-                List<String> tmplabelList = new ArrayList<>(); // 用来存储标签文本的列表
                 for (Map.Entry<Integer, LinkedList<String>> entry : sortedResults.entrySet()) {
                     Integer count = entry.getKey();
                     for (String result : entry.getValue()) {
-                        if(tmplabelList.size() == MAX_LABEL){
-                            tmplabelList.add("...");
+                        if(ADD_LABEL_NUMBER == MAX_LABEL){
+                            tmpList.add("...(0)");
+                            ADD_LABEL_NUMBER += 1;
                             continue;
                         }
-                        if(tmplabelList.size() > MAX_LABEL){
+                        if(ADD_LABEL_NUMBER > MAX_LABEL){
                             continue;
                         }
-                        tmplabelList.add(result + " (" + count + ")");
+                        ADD_LABEL_NUMBER += 1;
+                        tmpList.add(result + " (" + count + ")");
+
                     }
                 }
+                if(!labelList.equals(tmpList)){
+                    labelList = tmpList;
+                    clearAllResultLabels(tagsPanel);
+                    for (String result : tmpList){
+                        addNewResultLabel(result, model);
+                    }
+                }
+                ADD_LABEL_NUMBER = 0;
             }
 
             public void addNewResultLabel(String result, HttpLogTableModel model) {
