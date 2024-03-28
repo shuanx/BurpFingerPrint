@@ -11,7 +11,16 @@
 - [x] 开界面进行指纹库修改，可导入、导出、重置
 - [x] 优化已有指纹库，区分重点指纹和常见指纹，补充部分实战热门漏洞的指纹，方便直接一键getshell
 ![img.png](images/importantFinger.png)
-- [ ] 收集github上常见的EXP工具，提起其含有EXP漏洞的指纹，当成重要指纹，一旦页面出现该指纹，就表示有戏有戏，有洞就有指纹
+- [ ] 优化算法，提升性能、减少内存开销
+- [ ] 收集github上常见的EXP工具，提起其含有EXP漏洞的指纹，当成重要指纹，一旦页面出现该指纹，就表示有戏有戏
+
+- 1、https://github.com/R4gd0ll/I-Wanna-Get-All
+- 2、https://github.com/YinWC/2021hvv_vul
+- 3、https://github.com/zhzyker/vulmap
+- 4、https://github.com/SecWiki/CMS-Hunter
+- 5、https://github.com/coffeehb/Some-PoC-oR-ExP
+- 6、https://github.com/White-hua/Apt_t00ls
+- 7、https://github.com/biggerwing/nsfocus-rsas-knowledge-base
 - [ ] 优化GUI，指纹识别出来后，可以快速查看对应的利用EXP的github地址
 - [ ] OA类弱口令爆破
 - [ ] 与本地Packer Fuzzer JS扫描器配合发现隐秘漏洞
