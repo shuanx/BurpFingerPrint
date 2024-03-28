@@ -211,7 +211,7 @@ public class FingerTab implements IMessageEditorController {
         contentPane.add(topPanel,BorderLayout.NORTH);
 
         tagsPanel = new JPanel();
-        tagsPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        tagsPanel.setLayout(new WrapLayout(FlowLayout.LEFT)); // 使用 WrapLayout 并设置为左对齐
         GridBagConstraints gbc_tagsPanel = new GridBagConstraints();
         gbc_tagsPanel.insets = new Insets(0, 0, 5, 0);
         gbc_tagsPanel.fill = GridBagConstraints.HORIZONTAL;
@@ -318,6 +318,141 @@ public class FingerTab implements IMessageEditorController {
     public byte[] getResponse() {
         return currentlyDisplayedItem.getResponse();
     }
+
+    public class WrapLayout extends FlowLayout {
+        public WrapLayout() {
+            super();
+        }
+
+        public WrapLayout(int align) {
+            super(align);
+        }
+
+        public WrapLayout(int align, int hgap, int vgap) {
+            super(align, hgap, vgap);
+        }
+
+        @Override
+        public Dimension preferredLayoutSize(Container target) {
+            return layoutSize(target, true);
+        }
+
+        @Override
+        public Dimension minimumLayoutSize(Container target) {
+            Dimension minimum = layoutSize(target, false);
+            minimum.width -= (getHgap() + 1);
+            return minimum;
+        }
+
+        private Dimension layoutSize(Container target, boolean preferred) {
+            synchronized (target.getTreeLock()) {
+                int targetWidth = target.getSize().width;
+                Container container = target;
+
+                while (container.getSize().width == 0 && container.getParent() != null) {
+                    container = container.getParent();
+                }
+
+                targetWidth = container.getSize().width;
+
+                if (targetWidth == 0) {
+                    targetWidth = Integer.MAX_VALUE;
+                }
+
+                int hgap = getHgap();
+                int vgap = getVgap();
+                Insets insets = target.getInsets();
+                int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
+                int maxWidth = targetWidth - horizontalInsetsAndGap;
+
+                // Fit components into the allowed width
+                Dimension dim = new Dimension(0, 0);
+                int rowWidth = 0;
+                int rowHeight = 0;
+
+                int nmembers = target.getComponentCount();
+
+                for (int i = 0; i < nmembers; i++) {
+                    Component m = target.getComponent(i);
+                    if (m.isVisible()) {
+                        Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
+
+                        // Wrap line if this component doesn't fit
+                        if ((rowWidth + d.width) > maxWidth) {
+                            dim.width = Math.max(rowWidth, dim.width);
+                            dim.height += rowHeight + vgap;
+                            rowWidth = 0;
+                            rowHeight = 0;
+                        }
+
+                        // Add component size to current row
+                        if (rowWidth != 0) {
+                            rowWidth += hgap;
+                        }
+                        rowWidth += d.width;
+                        rowHeight = Math.max(rowHeight, d.height);
+                    }
+                }
+
+                dim.width = Math.max(rowWidth, dim.width);
+                dim.height += rowHeight + vgap;
+                dim.width += horizontalInsetsAndGap;
+                dim.height += insets.top + insets.bottom + vgap * 2;
+
+                // When using a scroll pane or the DecoratedLookAndFeel we need to
+                // make sure the preferred size is less than the size of the
+                // target containter so shrinking the container size works
+                // correctly. Removing the horizontal gap is an easy way to do this.
+                Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
+                if (scrollPane != null && target.isValid()) {
+                    dim.width -= (hgap + 1);
+                }
+
+                return dim;
+            }
+        }
+
+    }
+
+    public class CustomWrapLayout extends FlowLayout {
+        private JLabel ellipsisLabel = new JLabel("...");
+        private JPanel tagsPanel; // 指向包含标签的面板
+
+        public CustomWrapLayout(JPanel tagsPanel) {
+            super(FlowLayout.LEFT);
+            this.tagsPanel = tagsPanel;
+            this.tagsPanel.add(ellipsisLabel);
+            ellipsisLabel.setVisible(false); // 初始时不显示
+        }
+
+        @Override
+        public void layoutContainer(Container target) {
+            super.layoutContainer(target);
+
+            Component[] components = target.getComponents();
+            boolean isEllipsisNeeded = false;
+
+            if (components.length > 0) {
+                // 检查最后一个组件是否可见
+                Rectangle lastComponentBounds = components[components.length - 1].getBounds();
+                Rectangle targetBounds = target.getBounds();
+
+                // 如果最后一个组件的右边界超出了容器的宽度，则需要省略号
+                isEllipsisNeeded = (lastComponentBounds.x + lastComponentBounds.width) > targetBounds.width;
+            }
+
+            // 根据需要显示或隐藏省略号标签
+            ellipsisLabel.setVisible(isEllipsisNeeded);
+
+            // 如果需要省略号，调整它的位置
+            if (isEllipsisNeeded) {
+                Dimension ellipsisSize = ellipsisLabel.getPreferredSize();
+                ellipsisLabel.setBounds(target.getWidth() - ellipsisSize.width, 0, ellipsisSize.width, ellipsisSize.height);
+            }
+        }
+    }
+
+
 
 }
 

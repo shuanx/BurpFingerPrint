@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
+import java.util.List;
 
 /**
  * @author： shaun
@@ -80,6 +81,9 @@ public class FingerTabEventHandlers {
 
     public static TableModelListener modelAddTableModelListener(HttpLogTableModel model, JPanel tagsPanel, HashMap<String, JLabel> resultMap, HttpLogTable logTable) {
         return new TableModelListener() {
+            private static final int MAX_LABEL = 20;
+            private List<String> labelList = new ArrayList<>(); // 用来存储标签文本的列表
+            private JLabel ellipsisLabel = new JLabel("..."); // 省略号标签
             @Override
             public void tableChanged(TableModelEvent e) {
                 HashMap<String, Integer> resultCounts = new HashMap<>();
@@ -100,10 +104,18 @@ public class FingerTabEventHandlers {
                 }
 
                 // 添加新的结果标签
+                List<String> tmplabelList = new ArrayList<>(); // 用来存储标签文本的列表
                 for (Map.Entry<Integer, LinkedList<String>> entry : sortedResults.entrySet()) {
                     Integer count = entry.getKey();
                     for (String result : entry.getValue()) {
-                        addNewResultLabel(result + " (" + count + ")", model);
+                        if(tmplabelList.size() == MAX_LABEL){
+                            tmplabelList.add("...");
+                            continue;
+                        }
+                        if(tmplabelList.size() > MAX_LABEL){
+                            continue;
+                        }
+                        tmplabelList.add(result + " (" + count + ")");
                     }
                 }
             }
