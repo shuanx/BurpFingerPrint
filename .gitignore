@@ -41,4 +41,4 @@ build/
 out/
 
 ### log
-log/*.log
+log/

@@ -21,6 +21,7 @@ import java.util.HashSet;
 
 import burp.ui.renderer.ButtonRenderer;
 import burp.ui.renderer.CenterRenderer;
+import burp.ui.renderer.HeaderIconTypeRenderer;
 import burp.util.UiUtils;
 import burp.util.Utils;
 import burp.ui.renderer.HeaderIconRenderer;
@@ -621,8 +622,7 @@ public class FingerConfigTab extends JPanel {
         TableColumn typeColumn = columnModel.getColumn(1); // 假定类型列的索引是1
 
         // 设置表头渲染器
-        // 设置表头渲染器
-        typeColumn.setHeaderRenderer(new HeaderIconRenderer());
+        typeColumn.setHeaderRenderer(new HeaderIconTypeRenderer());
 
         // 在您的FingerConfigTab构造函数中
         header.addMouseListener(new MouseAdapter() {
@@ -852,22 +852,6 @@ public class FingerConfigTab extends JPanel {
         }
         locationField.setSelectedItem("body"); // 默认选中 "body"
     }
-
-    private void showFilterMenu(int x, int y) {
-        JPopupMenu filterMenu = new JPopupMenu();
-        for (String type : uniqueTypes) {
-            JMenuItem menuItem = new JMenuItem(type);
-            menuItem.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    filterTableByType(type);
-                }
-            });
-            filterMenu.add(menuItem);
-        }
-        filterMenu.show(table.getTableHeader(), x, y);
-    }
-
 
     // 创建或更新typeField下拉框的方法
     public void updateTypeField() {
