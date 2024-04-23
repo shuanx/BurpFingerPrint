@@ -64,7 +64,7 @@ GITHUB: https://github.com/shuanx/BurpJsUrlFinder
 - [ ] 信呼OA
 
 ## 优化/建议/问题反馈群
-![img.png](images/weixinqun.png)
+<img src="images/weixinqun.jpg" alt="img.png" width="200"/>
 
 
 ## 免责声明
