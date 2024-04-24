@@ -4,6 +4,7 @@ import burp.BurpExtender;
 import burp.IExtensionHelpers;
 import burp.IResponseInfo;
 import burp.model.FingerPrintRule;
+import burp.ui.FingerConfigTab;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -44,13 +45,13 @@ public class FingerUtils {
         if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || oneUrl.contains("favicon.") || oneUrl.contains(".ico")) {
             byte[] body = Arrays.copyOfRange(oneResponseBytes, responseInfo.getBodyOffset(), oneResponseBytes.length);
             faviconHash = Utils.getFaviconHash(body);
-            BurpExtender.stdout.println("The MurmurHash3 of the image is: " + oneUrl + ":" + faviconHash);
+            BurpExtender.getStdout().println("The MurmurHash3 of the image is: " + oneUrl + ":" + faviconHash);
         }
 
 
         for (FingerPrintRule rule : BurpExtender.fingerprintRules) {
             // 看是否只对重点指纹进行匹配
-            if (BurpExtender.tags.fingerConfigTab.allFingerprintsButton.isSelected() && !rule.getIsImportant()){
+            if (FingerConfigTab.allFingerprintsButton.isSelected() && !rule.getIsImportant()){
                 continue;
             }
             String locationContent = "";
@@ -61,7 +62,7 @@ public class FingerUtils {
             } else if ("title".equals(rule.getLocation())) {
                 locationContent = finalResponseTitle;
             }else{
-                BurpExtender.stderr.println("[!]指纹出现问题：" + rule.getLocation());
+                BurpExtender.getStderr().println("[!]指纹出现问题：" + rule.getLocation());
             }
             boolean allKeywordsPresent = true;
             if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || oneUrl.contains("favicon.") || oneUrl.contains(".ico")) {
@@ -71,7 +72,7 @@ public class FingerUtils {
                         allKeywordsPresent = false;
                     }
                 } catch (Exception e) {
-                    BurpExtender.stderr.println(e.getMessage());
+                    BurpExtender.getStderr().println(e.getMessage());
                 }
             }else{
                 // 进入非图标匹配逻辑

@@ -1,6 +1,7 @@
 package burp.ui;
 
 import burp.BurpExtender;
+import burp.model.TableLogEntry;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -69,7 +70,7 @@ public class HttpLogTable extends JTable {
     public void changeSelection(int row, int col, boolean toggle, boolean extend) {
         super.changeSelection(row, col, toggle, extend);
         // show the log entry for the selected row
-        LogEntry logEntry = BurpExtender.log.get(row);
+        TableLogEntry logEntry = BurpExtender.log.get(row);
         FingerTab.requestViewer.setMessage(logEntry.requestResponse.getRequest(), true);
         FingerTab.responseViewer.setMessage(logEntry.requestResponse.getResponse(), false);
         FingerTab.resultDeViewer.setText(logEntry.resultDetail.getBytes());

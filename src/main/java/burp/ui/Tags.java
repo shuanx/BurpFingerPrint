@@ -16,7 +16,7 @@ public class Tags implements ITab {
     private FingerTab fingerTab = new FingerTab();
     public FingerConfigTab fingerConfigTab = new FingerConfigTab();
 
-    public Tags(IBurpExtenderCallbacks callbacks, String name) throws Exception{
+    public Tags(IBurpExtenderCallbacks callbacks, String name){
 
         this.tagName = name;
         // 定义tab标签页

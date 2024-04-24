@@ -34,11 +34,11 @@ public class HTTPUtils {
             // 分析URL
         } catch (Exception e) {
             // 处理可能出现的MalformedURLException
-            BurpExtender.stdout.println("Invalid URL: " + getUrl);
+            BurpExtender.getStdout().println("Invalid URL: " + getUrl);
             return null;
         }
         // 创建IHttpService对象
-        IHttpService httpService = BurpExtender.helpers.buildHttpService(host, port, protocol);
+        IHttpService httpService = BurpExtender.getHelpers().buildHttpService(host, port, protocol);
 
         // 构造GET请求的字节数组
         String request = "GET " + path + " HTTP/1.1\r\n" +
@@ -48,7 +48,7 @@ public class HTTPUtils {
         byte[] requestBytes = request.getBytes();
 
         // 发起请求
-        IHttpRequestResponse response = BurpExtender.callbacks.makeHttpRequest(httpService, requestBytes);
+        IHttpRequestResponse response = BurpExtender.getCallbacks().makeHttpRequest(httpService, requestBytes);
 
         // 当前请求的URL，requests，Response，以及findUrl来区别是否为提取出来的URL
         Map<String, Object> originalData = new HashMap<String, Object>();

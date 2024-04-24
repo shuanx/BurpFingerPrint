@@ -1,6 +1,8 @@
 package burp.ui;
 
 import burp.BurpExtender;
+import burp.model.TableLogEntry;
+
 import javax.swing.JTable;
 
 import javax.swing.table.AbstractTableModel;
@@ -51,7 +53,7 @@ public class HttpLogTableModel extends AbstractTableModel {
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         // 对接log数据，底层会遍历该接口，获取所有的log的数据展示在burp的表格上
-        LogEntry logEntry = BurpExtender.log.get(rowIndex);
+        TableLogEntry logEntry = BurpExtender.log.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
@@ -78,7 +80,7 @@ public class HttpLogTableModel extends AbstractTableModel {
     }
 
     public void setRowCount() {
-        for (LogEntry logEntry : BurpExtender.log) {
+        for (TableLogEntry logEntry : BurpExtender.log) {
             FingerTab.logTable.decrementResultCount(logEntry.result);
         }
         BurpExtender.log.clear();

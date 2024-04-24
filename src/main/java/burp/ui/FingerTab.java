@@ -169,7 +169,7 @@ public class FingerTab implements IMessageEditorController {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 例如，更新FingerConfigTab中的按钮状态
-                BurpExtender.tags.fingerConfigTab.toggleButton.setSelected(toggleButton.isSelected());
+                BurpExtender.getTags().fingerConfigTab.toggleButton.setSelected(toggleButton.isSelected());
                 FingerConfigTab.toggleFingerprintsDisplay(toggleButton.isSelected(), allFingerprintsButton.isSelected());
             }
         });
@@ -291,16 +291,16 @@ public class FingerTab implements IMessageEditorController {
 
 
         JTabbedPane tabs = new JTabbedPane();
-        requestViewer = BurpExtender.callbacks.createMessageEditor(this, false);
-        responseViewer = BurpExtender.callbacks.createMessageEditor(this, false);
-        resultDeViewer = BurpExtender.callbacks.createTextEditor();
+        requestViewer = BurpExtender.getCallbacks().createMessageEditor(this, false);
+        responseViewer = BurpExtender.getCallbacks().createMessageEditor(this, false);
+        resultDeViewer = BurpExtender.getCallbacks().createTextEditor();
 
         tabs.addTab("Result Details", resultDeViewer.getComponent());
         tabs.addTab("Request", requestViewer.getComponent());
         tabs.addTab("Original Response", responseViewer.getComponent());
         splitPane.setBottomComponent(tabs);
 
-        BurpExtender.callbacks.customizeUiComponent(topPanel);
+        BurpExtender.getCallbacks().customizeUiComponent(topPanel);
     }
 
     public Component getComponet(){

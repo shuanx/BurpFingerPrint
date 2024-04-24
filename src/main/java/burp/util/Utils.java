@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import burp.IBurpExtenderCallbacks;
-import burp.ui.LogEntry;
+import burp.IHttpService;
+import burp.model.TableLogEntry;
 
 import java.util.*;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import java.security.cert.X509Certificate;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -141,8 +141,8 @@ public class Utils {
         return (pureUrl.lastIndexOf(".") > -1 ? pureUrl.substring(pureUrl.lastIndexOf(".") + 1) : "").toLowerCase();
     }
 
-    public static boolean urlExistsInLog(List<LogEntry> log, String url) {
-        for (LogEntry logEntry : log) {
+    public static boolean urlExistsInLog(List<TableLogEntry> log, String url) {
+        for (TableLogEntry logEntry : log) {
             if (logEntry.getUrl().equals(url))
                 return true;
         }
@@ -465,6 +465,25 @@ public class Utils {
         Integer lastIndex = callbacks.getExtensionFilename().lastIndexOf(File.separator);
         path = callbacks.getExtensionFilename().substring(0, lastIndex) + File.separator;
         return path;
+    }
+
+    public static IHttpService iHttpService(String host, int port, String protocol){
+        return new IHttpService() {
+            @Override
+            public String getHost() {
+                return host;
+            }
+
+            @Override
+            public int getPort() {
+                return port;
+            }
+
+            @Override
+            public String getProtocol() {
+                return protocol;
+            }
+        };
     }
 
 }
