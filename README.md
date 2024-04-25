@@ -11,7 +11,8 @@
 - [x] 开界面进行指纹库修改，可导入、导出、重置
 - [x] 优化已有指纹库，区分重点指纹和常见指纹，补充部分实战热门漏洞的指纹，方便直接一键getshell
 ![img.png](images/importantFinger.png)
-- [ ] 优化算法，提升性能、减少内存开销
+- [x] 优化算法，提升性能、减少内存开销
+- [x] 使用sqlite存储扫描结果，放置因BurpSuite意外退出而导致数据丢失
 - [ ] 收集github上常见的EXP工具，提起其含有EXP漏洞的指纹，当成重要指纹，一旦页面出现该指纹，就表示有戏有戏
 
 - 1、https://github.com/R4gd0ll/I-Wanna-Get-All
