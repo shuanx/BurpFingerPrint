@@ -141,6 +141,7 @@ public class IProxyScanner implements IProxyListener {
                             }
 
                             mapResult.setStatus(Short.toString(responseInfo.getStatusCode()));
+                            mapResult.setMethod(oneMethod);
                             BurpExtender.getDataBaseService().insertOrUpdateLogEntry(mapResult);
                             BurpExtender.getStdout().println(mapResult);
                         }

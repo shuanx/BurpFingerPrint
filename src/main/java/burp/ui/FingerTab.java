@@ -17,6 +17,8 @@ import javax.swing.table.*;
 import java.awt.Component;
 
 //import burp.ui.event.FingerTabEventHandlers;
+import burp.model.DatabaseService;
+import burp.model.TableLogModel;
 import burp.ui.renderer.CenterTableCellRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
 import burp.ui.renderer.IconTableCellRenderer;
@@ -363,6 +365,8 @@ public class FingerTab implements IMessageEditorController {
             }
         });
 
+        timer.start();
+
 
 
     }
@@ -376,14 +380,36 @@ public class FingerTab implements IMessageEditorController {
             }
             return;
         }
-        // 触发显示所有行事件
-        String searchText = "";
-//        if (!FingerConfigTab.searchField.getText().isEmpty()){
-//            searchText = ConfigPanel.searchField.getText();
-//        }
-//        // 设置所有状态码为关闭
-//        MailPanel.showFilter(searchText);
+        // 设置所有状态码为关闭
+        showFilter();
     }
+
+
+    public static void showFilter(){
+        synchronized (model) {
+            // 清空model后，根据URL来做匹配
+            model.setRowCount(0);
+
+            // 获取数据库中的所有ApiDataModels
+            java.util.List<TableLogModel> allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
+
+            // 遍历apiDataModelMap
+            for (TableLogModel apiDataModel : allApiDataModels) {
+                model.insertRow(0, new Object[]{
+                        apiDataModel.getPid(),
+                        apiDataModel.getMethod(),
+                        apiDataModel.getUrl(),
+                        apiDataModel.getTitle(),
+                        apiDataModel.getStatus(),
+                        apiDataModel.getResult(),
+                        apiDataModel.getType(),
+                        apiDataModel.getIsImportant(),
+                        apiDataModel.getTime()
+                });
+            }
+        }
+    }
+
 
     public Component getComponet(){
         return contentPane;

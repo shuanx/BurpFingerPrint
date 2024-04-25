@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class FingerUtils {
     public static TableLogModel FingerFilter(int pid, String oneUrl, byte[] oneResponseBytes, IHttpService iHttpService, IExtensionHelpers helpers, int requestResponseIndex){
-        TableLogModel logModel = new TableLogModel(pid, oneUrl, "", "", "", "", "", false, "", iHttpService, requestResponseIndex);
+        TableLogModel logModel = new TableLogModel(pid, Utils.getUriFromUrl(oneUrl), "", "", "", "", "", false, "", iHttpService, requestResponseIndex);
 
         IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
         // 响应的body值

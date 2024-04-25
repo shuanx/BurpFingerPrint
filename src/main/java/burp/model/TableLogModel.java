@@ -127,11 +127,11 @@ public class TableLogModel {
     }
 
     public int getPort(){
-        return this.getPort();
+        return this.iHttpService.getPort();
     }
 
     public String getProtocol(){
-        return this.getProtocol();
+        return this.iHttpService.getProtocol();
     }
 
 

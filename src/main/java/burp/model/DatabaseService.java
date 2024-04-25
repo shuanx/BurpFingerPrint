@@ -10,6 +10,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class DatabaseService {
 
@@ -101,7 +105,7 @@ public class DatabaseService {
 
     public synchronized int insertOrUpdateLogEntry(TableLogModel logEntry) {
         int generatedId = -1; // 默认ID值，如果没有生成ID，则保持此值
-        String checkSql = "SELECT id, result, result_info, status FROM table_data WHERE url = ?";
+        String checkSql = "SELECT id, result, result_info, status, request_response_index FROM table_data WHERE url = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
@@ -146,7 +150,7 @@ public class DatabaseService {
                 }
             } else {
                 // 记录不存在，插入新记录
-                String insertSql = "INSERT INTO table_data (pid, url, method, title, status, result, type, is_important, result_info, request_response_index, host, port, protocol) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                String insertSql = "INSERT INTO table_data (pid, url, method, title, status, result, type, is_important, result_info, request_response_index, host, port, protocol, time) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                     insertStmt.setInt(1, logEntry.getPid());
                     insertStmt.setString(2, logEntry.getUrl());
@@ -161,6 +165,7 @@ public class DatabaseService {
                     insertStmt.setString(11, logEntry.getHost());
                     insertStmt.setInt(12, logEntry.getPort());
                     insertStmt.setString(13, logEntry.getProtocol());
+                    insertStmt.setString(14, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
                     insertStmt.executeUpdate();
 
                     // 获取生成的键值
@@ -177,6 +182,39 @@ public class DatabaseService {
         }
 
         return generatedId; // 返回ID值，无论是更新还是插入
+    }
+
+    public synchronized List<TableLogModel> getAllTableDataModels() {
+        List<TableLogModel> allTableDataModels = new ArrayList<>();
+        String sql = "SELECT * FROM table_data";
+
+        try (Connection conn = this.connect();
+             Statement stmt  = conn.createStatement();
+             ResultSet rs    = stmt.executeQuery(sql)) {
+
+            // loop through the result set
+            while (rs.next()) {
+                TableLogModel model = new TableLogModel(
+                        rs.getInt("pid"),
+                        rs.getString("url"),
+                        rs.getString("method"),
+                        rs.getString("title"),
+                        rs.getString("status"),
+                        rs.getString("result"),
+                        rs.getString("type"),
+                        rs.getInt("is_important") != 0, // Convert to Boolean
+                        rs.getString("result_info"),
+                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
+                        rs.getInt("request_response_index")
+                );
+                // Assuming you have a constructor that matches these parameters.
+                allTableDataModels.add(model);
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error retrieving all records from table_data: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        return allTableDataModels;
     }
 
     public synchronized boolean isExistTableDataModelByUri(String uri) {
