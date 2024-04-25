@@ -217,6 +217,83 @@ public class DatabaseService {
         return allTableDataModels;
     }
 
+    public synchronized List<TableLogModel> getTableDataModelsByType(String typeFilter) {
+        List<TableLogModel> filteredTableDataModels = new ArrayList<>();
+        // Use a parameterized query to prevent SQL injection
+        String sql = "SELECT * FROM table_data WHERE type LIKE ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set the parameter to the prepared statement
+            pstmt.setString(1, "%" + typeFilter + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            // Loop through the result set
+            while (rs.next()) {
+                TableLogModel model = new TableLogModel(
+                        rs.getInt("pid"),
+                        rs.getString("url"),
+                        rs.getString("method"),
+                        rs.getString("title"),
+                        rs.getString("status"),
+                        rs.getString("result"),
+                        rs.getString("type"),
+                        rs.getInt("is_important") != 0, // Convert to Boolean
+                        rs.getString("result_info"),
+                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
+                        rs.getInt("request_response_index")
+                );
+                // Assuming you have a constructor that matches these parameters.
+                filteredTableDataModels.add(model);
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error retrieving records by type from table_data: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        return filteredTableDataModels;
+    }
+
+
+    public synchronized List<TableLogModel> getTableDataModelsByResult(String result) {
+        List<TableLogModel> filteredTableDataModels = new ArrayList<>();
+        // Use a parameterized query to prevent SQL injection
+        String sql = "SELECT * FROM table_data WHERE result LIKE ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            // Set the parameter to the prepared statement
+            pstmt.setString(1, "%" + result + "%");
+            ResultSet rs = pstmt.executeQuery();
+
+            // Loop through the result set
+            while (rs.next()) {
+                TableLogModel model = new TableLogModel(
+                        rs.getInt("pid"),
+                        rs.getString("url"),
+                        rs.getString("method"),
+                        rs.getString("title"),
+                        rs.getString("status"),
+                        rs.getString("result"),
+                        rs.getString("type"),
+                        rs.getInt("is_important") != 0, // Convert to Boolean
+                        rs.getString("result_info"),
+                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
+                        rs.getInt("request_response_index")
+                );
+                // Assuming you have a constructor that matches these parameters.
+                filteredTableDataModels.add(model);
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error retrieving records by type from table_data: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        return filteredTableDataModels;
+    }
+
+
+
     public synchronized boolean isExistTableDataModelByUri(String uri) {
         String sql = "SELECT * FROM api_data WHERE url = ?";
         TableLogModel model = null;

@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.awt.Component;
 //import burp.ui.event.FingerTabEventHandlers;
 import burp.model.DatabaseService;
 import burp.model.TableLogModel;
+import burp.ui.event.FingerTabEventHandlers;
 import burp.ui.renderer.CenterTableCellRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
 import burp.ui.renderer.IconTableCellRenderer;
@@ -315,9 +317,9 @@ public class FingerTab implements IMessageEditorController {
         // 设置表头渲染器
         typeColumn.setHeaderRenderer(new HeaderIconRenderer());
         // 在您的FingerConfigTab构造函数中
-//        header.addMouseListener(FingerTabEventHandlers.headerAddMouseListener(table));
+        header.addMouseListener(FingerTabEventHandlers.headerAddMouseListener(table));
 
-//        model.addTableModelListener(FingerTabEventHandlers.modelAddTableModelListener(model, tagsPanel, resultMap, logTable));
+        model.addTableModelListener(FingerTabEventHandlers.modelAddTableModelListener(model, tagsPanel, resultMap, table));
 
 
         // 创建右键菜单
@@ -407,6 +409,75 @@ public class FingerTab implements IMessageEditorController {
                         apiDataModel.getTime()
                 });
             }
+        }
+    }
+
+    public static void filterTableByType(String type) {
+        try{
+        // 清空model后，根据URL来做匹配
+            model.setRowCount(0);
+            java.util.List<TableLogModel> allApiDataModels;
+            if (type.isEmpty()){
+                allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
+                setFlashButtonTrue();
+            } else{
+                // 获取数据库中的所有ApiDataModels
+                allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByType(type);
+                setFlashButtonFalse();
+            }
+
+            // 遍历apiDataModelMap
+            for (TableLogModel apiDataModel : allApiDataModels) {
+                model.insertRow(0, new Object[]{
+                        apiDataModel.getPid(),
+                        apiDataModel.getMethod(),
+                        apiDataModel.getUrl(),
+                        apiDataModel.getTitle(),
+                        apiDataModel.getStatus(),
+                        apiDataModel.getResult(),
+                        apiDataModel.getType(),
+                        apiDataModel.getIsImportant(),
+                        apiDataModel.getTime()
+                });
+            }
+        } catch (Exception e) {
+            BurpExtender.getStderr().println("[-] Error filterTableByType: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
+
+    public static void filterTableByRersult(String result) {
+        try{
+            // 清空model后，根据URL来做匹配
+            model.setRowCount(0);
+            java.util.List<TableLogModel> allApiDataModels;
+            if (result.isEmpty()){
+                allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
+                setFlashButtonTrue();
+            } else{
+                // 获取数据库中的所有ApiDataModels
+                allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByResult(result);
+                setFlashButtonFalse();
+            }
+
+            // 遍历apiDataModelMap
+            for (TableLogModel apiDataModel : allApiDataModels) {
+                model.insertRow(0, new Object[]{
+                        apiDataModel.getPid(),
+                        apiDataModel.getMethod(),
+                        apiDataModel.getUrl(),
+                        apiDataModel.getTitle(),
+                        apiDataModel.getStatus(),
+                        apiDataModel.getResult(),
+                        apiDataModel.getType(),
+                        apiDataModel.getIsImportant(),
+                        apiDataModel.getTime()
+                });
+            }
+        } catch (Exception e) {
+            BurpExtender.getStderr().println("[-] Error filterTableByType: ");
+            e.printStackTrace(BurpExtender.getStderr());
         }
     }
 
