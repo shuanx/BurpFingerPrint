@@ -380,7 +380,7 @@ public class FingerConfigTab extends JPanel {
                         model.fireTableDataChanged();
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(FingerConfigTab.this, "读取文件或解析 JSON 数据时发生错误: " + ex.getMessage(), "导入失败", JOptionPane.ERROR_MESSAGE);
-                        BurpExtender.stdout.println(ex.getMessage());
+                        BurpExtender.getStdout().println(ex.getMessage());
                     }
 
                 }
@@ -450,7 +450,7 @@ public class FingerConfigTab extends JPanel {
 
                 try {
                     // 使用UTF-8编码写入文件
-                    File fileToSave = new File(Utils.getExtensionFilePath(BurpExtender.callbacks), "finger-tmp.json");
+                    File fileToSave = new File(Utils.getExtensionFilePath(BurpExtender.getCallbacks()), "finger-tmp.json");
                     OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(fileToSave), StandardCharsets.UTF_8);
                     writer.write(json);
                     writer.close();

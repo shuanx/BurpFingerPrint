@@ -1,13 +1,8 @@
 package burp.model;
 
-import burp.IHttpRequestResponsePersisted;
 import burp.IHttpService;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-
-public class TableLogEntry {
+public class TableLogModel {
     final int pid;
     int requestResponseIndex;
     Boolean isImportant;
@@ -21,7 +16,7 @@ public class TableLogEntry {
     String time;
     IHttpService iHttpService;
 
-    public TableLogEntry(int pid, String url, String method, String title, String status, String result, String type, Boolean isImportant, String resultInfo, IHttpService iHttpService, int requestResponseIndex ) {
+    public TableLogModel(int pid, String url, String method, String title, String status, String result, String type, Boolean isImportant, String resultInfo, IHttpService iHttpService, int requestResponseIndex ) {
         this.pid = pid;
         this.url = url;
         this.title = title;

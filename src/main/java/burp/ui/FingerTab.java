@@ -8,13 +8,15 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.*;
 import java.awt.Component;
 
-import burp.ui.event.FingerTabEventHandlers;
+//import burp.ui.event.FingerTabEventHandlers;
 import burp.ui.renderer.CenterTableCellRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
 import burp.ui.renderer.IconTableCellRenderer;
@@ -24,7 +26,6 @@ import burp.util.UiUtils;
 public class FingerTab implements IMessageEditorController {
     public static JPanel contentPane;
     private JSplitPane splitPane;
-    public static HttpLogTable logTable;
     public static IHttpRequestResponse currentlyDisplayedItem;
     public static JLabel lbRequestCount;
     public static JLabel lbSuccessCount;
@@ -39,6 +40,12 @@ public class FingerTab implements IMessageEditorController {
     // 在FingerTab类中添加成员变量
     public static JToggleButton allFingerprintsButton;
     public static JToggleButton toggleButton;
+    private static DefaultTableModel model;
+    public static JTable table;
+    public static JToggleButton flashButton;
+    public static JLabel flashText;
+    public static Timer timer;
+    public static LocalDateTime operationStartTime = LocalDateTime.now();
 
     public FingerTab() {
         contentPane = new JPanel();
@@ -154,16 +161,49 @@ public class FingerTab implements IMessageEditorController {
         gbc_buttons.gridx = 7; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(toggleButton, gbc_buttons);
 
+        // 刷新按钮按钮
+        flashButton = new JToggleButton(UiUtils.getImageIcon("/icon/runningButton.png", 24, 24));
+        flashButton.setSelectedIcon(UiUtils.getImageIcon("/icon/flashButton.png", 24, 24));
+        flashButton.setPreferredSize(new Dimension(30, 30));
+        flashButton.setBorder(null);  // 设置无边框
+        flashButton.setFocusPainted(false);  // 移除焦点边框
+        flashButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        flashButton.setToolTipText("用于控制表格是否自动化刷新，还是手工点击刷新");
+
+
+        // 刷新按钮
+        flashButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 检查按钮的选中状态
+                if (flashButton.isSelected()) {
+                    // 如果按钮被选中，意味着刷新功能被激活，我们将文本设置为 "暂停刷新中"
+                    flashText.setText("暂停每5秒刷新表格");
+                } else {
+                    // 如果按钮没有被选中，意味着刷新功能没有被激活，我们将文本设置为 "自动刷新"
+                    flashText.setText("自动每5秒刷新表格中");
+                }
+            }
+        });
+
+        // 刷新文本
+        flashText = new JLabel("自动每5秒刷新表格中");
+
+        gbc_buttons.gridx = 8; // 将横坐标位置移动到下一个单元格
+        FilterPanel.add(flashButton, gbc_buttons);
+        gbc_buttons.gridx = 9; // 将横坐标位置移动到下一个单元格
+        FilterPanel.add(flashText, gbc_buttons);
+
         // 添加填充以在右侧占位
         GridBagConstraints gbc_rightFiller = new GridBagConstraints();
         gbc_rightFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
-        gbc_rightFiller.gridx = 8; // 位置设置为最后一个单元格
+        gbc_rightFiller.gridx = 11; // 位置设置为最后一个单元格
         gbc_rightFiller.gridy = 0; // 第一行
         gbc_rightFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
         FilterPanel.add(Box.createHorizontalGlue(), gbc_rightFiller);
 
         // 在FingerTab类中添加事件监听器
-        allFingerprintsButton.addActionListener(FingerTabEventHandlers.allFingerprintsButtonAddActionListener(logTable, allFingerprintsButton));
+//        allFingerprintsButton.addActionListener(FingerTabEventHandlers.allFingerprintsButtonAddActionListener(logTable, allFingerprintsButton));
 
         toggleButton.addActionListener(new ActionListener() {
             @Override
@@ -180,7 +220,7 @@ public class FingerTab implements IMessageEditorController {
         GridBagConstraints gbc_btnClear = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 11;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 12;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(btnClear, gbc_btnClear);
 
@@ -195,11 +235,11 @@ public class FingerTab implements IMessageEditorController {
         GridBagConstraints gbc_btnMore = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 12;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 13;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(moreButton, gbc_btnMore);
 
-        exportItem.addActionListener(FingerTabEventHandlers.exportItemAddActionListener(contentPane, logTable));
+//        exportItem.addActionListener(FingerTabEventHandlers.exportItemAddActionListener(contentPane, logTable));
 
         // 点击”功能“的监听事件
         moreButton.addMouseListener(new MouseAdapter() {
@@ -233,7 +273,7 @@ public class FingerTab implements IMessageEditorController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 // 当用户点击 "全部"，展示所有的数据
-                ((TableRowSorter<TableModel>)logTable.getRowSorter()).setRowFilter(null);
+//                ((TableRowSorter<TableModel>)logTable.getRowSorter()).setRowFilter(null);
             }
         });
         tagsPanel.add(allLabel);
@@ -244,33 +284,38 @@ public class FingerTab implements IMessageEditorController {
         splitPane.setDividerLocation(0.5);
         contentPane.add(splitPane, BorderLayout.CENTER);
 
-        HttpLogTableModel model = new HttpLogTableModel();
-        logTable = new HttpLogTable(model);
-        // 创建居中渲染器实例
-        CenterTableCellRenderer centerRenderer = new CenterTableCellRenderer();
-        // 创建自定义的单元格渲染器实例
-        IconTableCellRenderer iconRenderer = new IconTableCellRenderer();
-        logTable.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        logTable.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        logTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-        logTable.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
-        logTable.getColumnModel().getColumn(7).setCellRenderer(iconRenderer);
-        logTable.getColumnModel().getColumn(8).setCellRenderer(centerRenderer);
-        logTable.setAutoCreateRowSorter(true);  // 添加这一行来启用自动创建行排序器
-        logTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        logTable.setRowSelectionAllowed(true);
+        // 数据展示面板
+        model = new DefaultTableModel(new Object[]{"#", "Method", "URl", "Titled", "Status", "Result", "type", "isImportant", "Time"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // This will make all cells of the table non-editable
+                return false;
+            }
+        };
+        table = new JTable(model){
+            // 重写getToolTipText方法以返回特定单元格的数据
+            public String getToolTipText(MouseEvent e) {
+                int row = rowAtPoint(e.getPoint());
+                int col = columnAtPoint(e.getPoint());
+                if (row > -1 && col > -1) {
+                    Object value = getValueAt(row, col);
+                    return value == null ? null : value.toString();
+                }
+                return super.getToolTipText(e);
+            }
+        };;
 
         // 在FingerConfigTab构造函数中设置表头渲染器和监听器的代码
-        JTableHeader header = logTable.getTableHeader();
+        JTableHeader header = table.getTableHeader();
         TableColumnModel columnModel = header.getColumnModel();
         TableColumn typeColumn = columnModel.getColumn(6); // 假定类型列的索引是1
 
         // 设置表头渲染器
         typeColumn.setHeaderRenderer(new HeaderIconRenderer());
         // 在您的FingerConfigTab构造函数中
-        header.addMouseListener(FingerTabEventHandlers.headerAddMouseListener(logTable));
+//        header.addMouseListener(FingerTabEventHandlers.headerAddMouseListener(table));
 
-        model.addTableModelListener(FingerTabEventHandlers.modelAddTableModelListener(model, tagsPanel, resultMap, logTable));
+//        model.addTableModelListener(FingerTabEventHandlers.modelAddTableModelListener(model, tagsPanel, resultMap, logTable));
 
 
         // 创建右键菜单
@@ -278,16 +323,16 @@ public class FingerTab implements IMessageEditorController {
         JMenuItem clearItem = new JMenuItem("清除");
         popupMenu.add(clearItem);
         // 将右键菜单添加到表格
-        logTable.setComponentPopupMenu(popupMenu);
+        table.setComponentPopupMenu(popupMenu);
 
         // 为菜单项添加行为
-        clearItem.addActionListener(FingerTabEventHandlers.clearItemAddActionListener(model, logTable, lbSuccessCount));
+//        clearItem.addActionListener(FingerTabEventHandlers.clearItemAddActionListener(model, logTable, lbSuccessCount));
 
-        JScrollPane jspLogTable = new JScrollPane(logTable);
+        JScrollPane jspLogTable = new JScrollPane(table);
         splitPane.setTopComponent(jspLogTable);
 
         // 添加点击事件监听器
-        btnClear.addActionListener(FingerTabEventHandlers.btnClearAddActionListener(model, lbRequestCount, lbSuccessCount, tagsPanel));
+//        btnClear.addActionListener(FingerTabEventHandlers.btnClearAddActionListener(model, lbRequestCount, lbSuccessCount, tagsPanel));
 
 
         JTabbedPane tabs = new JTabbedPane();
@@ -301,6 +346,43 @@ public class FingerTab implements IMessageEditorController {
         splitPane.setBottomComponent(tabs);
 
         BurpExtender.getCallbacks().customizeUiComponent(topPanel);
+
+        // 构建一个定时刷新页面函数
+        // 创建一个每5秒触发一次的定时器
+        int delay = 5000; // 延迟时间，单位为毫秒
+        timer = new Timer(delay, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 调用刷新表格的方法
+                try{
+                    refreshTableModel();
+                } catch (Exception ep){
+                    BurpExtender.getStderr().println("[!] 刷新表格报错， 报错如下：");
+                    ep.printStackTrace(BurpExtender.getStderr());
+                }
+            }
+        });
+
+
+
+    }
+
+    public static void refreshTableModel(){
+        // 刷新页面, 如果自动更新关闭，则不刷新页面内容
+//        lbSuccessCount.setText(String.valueOf(BurpExtender.getDataBaseService().getApiDataCount()));
+        if(getFlashButtonStatus()){
+            if (Duration.between(operationStartTime, LocalDateTime.now()).getSeconds() > 600){
+                setFlashButtonTrue();
+            }
+            return;
+        }
+        // 触发显示所有行事件
+        String searchText = "";
+//        if (!FingerConfigTab.searchField.getText().isEmpty()){
+//            searchText = ConfigPanel.searchField.getText();
+//        }
+//        // 设置所有状态码为关闭
+//        MailPanel.showFilter(searchText);
     }
 
     public Component getComponet(){
@@ -449,6 +531,28 @@ public class FingerTab implements IMessageEditorController {
                 Dimension ellipsisSize = ellipsisLabel.getPreferredSize();
                 ellipsisLabel.setBounds(target.getWidth() - ellipsisSize.width, 0, ellipsisSize.width, ellipsisSize.height);
             }
+        }
+    }
+
+    public static void setFlashButtonTrue(){
+        flashButton.setSelected(false);
+        flashText.setText("自动每5秒刷新表格中");
+
+    }
+
+    public static void setFlashButtonFalse(){
+        flashButton.setSelected(true);
+        flashText.setText("暂停每5秒刷新表格");
+    }
+
+    public static boolean getFlashButtonStatus(){
+        // 检查按钮的选中状态
+        if (flashButton.isSelected()) {
+            // 如果按钮被选中，意味着刷新功能被激活，我们将文本设置为 "暂停刷新中"
+            return true;
+        } else {
+            // 如果按钮没有被选中，意味着刷新功能没有被激活，我们将文本设置为 "自动刷新"
+            return false;
         }
     }
 

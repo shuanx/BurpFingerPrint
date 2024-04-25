@@ -3,14 +3,12 @@ package burp.model;
 import burp.BurpExtender;
 import burp.util.Utils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.nio.file.Paths;
 import java.sql.*;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DatabaseService {
@@ -101,37 +99,89 @@ public class DatabaseService {
         return connection;
     }
 
-    private synchronized void insertTableData(TableLogEntry entry) {
-        String sql = "INSERT INTO table_data (pid, url, method, title, status, result, type, is_important, time, result_info, request_response_index, host, port, protocol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public synchronized int insertOrUpdateLogEntry(TableLogModel logEntry) {
+        int generatedId = -1; // 默认ID值，如果没有生成ID，则保持此值
+        String checkSql = "SELECT id, result, result_info, status FROM table_data WHERE url = ?";
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, entry.getPid());
-            pstmt.setString(2, entry.getUrl());
-            pstmt.setString(3, entry.getMethod());
-            pstmt.setString(4, entry.getTitle());
-            pstmt.setString(5, entry.getStatus());
-            pstmt.setString(6, entry.getResult());
-            pstmt.setString(7, entry.getType());
-            pstmt.setInt(8, entry.getIsImportant() ? 1 : 0); // Assuming Boolean is stored as an INTEGER
-            pstmt.setString(9, entry.getTime());
-            pstmt.setString(10, entry.getResultInfo());
-            pstmt.setInt(11, entry.getRequestResponseIndex());
-            // Assuming you have getters and setters for host, port, and protocol
-            pstmt.setString(12, entry.getHost());
-            pstmt.setInt(13, entry.getPort());
-            pstmt.setString(14, entry.getProtocol());
+        try (Connection conn = this.connect();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            // 检查记录是否存在
+            checkStmt.setString(1, Utils.getUriFromUrl(logEntry.getUrl()));
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                // 记录存在，更新记录
 
-            pstmt.executeUpdate();
-            BurpExtender.getStdout().println("[+] Data inserted into table_data successfully");
+                String updateSql = "UPDATE table_data SET method = ?, title = ?, status = ?, result = ?, type = ?, is_important = ?, result_info = ?, host = ?, port = ?, protocol = ?, time = ?, request_response_index = ? WHERE url = ?";
+                generatedId = rs.getInt("id");
+                String result = rs.getString("result");
+                String status = rs.getString("status");
+                int request_response_index = rs.getInt("request_response_index");
+
+                for (String oneRs : logEntry.getResult().split(", ")){
+                    if (!result.contains(oneRs)){
+                        result = result + ", " + oneRs;
+                    }
+                }
+
+                if (logEntry.getStatus().equals("200")){
+                    request_response_index = logEntry.getRequestResponseIndex();
+                    status = logEntry.getStatus();
+                }
+
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setString(1, logEntry.getMethod());
+                    updateStmt.setString(2, logEntry.getTitle());
+                    updateStmt.setString(3, status);
+                    updateStmt.setString(4, result);
+                    updateStmt.setString(5, logEntry.getType());
+                    updateStmt.setBoolean(6, logEntry.getIsImportant());
+                    updateStmt.setString(7, rs.getString("result_info") + "\r\n\r\n" + logEntry.getResultInfo());
+                    updateStmt.setString(8, logEntry.getHost());
+                    updateStmt.setInt(9, logEntry.getPort());
+                    updateStmt.setString(10, logEntry.getProtocol());
+                    updateStmt.setString(11, logEntry.getUrl());
+                    updateStmt.setString(12, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+                    updateStmt.setInt(13, request_response_index);
+                    updateStmt.executeUpdate();
+                }
+            } else {
+                // 记录不存在，插入新记录
+                String insertSql = "INSERT INTO table_data (pid, url, method, title, status, result, type, is_important, result_info, request_response_index, host, port, protocol) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+                    insertStmt.setInt(1, logEntry.getPid());
+                    insertStmt.setString(2, logEntry.getUrl());
+                    insertStmt.setString(3, logEntry.getMethod());
+                    insertStmt.setString(4, logEntry.getTitle());
+                    insertStmt.setString(5, logEntry.getStatus());
+                    insertStmt.setString(6, logEntry.getResult());
+                    insertStmt.setString(7, logEntry.getType());
+                    insertStmt.setBoolean(8, logEntry.getIsImportant());
+                    insertStmt.setString(9, logEntry.getResultInfo());
+                    insertStmt.setInt(10, logEntry.getRequestResponseIndex());
+                    insertStmt.setString(11, logEntry.getHost());
+                    insertStmt.setInt(12, logEntry.getPort());
+                    insertStmt.setString(13, logEntry.getProtocol());
+                    insertStmt.executeUpdate();
+
+                    // 获取生成的键值
+                    try (ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                        if (generatedKeys.next()) {
+                            generatedId = generatedKeys.getInt(1); // 获取生成的ID
+                        }
+                    }
+                }
+            }
         } catch (Exception e) {
-            BurpExtender.getStderr().println("[!] Data insertion into table_data failed:");
+            BurpExtender.getStderr().println("[-] Error inserting or updating table_data: ");
             e.printStackTrace(BurpExtender.getStderr());
         }
+
+        return generatedId; // 返回ID值，无论是更新还是插入
     }
 
     public synchronized boolean isExistTableDataModelByUri(String uri) {
         String sql = "SELECT * FROM api_data WHERE url = ?";
-        ApiDataModel model = null;
+        TableLogModel model = null;
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -151,9 +201,9 @@ public class DatabaseService {
     }
 
     // Method to select an ApiDataModel by uri
-    public synchronized ApiDataModel selectTableDataByUri(String uri) {
+    public synchronized TableLogModel selectTableDataByUri(String uri) {
         String sql = "SELECT * FROM api_data WHERE url = ?";
-        ApiDataModel model = null;
+        TableLogModel model = null;
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -162,22 +212,22 @@ public class DatabaseService {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                model = new ApiDataModel(
-                        rs.getString("list_status"),
-                        rs.getString("id"),
-                        rs.getString("url"),
-                        rs.getString("path_number"),
-                        rs.getBoolean("having_important"),
-                        rs.getString("result"),
-                        rs.getInt("request_response_index"),
-                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
-                        rs.getString("time"),
-                        rs.getString("status"),
-                        rs.getString("is_js_find_url"),
-                        rs.getString("method"),
-                        rs.getString("describe"),
-                        rs.getString("result_info")
-                );
+//                model = new (
+//                        rs.getString("list_status"),
+//                        rs.getString("id"),
+//                        rs.getString("url"),
+//                        rs.getString("path_number"),
+//                        rs.getBoolean("having_important"),
+//                        rs.getString("result"),
+//                        rs.getInt("request_response_index"),
+//                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
+//                        rs.getString("time"),
+//                        rs.getString("status"),
+//                        rs.getString("is_js_find_url"),
+//                        rs.getString("method"),
+//                        rs.getString("describe"),
+//                        rs.getString("result_info")
+//                );
             }
         } catch (Exception e) {
             BurpExtender.getStderr().println("[-]查询数据库错误: URI=" + uri);
@@ -189,16 +239,16 @@ public class DatabaseService {
 
 
     // SELECT (READ)
-    private synchronized TableLogEntry selectTableData(int id) {
+    private synchronized TableLogModel selectTableData(int id) {
         String sql = "SELECT * FROM table_data WHERE id = ?";
-        TableLogEntry entry = null;
+        TableLogModel entry = null;
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                entry = new TableLogEntry(
+                entry = new TableLogModel(
                         rs.getInt("pid"),
                         rs.getString("url"),
                         rs.getString("method"),
@@ -224,7 +274,7 @@ public class DatabaseService {
     }
 
     // UPDATE
-    private synchronized void updateTableData(TableLogEntry entry) {
+    private synchronized void updateTableData(TableLogModel entry) {
         String sql = "UPDATE table_data SET pid = ?, url = ?, method = ?, title = ?, status = ?, result = ?, type = ?, is_important = ?, time = ?, result_info = ?, request_response_index = ?, host = ?, port = ?, protocol = ? WHERE id = ?";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -267,6 +317,20 @@ public class DatabaseService {
             BurpExtender.getStdout().println("[-] requests_response table has been cleared.");
         } catch (Exception e) {
             BurpExtender.getStderr().println("Error clearing requests_response table: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
+    public synchronized void clearTableDataTable() {
+        String sql = "DELETE FROM table_data"; // 用 DELETE 语句来清空表
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.executeUpdate();
+            BurpExtender.getStdout().println("[-] table_data table has been cleared.");
+        } catch (Exception e) {
+            BurpExtender.getStderr().println("Error clearing table_data table: ");
             e.printStackTrace(BurpExtender.getStderr());
         }
     }

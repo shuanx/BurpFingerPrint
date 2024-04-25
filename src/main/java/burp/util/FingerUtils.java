@@ -2,8 +2,10 @@ package burp.util;
 
 import burp.BurpExtender;
 import burp.IExtensionHelpers;
+import burp.IHttpService;
 import burp.IResponseInfo;
 import burp.model.FingerPrintRule;
+import burp.model.TableLogModel;
 import burp.ui.FingerConfigTab;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +21,9 @@ import java.util.Map;
  * @description：TODO
  */
 public class FingerUtils {
-    public static Map<String, String> FingerFilter(String oneUrl, byte[] oneResponseBytes, IExtensionHelpers helpers){
-        Map<String, String> mapResult =  new HashMap<String, String>();
+    public static TableLogModel FingerFilter(int pid, String oneUrl, byte[] oneResponseBytes, IHttpService iHttpService, IExtensionHelpers helpers, int requestResponseIndex){
+        TableLogModel logModel = new TableLogModel(pid, oneUrl, "", "", "", "", "", false, "", iHttpService, requestResponseIndex);
+
         IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
         // 响应的body值
         String responseBody = new String(oneResponseBytes, StandardCharsets.UTF_8);
@@ -36,11 +39,12 @@ public class FingerUtils {
         String finalResponseTitle = responseTitle;
 
         String faviconHash = "0";
+
         if (finalResponseTitle.equals(responseBody)){
-            mapResult.put("title", "-");
+            logModel.setTitle("-");
         }
         else{
-            mapResult.put("title", finalResponseTitle);
+            logModel.setTitle(finalResponseTitle);
         }
         if (mimeType.contains("png") || mimeType.contains("jpeg") || mimeType.contains("icon") || mimeType.contains("image") || oneUrl.contains("favicon.") || oneUrl.contains(".ico")) {
             byte[] body = Arrays.copyOfRange(oneResponseBytes, responseInfo.getBodyOffset(), oneResponseBytes.length);
@@ -85,47 +89,44 @@ public class FingerUtils {
             }
 
             if (allKeywordsPresent) {
-                if (mapResult.containsKey("result")) {
+                if (!logModel.getResult().isEmpty()) {
                     // 如果result键已经存在，那么获取它的值并进行拼接
-                    String existingResult = mapResult.get("result");
-                    if (!existingResult.contains(rule.getCms())){
-                        mapResult.put("result", existingResult + ", " + rule.getCms());
+                    if (!logModel.getResult().contains(rule.getCms())){
+                        logModel.setResult(logModel.getResult() + ", " + rule.getCms());
                     }
                 } else {
                     // 如果result键不存在，那么直接添加新的result
-                    mapResult.put("result", rule.getCms());
+                    logModel.setResult(rule.getCms());
                 }
                 String detailInfo =  "Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + "\r\nUrl:" + oneUrl + "\r\n指纹详细信息如下：\r\n" + rule.getInfo();
-                if (mapResult.containsKey("resultDetail")){
+                if (logModel.getResultInfo().isEmpty()){
                     // 如果resultDetail键已经存在，那么获取它的值并进行拼接
-                    String existingResultDetail = mapResult.get("resultDetail");
-                    mapResult.put("resultDetail", detailInfo + "\r\n\r\n" + existingResultDetail);
+                    logModel.setResultInfo(detailInfo + "\r\n\r\n" + logModel.getResultInfo());
                 }
                 else{
                     // 如果resultDetail键不存在，那么直接添加新的result
-                    mapResult.put("resultDetail", detailInfo);
+                    logModel.setResultInfo(detailInfo);
                 }
-                if(mapResult.containsKey("isImportant")){
+                if(logModel.getIsImportant()){
                     if (rule.getIsImportant()){
-                        mapResult.put("isImportant", Boolean.toString(rule.getIsImportant()));
+                        logModel.setIsImportant(rule.getIsImportant());
                     }
                 } else{
-                    mapResult.put("isImportant", Boolean.toString(rule.getIsImportant()));
+                    logModel.setIsImportant(rule.getIsImportant());
                 }
-                if (mapResult.containsKey("type")) {
+                if (!logModel.getType().isEmpty()) {
                     // 如果result键已经存在，那么获取它的值并进行拼接
-                    String existingType = mapResult.get("type");
-                    if (existingType.equals("-") && !rule.getType().equals("-")){
-                        mapResult.put("type", rule.getType());
-                    } else if (!existingType.contains(rule.getType()) && !rule.getType().equals("-")) {
-                        mapResult.put("type", existingType + ", " + rule.getType());
+                    if (logModel.getType().equals("-") && !rule.getType().equals("-")){
+                        logModel.setType(rule.getType());
+                    } else if (!logModel.getType().contains(rule.getType()) && !rule.getType().equals("-")) {
+                        logModel.setType(logModel.getType() + ", " + rule.getType());
                     }
                 } else {
                     // 如果result键不存在，那么直接添加新的result
-                    mapResult.put("type", rule.getType());
+                    logModel.setType(rule.getType());
                 }
             }
         }
-        return mapResult;
+        return logModel;
     }
 }

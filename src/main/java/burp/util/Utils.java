@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
-import burp.model.TableLogEntry;
+import burp.model.TableLogModel;
 
 import java.util.*;
 import java.util.ArrayList;
@@ -141,8 +141,8 @@ public class Utils {
         return (pureUrl.lastIndexOf(".") > -1 ? pureUrl.substring(pureUrl.lastIndexOf(".") + 1) : "").toLowerCase();
     }
 
-    public static boolean urlExistsInLog(List<TableLogEntry> log, String url) {
-        for (TableLogEntry logEntry : log) {
+    public static boolean urlExistsInLog(List<TableLogModel> log, String url) {
+        for (TableLogModel logEntry : log) {
             if (logEntry.getUrl().equals(url))
                 return true;
         }
