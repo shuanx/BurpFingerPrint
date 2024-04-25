@@ -156,10 +156,10 @@ public class Utils {
         Matcher matcher = pattern.matcher(urlString);
 
         if (matcher.find()) {
-            return matcher.group(1);
+            return removeBackSlash(matcher.group(1));
         }
         else{
-            return urlString;
+            return removeBackSlash(urlString);
         }
     }
 

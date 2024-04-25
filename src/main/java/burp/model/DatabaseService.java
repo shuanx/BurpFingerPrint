@@ -144,7 +144,7 @@ public class DatabaseService {
                     updateStmt.setInt(9, logEntry.getPort());
                     updateStmt.setString(10, logEntry.getProtocol());
                     updateStmt.setString(11, logEntry.getUrl());
-                    updateStmt.setString(12, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+                    updateStmt.setString(12, logEntry.getTime());
                     updateStmt.setInt(13, request_response_index);
                     updateStmt.executeUpdate();
                 }
@@ -165,7 +165,7 @@ public class DatabaseService {
                     insertStmt.setString(11, logEntry.getHost());
                     insertStmt.setInt(12, logEntry.getPort());
                     insertStmt.setString(13, logEntry.getProtocol());
-                    insertStmt.setString(14, new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+                    insertStmt.setString(14, logEntry.getTime());
                     insertStmt.executeUpdate();
 
                     // 获取生成的键值
@@ -205,7 +205,8 @@ public class DatabaseService {
                         rs.getInt("is_important") != 0, // Convert to Boolean
                         rs.getString("result_info"),
                         Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
-                        rs.getInt("request_response_index")
+                        rs.getInt("request_response_index"),
+                        rs.getString("time")
                 );
                 // Assuming you have a constructor that matches these parameters.
                 allTableDataModels.add(model);
@@ -217,16 +218,58 @@ public class DatabaseService {
         return allTableDataModels;
     }
 
-    public synchronized List<TableLogModel> getTableDataModelsByType(String typeFilter) {
+    public synchronized HashMap<String, Integer> getResultCountsFromDatabase() {
+        HashMap<String, Integer> resultCounts = new HashMap<>();
+
+        // 调用 getAllTableDataModels() 方法以从数据库获取所有记录
+        List<TableLogModel> allTableDataModels = getAllTableDataModels();
+
+        // 遍历所有记录
+        for (TableLogModel model : allTableDataModels) {
+            String result = model.getResult(); // 获取结果值
+            if (result != null && !result.trim().isEmpty()) {
+                String[] parts = result.split(", "); // 根据", "进行切分
+                for (String part : parts) {
+                    resultCounts.put(part, resultCounts.getOrDefault(part, 0) + 1); // 添加到映射中进行去重，并计数
+                }
+            }
+        }
+
+        return resultCounts; // 返回包含每个不同结果出现次数的 HashMap
+    }
+    public synchronized List<TableLogModel> getTableDataModelsByFilter(String typeFilter, String resultFilter, Boolean isImportantFilter) {
         List<TableLogModel> filteredTableDataModels = new ArrayList<>();
-        // Use a parameterized query to prevent SQL injection
-        String sql = "SELECT * FROM table_data WHERE type LIKE ?";
+        // Start with a base SQL query
+        StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM table_data WHERE 1=1");
+
+        // If typeFilter is not "全部", add it to the query
+        if (!"全部".equals(typeFilter)) {
+            sqlBuilder.append(" AND type LIKE ?");
+        }
+        // If resultFilter is not "全部", add it to the query
+        if (!"全部".equals(resultFilter)) {
+            sqlBuilder.append(" AND result LIKE ?");
+        }
+        // If isImportantFilter is not null, add it to the query
+        if (isImportantFilter != null) {
+            sqlBuilder.append(" AND is_important = ?");
+        }
 
         try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sqlBuilder.toString())) {
 
-            // Set the parameter to the prepared statement
-            pstmt.setString(1, "%" + typeFilter + "%");
+            // Set the parameters to the prepared statement
+            int paramIndex = 1;
+            if (!"全部".equals(typeFilter)) {
+                pstmt.setString(paramIndex++, "%" + typeFilter + "%");
+            }
+            if (!"全部".equals(resultFilter)) {
+                pstmt.setString(paramIndex++, "%" + resultFilter + "%");
+            }
+            if (isImportantFilter != null) {
+                pstmt.setInt(paramIndex, isImportantFilter ? 1 : 0);
+            }
+
             ResultSet rs = pstmt.executeQuery();
 
             // Loop through the result set
@@ -242,184 +285,86 @@ public class DatabaseService {
                         rs.getInt("is_important") != 0, // Convert to Boolean
                         rs.getString("result_info"),
                         Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
-                        rs.getInt("request_response_index")
+                        rs.getInt("request_response_index"),
+                        rs.getString("time")
                 );
                 // Assuming you have a constructor that matches these parameters.
                 filteredTableDataModels.add(model);
             }
         } catch (SQLException e) {
-            BurpExtender.getStderr().println("[-] Error retrieving records by type from table_data: ");
+            BurpExtender.getStderr().println("[-] Error retrieving filtered records from table_data: ");
             e.printStackTrace(BurpExtender.getStderr());
         }
         return filteredTableDataModels;
     }
 
 
-    public synchronized List<TableLogModel> getTableDataModelsByResult(String result) {
-        List<TableLogModel> filteredTableDataModels = new ArrayList<>();
-        // Use a parameterized query to prevent SQL injection
-        String sql = "SELECT * FROM table_data WHERE result LIKE ?";
+    public synchronized void deleteDataByUrl(String url) {
+        // 删除SQL语句
+        String sql = "DELETE FROM table_data WHERE url = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            // 设置参数
+            pstmt.setString(1, url);
+            // 执行删除操作
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[!] Error deleting data from table_data with URL: " + url);
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
+    // 根据URL查询table_data表中的数据
+    public synchronized TableLogModel getTableDataByUrl(String url) {
+        String sql = "SELECT * FROM table_data WHERE url = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Set the parameter to the prepared statement
-            pstmt.setString(1, "%" + result + "%");
+            pstmt.setString(1, url);
             ResultSet rs = pstmt.executeQuery();
-
-            // Loop through the result set
-            while (rs.next()) {
-                TableLogModel model = new TableLogModel(
-                        rs.getInt("pid"),
-                        rs.getString("url"),
-                        rs.getString("method"),
-                        rs.getString("title"),
-                        rs.getString("status"),
-                        rs.getString("result"),
-                        rs.getString("type"),
-                        rs.getInt("is_important") != 0, // Convert to Boolean
-                        rs.getString("result_info"),
-                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
-                        rs.getInt("request_response_index")
-                );
-                // Assuming you have a constructor that matches these parameters.
-                filteredTableDataModels.add(model);
+                if (rs.next()) {
+                    TableLogModel model = new TableLogModel(
+                            rs.getInt("pid"),
+                            rs.getString("url"),
+                            rs.getString("method"),
+                            rs.getString("title"),
+                            rs.getString("status"),
+                            rs.getString("result"),
+                            rs.getString("type"),
+                            rs.getInt("is_important") != 0, // Convert to Boolean
+                            rs.getString("result_info"),
+                            Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
+                            rs.getInt("request_response_index"),
+                            rs.getString("time")
+                    );
+                    return model;
             }
         } catch (SQLException e) {
-            BurpExtender.getStderr().println("[-] Error retrieving records by type from table_data: ");
-            e.printStackTrace(BurpExtender.getStderr());
+            e.printStackTrace(); // 或更复杂的错误处理
         }
-        return filteredTableDataModels;
+        return null;
     }
 
+    public synchronized int getTableDataCount() {
+        // 查询表格行数的SQL语句
+        String sql = "SELECT COUNT(*) AS rowcount FROM table_data";
 
-
-    public synchronized boolean isExistTableDataModelByUri(String uri) {
-        String sql = "SELECT * FROM api_data WHERE url = ?";
-        TableLogModel model = null;
-
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, uri);
-            ResultSet rs = pstmt.executeQuery();
-
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            // 如果查询结果存在，返回第一行的计数
             if (rs.next()) {
-                return true;
+                int count = rs.getInt("rowcount");
+                BurpExtender.getStdout().println("[+] Table table_data has " + count + " rows.");
+                return count;
             }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[-]查询数据库错误: URI=" + uri);
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[!] Error getting row count from table_data");
             e.printStackTrace(BurpExtender.getStderr());
         }
-
-        return false;
-    }
-
-    // Method to select an ApiDataModel by uri
-    public synchronized TableLogModel selectTableDataByUri(String uri) {
-        String sql = "SELECT * FROM api_data WHERE url = ?";
-        TableLogModel model = null;
-
-        try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, uri);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-//                model = new (
-//                        rs.getString("list_status"),
-//                        rs.getString("id"),
-//                        rs.getString("url"),
-//                        rs.getString("path_number"),
-//                        rs.getBoolean("having_important"),
-//                        rs.getString("result"),
-//                        rs.getInt("request_response_index"),
-//                        Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol")),
-//                        rs.getString("time"),
-//                        rs.getString("status"),
-//                        rs.getString("is_js_find_url"),
-//                        rs.getString("method"),
-//                        rs.getString("describe"),
-//                        rs.getString("result_info")
-//                );
-            }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[-]查询数据库错误: URI=" + uri);
-            e.printStackTrace(BurpExtender.getStderr());
-        }
-
-        return model;
-    }
-
-
-    // SELECT (READ)
-    private synchronized TableLogModel selectTableData(int id) {
-        String sql = "SELECT * FROM table_data WHERE id = ?";
-        TableLogModel entry = null;
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                entry = new TableLogModel(
-                        rs.getInt("pid"),
-                        rs.getString("url"),
-                        rs.getString("method"),
-                        rs.getString("title"),
-                        rs.getString("status"),
-                        rs.getString("result"),
-                        rs.getString("type"),
-                        rs.getInt("is_important") != 0,
-                        rs.getString("result_info"),
-                        null, // You need to handle `iHttpService` object initialization
-                        rs.getInt("request_response_index")
-                );
-                // Assuming you have a constructor that matches these parameters
-                // You need to handle the creation of the `iHttpService` object separately
-                entry.setIHttpService(Utils.iHttpService(rs.getString("host"), rs.getInt("port"), rs.getString("protocol") ));
-            }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[!] Data selection from table_data failed:");
-            e.printStackTrace(BurpExtender.getStderr());
-        }
-
-        return entry;
-    }
-
-    // UPDATE
-    private synchronized void updateTableData(TableLogModel entry) {
-        String sql = "UPDATE table_data SET pid = ?, url = ?, method = ?, title = ?, status = ?, result = ?, type = ?, is_important = ?, time = ?, result_info = ?, request_response_index = ?, host = ?, port = ?, protocol = ? WHERE id = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, entry.getPid());
-            pstmt.setString(2, entry.getUrl());
-            pstmt.setString(3, entry.getMethod());
-            pstmt.setString(4, entry.getTitle());
-            pstmt.setString(5, entry.getStatus());
-            pstmt.setString(6, entry.getResult());
-            pstmt.setString(7, entry.getType());
-            pstmt.setInt(8, entry.getIsImportant() ? 1 : 0);
-            pstmt.setString(9, entry.getTime());
-            pstmt.setString(10, entry.getResultInfo());
-            pstmt.setInt(11, entry.getRequestResponseIndex());
-            // Assuming you have getters and setters for host, port, and protocol
-            pstmt.setString(12, entry.getHost());
-            pstmt.setInt(13, entry.getPort());
-            pstmt.setString(14, entry.getProtocol());
-            pstmt.setInt(15, entry.getPid()); // Assuming you have a getter for ID
-
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                BurpExtender.getStdout().println("[+] Data updated in table_data successfully");
-            } else {
-                BurpExtender.getStdout().println("[!] No rows affected.");
-            }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[!] Data update in table_data failed:");
-            e.printStackTrace(BurpExtender.getStderr());
-        }
+        // 如果查询失败，返回0或者适当的错误代码
+        return 0;
     }
 
     public synchronized void clearRequestsResponseTable() {

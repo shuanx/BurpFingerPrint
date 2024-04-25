@@ -16,15 +16,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.*;
 import java.awt.Component;
+import java.util.Map;
+import java.util.ArrayList;
 
 //import burp.ui.event.FingerTabEventHandlers;
 import burp.model.DatabaseService;
 import burp.model.TableLogModel;
 import burp.ui.event.FingerTabEventHandlers;
 import burp.ui.renderer.CenterTableCellRenderer;
+import burp.ui.renderer.HavingImportantRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
 import burp.ui.renderer.IconTableCellRenderer;
 import burp.util.UiUtils;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 
 
 public class FingerTab implements IMessageEditorController {
@@ -42,14 +47,17 @@ public class FingerTab implements IMessageEditorController {
     public static JPanel tagsPanel;
 
     // 在FingerTab类中添加成员变量
-    public static JToggleButton allFingerprintsButton;
     public static JToggleButton toggleButton;
     private static DefaultTableModel model;
     public static JTable table;
     public static JToggleButton flashButton;
+    public static JComboBox<String> choicesComboBox;
     public static JLabel flashText;
     public static Timer timer;
     public static LocalDateTime operationStartTime = LocalDateTime.now();
+    public static String historyChoiceType = "全部";
+    public static String historyChoiceJMenuItem = "全部";
+    public static JLabel currentSelectedLabel = null;
 
     public FingerTab() {
         contentPane = new JPanel();
@@ -127,14 +135,6 @@ public class FingerTab implements IMessageEditorController {
         gbc_lbSuccessCount.gridy = 0;
         FilterPanel.add(lbSuccessCount, gbc_lbSuccessCount);
 
-        // 初始化按钮
-        allFingerprintsButton = new JToggleButton(UiUtils.getImageIcon("/icon/allButtonIcon.png", 30, 30));
-        allFingerprintsButton.setSelectedIcon(UiUtils.getImageIcon("/icon/importantButtonIcon.png", 30, 30));
-        allFingerprintsButton.setPreferredSize(new Dimension(30, 30));
-        allFingerprintsButton.setBorder(null);  // 设置无边框
-        allFingerprintsButton.setFocusPainted(false);  // 移除焦点边框
-        allFingerprintsButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
-        allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
         toggleButton = new JToggleButton(UiUtils.getImageIcon("/icon/openButtonIcon.png", 40, 24));
         toggleButton.setSelectedIcon(UiUtils.getImageIcon("/icon/shutdownButtonIcon.png", 40, 24));
         toggleButton.setPreferredSize(new Dimension(50, 24));
@@ -154,14 +154,8 @@ public class FingerTab implements IMessageEditorController {
         // 设置按钮的 GridBagConstraints
         GridBagConstraints gbc_buttons = new GridBagConstraints();
         gbc_buttons.insets = new Insets(0, 5, 0, 5);
-        gbc_buttons.gridx = 6; // 设置按钮的横坐标位置
         gbc_buttons.gridy = 0; // 设置按钮的纵坐标位置
         gbc_buttons.fill = GridBagConstraints.NONE; // 不填充
-
-        // 在 FilterPanel 中添加 allFingerprintsButton
-        FilterPanel.add(allFingerprintsButton, gbc_buttons);
-
-        // 在 FilterPanel 中添加 toggleButton
         gbc_buttons.gridx = 7; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(toggleButton, gbc_buttons);
 
@@ -214,17 +208,15 @@ public class FingerTab implements IMessageEditorController {
             public void actionPerformed(ActionEvent e) {
                 // 例如，更新FingerConfigTab中的按钮状态
                 BurpExtender.getTags().fingerConfigTab.toggleButton.setSelected(toggleButton.isSelected());
-                FingerConfigTab.toggleFingerprintsDisplay(toggleButton.isSelected(), allFingerprintsButton.isSelected());
             }
         });
 
-
         // 添加一个 "清除" 按钮
-        JButton btnClear = new JButton("清除");
+        JButton btnClear = new JButton("清空");
         GridBagConstraints gbc_btnClear = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 12;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 13;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(btnClear, gbc_btnClear);
 
@@ -239,7 +231,7 @@ public class FingerTab implements IMessageEditorController {
         GridBagConstraints gbc_btnMore = new GridBagConstraints();
         gbc_btnClear.insets = new Insets(0, 0, 0, 5);
         gbc_btnClear.fill = 0;
-        gbc_btnClear.gridx = 13;  // 根据该值来确定是确定从左到右的顺序
+        gbc_btnClear.gridx = 14;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(moreButton, gbc_btnMore);
 
@@ -265,9 +257,9 @@ public class FingerTab implements IMessageEditorController {
 
         JLabel allLabel = new JLabel("全部");
         allLabel.setOpaque(true);  // 设置为不透明
-        allLabel.setBackground(new Color(200, 200, 200));  // 设置背景颜色为浅灰色
+        allLabel.setBackground(new Color(150, 150, 150));  // 设置背景颜色为浅灰色
         allLabel.setForeground(Color.BLACK);  // 设置字体颜色为黑色
-
+        FingerTab.currentSelectedLabel = allLabel;
         // 为标签添加一个有颜色的边框，边框内有5像素的填充
         allLabel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(100, 100, 100), 1),  // 外部边框，颜色为深灰色，宽度为2像素
@@ -276,8 +268,18 @@ public class FingerTab implements IMessageEditorController {
         allLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                // 取消之前选中标签的颜色
+                if (FingerTab.currentSelectedLabel != null) {
+                    FingerTab.currentSelectedLabel.setBackground(new Color(200, 200, 200)); // 还原默认背景色
+                }
+
+                // 设置当前点击的标签为选中状态
+                allLabel.setBackground(new Color(150, 150, 150)); // 选中状态的背景色
+                FingerTab.currentSelectedLabel = allLabel; // 更新当前选中的标签
                 // 当用户点击 "全部"，展示所有的数据
-//                ((TableRowSorter<TableModel>)logTable.getRowSorter()).setRowFilter(null);
+                historyChoiceType = "全部";
+                historyChoiceJMenuItem = "全部";
+                filterTable("全部", "全部", null);
             }
         });
         tagsPanel.add(allLabel);
@@ -309,18 +311,48 @@ public class FingerTab implements IMessageEditorController {
             }
         };;
 
+
+        // 前两列设置宽度 30px、60px
+        table.getColumnModel().getColumn(0).setMinWidth(20);
+        table.getColumnModel().getColumn(1).setMinWidth(20);
+        table.getColumnModel().getColumn(2).setMinWidth(200);
+        table.getColumnModel().getColumn(3).setMinWidth(60);
+        table.getColumnModel().getColumn(4).setMinWidth(20);
+        table.getColumnModel().getColumn(5).setMinWidth(180);
+        table.getColumnModel().getColumn(6).setMinWidth(180);
+        table.getColumnModel().getColumn(7).setMinWidth(20);
+        table.getColumnModel().getColumn(8).setMinWidth(60);
+
+        // 创建一个居中对齐的单元格渲染器
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+
+        DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+        leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+
+        table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(2).setCellRenderer(leftRenderer);
+        table.getColumnModel().getColumn(3).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
+        table.getColumnModel().getColumn(7).setCellRenderer(leftRenderer);
+        table.getColumnModel().getColumn(8).setCellRenderer(leftRenderer);
+
+        HavingImportantRenderer havingImportantRenderer = new HavingImportantRenderer();
+        table.getColumnModel().getColumn(7).setCellRenderer(havingImportantRenderer);
+
         // 在FingerConfigTab构造函数中设置表头渲染器和监听器的代码
         JTableHeader header = table.getTableHeader();
         TableColumnModel columnModel = header.getColumnModel();
-        TableColumn typeColumn = columnModel.getColumn(6); // 假定类型列的索引是1
+        columnModel.getColumn(6).setHeaderRenderer(new HeaderIconRenderer());
+        columnModel.getColumn(7).setHeaderRenderer(new HeaderIconRenderer());
 
-        // 设置表头渲染器
-        typeColumn.setHeaderRenderer(new HeaderIconRenderer());
         // 在您的FingerConfigTab构造函数中
         header.addMouseListener(FingerTabEventHandlers.headerAddMouseListener(table));
 
         model.addTableModelListener(FingerTabEventHandlers.modelAddTableModelListener(model, tagsPanel, resultMap, table));
-
 
         // 创建右键菜单
         JPopupMenu popupMenu = new JPopupMenu();
@@ -330,13 +362,44 @@ public class FingerTab implements IMessageEditorController {
         table.setComponentPopupMenu(popupMenu);
 
         // 为菜单项添加行为
-//        clearItem.addActionListener(FingerTabEventHandlers.clearItemAddActionListener(model, logTable, lbSuccessCount));
+        clearItem.addActionListener(FingerTabEventHandlers.clearItemAddActionListener(model, table, lbSuccessCount));
 
         JScrollPane jspLogTable = new JScrollPane(table);
         splitPane.setTopComponent(jspLogTable);
 
+        // 设置表格选择模式为单行选择
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // 添加ListSelectionListener来监听行选择事件
+        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+                                                               public void valueChanged(ListSelectionEvent event) {
+                                                                   if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                                                                       // 在这里获取选中行的数据
+                                                                       int selectedRow = table.getSelectedRow();
+
+                                                                       // 根据您的数据模型结构获取数据
+                                                                       String url = model.getValueAt(selectedRow, 2).toString();
+                                                                       TableLogModel logModel = BurpExtender.getDataBaseService().getTableDataByUrl(url);
+                                                                       resultDeViewer.setText(logModel.getResultInfo().getBytes());
+                                                                       Map<String, byte[]> requestResponse = BurpExtender.getDataBaseService().selectRequestResponseById(logModel.getRequestResponseIndex());
+
+                                                                       if (requestResponse != null) {
+                                                                           // 提取请求和响应数据
+                                                                           byte[] requestBytes = requestResponse.get("request");
+                                                                           byte[] responseBytes = requestResponse.get("response");
+
+                                                                           // 现在你可以使用这些字节数据了
+                                                                           // 例如，你可以将它们设置到一个 HTTP 消息编辑器组件中
+                                                                           requestViewer.setMessage(requestBytes, true); // true 表示请求消息
+                                                                           responseViewer.setMessage(responseBytes, false); // false 表示响应消息
+                                                                       }
+
+                                                                   }
+                                                               }
+                                                           });
+
         // 添加点击事件监听器
-//        btnClear.addActionListener(FingerTabEventHandlers.btnClearAddActionListener(model, lbRequestCount, lbSuccessCount, tagsPanel));
+        btnClear.addActionListener(FingerTabEventHandlers.btnClearAddActionListener(model, lbRequestCount, lbSuccessCount));
 
 
         JTabbedPane tabs = new JTabbedPane();
@@ -412,20 +475,15 @@ public class FingerTab implements IMessageEditorController {
         }
     }
 
-    public static void filterTableByType(String type) {
+    public static void filterTable(String typeFilter, String resultFilter, Boolean isImportantFilter) {
         try{
         // 清空model后，根据URL来做匹配
             model.setRowCount(0);
             java.util.List<TableLogModel> allApiDataModels;
-            if (type.isEmpty()){
-                allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
-                setFlashButtonTrue();
-            } else{
-                // 获取数据库中的所有ApiDataModels
-                allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByType(type);
-                setFlashButtonFalse();
-            }
-
+            // 获取数据库中的所有ApiDataModels
+            allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByFilter(typeFilter, resultFilter, isImportantFilter);
+            setFlashButtonFalse();
+            operationStartTime = LocalDateTime.now();
             // 遍历apiDataModelMap
             for (TableLogModel apiDataModel : allApiDataModels) {
                 model.insertRow(0, new Object[]{
@@ -446,40 +504,6 @@ public class FingerTab implements IMessageEditorController {
         }
     }
 
-
-    public static void filterTableByRersult(String result) {
-        try{
-            // 清空model后，根据URL来做匹配
-            model.setRowCount(0);
-            java.util.List<TableLogModel> allApiDataModels;
-            if (result.isEmpty()){
-                allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
-                setFlashButtonTrue();
-            } else{
-                // 获取数据库中的所有ApiDataModels
-                allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByResult(result);
-                setFlashButtonFalse();
-            }
-
-            // 遍历apiDataModelMap
-            for (TableLogModel apiDataModel : allApiDataModels) {
-                model.insertRow(0, new Object[]{
-                        apiDataModel.getPid(),
-                        apiDataModel.getMethod(),
-                        apiDataModel.getUrl(),
-                        apiDataModel.getTitle(),
-                        apiDataModel.getStatus(),
-                        apiDataModel.getResult(),
-                        apiDataModel.getType(),
-                        apiDataModel.getIsImportant(),
-                        apiDataModel.getTime()
-                });
-            }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[-] Error filterTableByType: ");
-            e.printStackTrace(BurpExtender.getStderr());
-        }
-    }
 
 
     public Component getComponet(){

@@ -40,7 +40,9 @@ public class FingerTabEventHandlers {
                     allItem.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            FingerTab.filterTableByRersult(""); // 移除过滤，显示全部
+                            FingerTab.historyChoiceType = "全部";
+                            FingerTab.historyChoiceJMenuItem = "全部";
+                            FingerTab.filterTable("全部", "全部", null);
                         }
                     });
                     filterMenu.add(allItem);
@@ -53,7 +55,35 @@ public class FingerTabEventHandlers {
                         menuItem.addActionListener(new ActionListener() {
                             @Override
                             public void actionPerformed(ActionEvent e) {
-                                FingerTab.filterTableByType(type); // 根据选中的类型过滤表格
+                                FingerTab.historyChoiceJMenuItem = "全部";
+                                FingerTab.historyChoiceType = type;
+                                FingerTab.filterTable(type, "全部", null); // 根据选中的类型过滤表格
+                            }
+                        });
+                        filterMenu.add(menuItem);
+                    }
+
+                    filterMenu.show(e.getComponent(), e.getX(), e.getY()); // 显示菜单
+                } else if (logTable.getColumnModel().getColumnIndexAtX(e.getX()) == 7) {
+                    JPopupMenu filterMenu = new JPopupMenu();
+
+                    List<String> isImportantItem = new ArrayList<>(Arrays.asList("全部", "重点", "普通"));
+
+
+                    // 为每个独特的类型创建菜单项
+                    for (String itemName : isImportantItem) {
+                        JMenuItem menuItem = new JMenuItem(itemName);
+                        menuItem.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                if (itemName.equals("全部")) {
+                                    FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, null); // 根据选中的类型过滤表格
+                                } else if (itemName.equals("重点")) {
+                                    FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, true); // 根据选中的类型过滤表格
+                                } else if (itemName.equals("普通")) {
+                                    FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, false); // 根据选中的类型过滤表格
+                                }
+
                             }
                         });
                         filterMenu.add(menuItem);
@@ -61,7 +91,7 @@ public class FingerTabEventHandlers {
 
                     filterMenu.show(e.getComponent(), e.getX(), e.getY()); // 显示菜单
                 }
-            }
+                }
 
 
         };
@@ -75,15 +105,7 @@ public class FingerTabEventHandlers {
             int ADD_LABEL_NUMBER = 0;
             @Override
             public void tableChanged(TableModelEvent e) {
-                HashMap<String, Integer> resultCounts = new HashMap<>();
-                // 遍历表格中所有行
-                for (int i = 0; i < model.getRowCount(); i++) {
-                    String result = (String) model.getValueAt(i, 5); // 获取结果值
-                    String[] parts = result.split(", "); // 根据", "进行切分
-                    for (String part : parts) {
-                        resultCounts.put(part, resultCounts.getOrDefault(part, 0) + 1); // 添加到映射中进行去重，并计数
-                    }
-                }
+                HashMap<String, Integer> resultCounts = BurpExtender.getDataBaseService().getResultCountsFromDatabase();
                 // 创建一个 TreeMap 并进行反向排序
                 TreeMap<Integer, LinkedList<String>> sortedResults = new TreeMap<>(Collections.reverseOrder());
                 for (Map.Entry<String, Integer> entry : resultCounts.entrySet()) {
@@ -111,13 +133,13 @@ public class FingerTabEventHandlers {
                     labelList = tmpList;
                     clearAllResultLabels(tagsPanel);
                     for (String result : tmpList){
-                        addNewResultLabel(result, model);
+                        addNewResultLabel(result);
                     }
                 }
                 ADD_LABEL_NUMBER = 0;
             }
 
-            public void addNewResultLabel(String result, DefaultTableModel model) {
+            public void addNewResultLabel(String result) {
                 // 创建新的标签
                 JLabel newLabel = new JLabel(result);
                 newLabel.setOpaque(true);  // 设置为不透明
@@ -130,14 +152,29 @@ public class FingerTabEventHandlers {
                         BorderFactory.createEmptyBorder(5, 5, 5, 5)  // 内部填充，宽度为5像素
                 ));
 
-                newLabel.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        // 当用户点击某个标签时，展示所有包含该标签文本的结果
-                        String filterWithoutCount = result.replaceAll("\\(.*\\)", "").trim();
-                        FingerTab.filterTableByRersult(filterWithoutCount);
-                    }
-                });
+
+                if (!result.contains("...(")){
+
+                    newLabel.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseClicked(MouseEvent e) {
+                            // 取消之前选中标签的颜色
+                            if (FingerTab.currentSelectedLabel != null) {
+                                FingerTab.currentSelectedLabel.setBackground(new Color(200, 200, 200)); // 还原默认背景色
+                            }
+
+                            // 设置当前点击的标签为选中状态
+                            newLabel.setBackground(new Color(150, 150, 150)); // 选中状态的背景色
+                            FingerTab.currentSelectedLabel = newLabel; //
+                            // 当用户点击某个标签时，展示所有包含该标签文本的结果
+                            String filterWithoutCount = result.replaceAll("\\(.*\\)", "").trim();
+                            FingerTab.historyChoiceJMenuItem = filterWithoutCount;
+                            FingerTab.historyChoiceType = "全部";
+                            FingerTab.filterTable("全部", filterWithoutCount, null);
+                        }
+                    });
+                }
+
 
                 // 添加新的标签到面板和 resultMap
                 tagsPanel.add(newLabel);
@@ -151,21 +188,21 @@ public class FingerTabEventHandlers {
 
         };
     }
-//
-//
-//    public static ActionListener btnClearAddActionListener(HttpLogTableModel model, JLabel lbRequestCount, JLabel lbSuccessCount, JPanel tagsPanel){
-//        return new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                // 清除表格数据
-//                lbRequestCount.setText("0");
-//                lbSuccessCount.setText("0");
-//                model.setRowCount();
-//                BurpExtender.hasScanDomainSet = new HashSet<>();
-//                clearAllResultLabels(tagsPanel);
-//            }
-//        };
-//    }
+
+
+    public static ActionListener btnClearAddActionListener(DefaultTableModel model, JLabel lbRequestCount, JLabel lbSuccessCount){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 清除表格数据
+                lbRequestCount.setText("0");
+                lbSuccessCount.setText("0");
+                model.setRowCount(0);
+                BurpExtender.getDataBaseService().clearTableDataTable();
+                BurpExtender.getDataBaseService().clearRequestsResponseTable();
+            }
+        };
+    }
 //
 //
 //    public static ActionListener exportItemAddActionListener(JPanel contentPane, HttpLogTable logTable){
@@ -197,17 +234,21 @@ public class FingerTabEventHandlers {
 //        };
 //    }
 //
-//
-//    public static ActionListener clearItemAddActionListener(HttpLogTableModel model, HttpLogTable logTable, JLabel lbSuccessCount){
-//        return new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                int successRequestsCount = Integer.parseInt(lbSuccessCount.getText()) - logTable.getSelectedRows().length;
-//                lbSuccessCount.setText(Integer.toString(successRequestsCount));
-//                model.removeSelectedRows(logTable);
-//            }
-//        };
-//    }
+
+    public static ActionListener clearItemAddActionListener(DefaultTableModel model, JTable logTable, JLabel lbSuccessCount){
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectRow = logTable.getSelectedRow();
+                if (selectRow >= 0){
+                    String url = model.getValueAt(selectRow, 2).toString();
+                    BurpExtender.getDataBaseService().deleteDataByUrl(url);
+                }
+                FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, null);
+                lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
+            }
+        };
+    }
 //
 //
 //    public static ActionListener allFingerprintsButtonAddActionListener(HttpLogTable logTable, JToggleButton allFingerprintsButton){

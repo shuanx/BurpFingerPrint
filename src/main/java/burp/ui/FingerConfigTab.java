@@ -19,12 +19,9 @@ import java.awt.event.*;
 import java.util.Set;
 import java.util.HashSet;
 
-import burp.ui.renderer.ButtonRenderer;
-import burp.ui.renderer.CenterRenderer;
-import burp.ui.renderer.HeaderIconTypeRenderer;
+import burp.ui.renderer.*;
 import burp.util.UiUtils;
 import burp.util.Utils;
-import burp.ui.renderer.HeaderIconRenderer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -493,10 +490,10 @@ public class FingerConfigTab extends JPanel {
 
         }
 
+
         // Adding an action listener to the toggle button
         allFingerprintsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                FingerTab.allFingerprintsButton.setSelected(allFingerprintsButton.isSelected());
                 if (toggleButton.isSelected()){
                     return;
                 }
@@ -922,48 +919,6 @@ public class FingerConfigTab extends JPanel {
 
         filterMenu.show(invoker, x, y); // 显示菜单
     }
-
-    public static void toggleFingerprintsDisplay(boolean isOpen, boolean showImportantOnly) {
-        // 清空当前表格数据
-        model.setRowCount(0);
-
-        if (isOpen){
-            return;
-        }
-
-        // 临时计数器，用于表格中的序号
-        int counter = 1;
-
-        // 清空映射
-        tableToModelIndexMap.clear();
-
-        // 遍历所有指纹规则，并根据条件添加到表格模型中
-        for (int i = 0; i < BurpExtender.fingerprintRules.size(); i++) {
-            FingerPrintRule rule = BurpExtender.fingerprintRules.get(i);
-
-            // 如果showImportantOnly为true，则只显示重要的指纹
-            if (!showImportantOnly || rule.getIsImportant()) {
-                // 添加行到表格模型
-                model.addRow(new Object[]{
-                        counter,
-                        rule.getType(),
-                        rule.getCms(),
-                        rule.getIsImportant(),
-                        rule.getMethod(),
-                        rule.getLocation(),
-                        String.join(",", rule.getKeyword()),
-                        new String[]{"Edit", "Delete"} // 假设这是操作列的按钮
-                });
-
-                // 更新tableToModelIndexMap，以便我们知道每个表行对应的数据模型索引
-                tableToModelIndexMap.add(i);
-
-                counter++;
-            }
-        }
-    }
-
-
 
 
     class ButtonEditor extends AbstractCellEditor implements TableCellEditor {

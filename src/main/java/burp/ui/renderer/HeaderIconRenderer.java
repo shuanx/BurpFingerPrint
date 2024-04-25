@@ -17,7 +17,7 @@ public class HeaderIconRenderer extends DefaultTableCellRenderer {
         Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
         // 如果是类型列
-        if (column == 6) {
+        if (column == 6 || column == 7) {
             setIcon(UiUtils.getImageIcon("/icon/filterIcon.png", 17, 17));
             setHorizontalAlignment(JLabel.CENTER);
             setHorizontalTextPosition(JLabel.LEFT);

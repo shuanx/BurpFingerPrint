@@ -16,7 +16,7 @@ public class TableLogModel {
     String time;
     IHttpService iHttpService;
 
-    public TableLogModel(int pid, String url, String method, String title, String status, String result, String type, Boolean isImportant, String resultInfo, IHttpService iHttpService, int requestResponseIndex ) {
+    public TableLogModel(int pid, String url, String method, String title, String status, String result, String type, Boolean isImportant, String resultInfo, IHttpService iHttpService, int requestResponseIndex, String time) {
         this.pid = pid;
         this.url = url;
         this.title = title;
@@ -28,6 +28,7 @@ public class TableLogModel {
         this.resultInfo = resultInfo;
         this.iHttpService = iHttpService;
         this.requestResponseIndex = requestResponseIndex;
+        this.time = time;
     }
 
     public int getPid() {
