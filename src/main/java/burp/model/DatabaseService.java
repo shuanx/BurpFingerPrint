@@ -94,8 +94,8 @@ public class DatabaseService {
         }
     }
 
-    public Connection getConnection() {
-        return connection;
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(CONNECTION_STRING);
     }
 
     public synchronized int insertOrUpdateLogEntry(TableLogModel logEntry) {

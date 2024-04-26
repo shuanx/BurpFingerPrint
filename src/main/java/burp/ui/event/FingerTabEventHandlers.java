@@ -205,6 +205,7 @@ public class FingerTabEventHandlers {
                 model.setRowCount(0);
                 BurpExtender.getDataBaseService().clearTableDataTable();
                 BurpExtender.getDataBaseService().clearRequestsResponseTable();
+                model.fireTableDataChanged();
             }
         };
     }

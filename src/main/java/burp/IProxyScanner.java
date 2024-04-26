@@ -57,13 +57,7 @@ public class IProxyScanner implements IProxyListener {
     public void processProxyMessage(boolean messageIsRequest, final IInterceptedProxyMessage iInterceptedProxyMessage) {
         if (!messageIsRequest) {
             // 更新总数
-            int newRequestsCount = Integer.parseInt(FingerTab.lbRequestCount.getText()) + 1;
-            FingerTab.lbRequestCount.setText(Integer.toString(newRequestsCount));
-
-            // 判断是否要进行指纹识别，如果关闭，则只展示数量
-            if (FingerConfigTab.toggleButton.isSelected()){
-                return;
-            }
+            FingerTab.lbRequestCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
 
             IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
@@ -93,7 +87,7 @@ public class IProxyScanner implements IProxyListener {
                     originalData.put("method", method);
                     totalUrlResponse.put(url, originalData);
 
-                    if (!url.contains("favicon.") && !url.contains(".ico")) {
+                    if (!url.contains("favicon.") && !url.contains(".ico") && !FingerTab.toggleButton.isSelected()) {
                         String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
                         URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
                         // 针对html页面提取

@@ -90,7 +90,7 @@ public class FingerConfigTab extends JPanel {
         toggleButton.setBorder(null);  // 设置无边框
         toggleButton.setFocusPainted(false);  // 移除焦点边框
         toggleButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
-        toggleButton.setToolTipText("指纹识别功能开");
+        toggleButton.setToolTipText("是否开启对页面提取URL后发起HTTP请求后进行指纹识别");
 
         centerPanel.add(allFingerprintsButton);
         centerPanel.add(toggleButton);
@@ -141,9 +141,7 @@ public class FingerConfigTab extends JPanel {
 
                 // 清除表格的所有行
                 model.setRowCount(0);
-                if (toggleButton.isSelected()){
-                    return;
-                }
+
                 int counter=1;
                 // 清空映射
                 tableToModelIndexMap.clear();
@@ -178,9 +176,7 @@ public class FingerConfigTab extends JPanel {
                 String searchText = searchField.getText(); // 获取用户输入的搜索文本
                 // 清除表格的所有行
                 model.setRowCount(0);
-                if (toggleButton.isSelected()){
-                    return;
-                }
+
                 // 重新添加匹配搜索文本的行
                 int counter=1;
                 // 清空映射
@@ -218,10 +214,6 @@ public class FingerConfigTab extends JPanel {
 
                 // 清除表格的所有行
                 model.setRowCount(0);
-                if (toggleButton.isSelected()){
-                    return;
-                }
-
                 int counter=1;
                 // 清空映射
                 tableToModelIndexMap.clear();
@@ -494,9 +486,6 @@ public class FingerConfigTab extends JPanel {
         // Adding an action listener to the toggle button
         allFingerprintsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (toggleButton.isSelected()){
-                    return;
-                }
                 if(allFingerprintsButton.isSelected()){
                     allFingerprintsButton.setToolTipText("指纹匹配：重点指纹");
                     // 清除表格的所有行
@@ -543,43 +532,6 @@ public class FingerConfigTab extends JPanel {
                 }
             }
         });
-        toggleButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                FingerTab.toggleButton.setSelected(toggleButton.isSelected());
-                if(toggleButton.isSelected()){
-                    toggleButton.setToolTipText("指纹识别功能关");
-                    // 清除表格的所有行
-                    model.setRowCount(0);
-                }else{
-                    toggleButton.setToolTipText("指纹识别功能开");
-                    // 清除表格的所有行
-                    model.setRowCount(0);
-
-                    // 添加所有的行
-                    int counter = 1;
-                    for (FingerPrintRule rule : BurpExtender.fingerprintRules){
-                        if (allFingerprintsButton.isSelected() && !rule.getIsImportant()){
-                            continue;
-                        }
-                        model.addRow(new Object[]{
-                                counter,
-                                rule.getType(),
-                                rule.getCms(), // 获取cms信息
-                                rule.getIsImportant(),
-                                rule.getMethod(), // 获取method信息
-                                rule.getLocation(), // 获取location信息
-                                String.join(",", rule.getKeyword()),
-                                new String[] {"Edit", "Delete"} // 操作按钮
-                        });
-                        counter ++;
-                    }
-                }
-            }
-        });
-
-
-
-
 
         table = new JTable(model);
         CenterRenderer centerRenderer = new CenterRenderer();

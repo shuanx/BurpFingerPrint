@@ -141,7 +141,7 @@ public class FingerTab implements IMessageEditorController {
         toggleButton.setBorder(null);  // 设置无边框
         toggleButton.setFocusPainted(false);  // 移除焦点边框
         toggleButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
-        toggleButton.setToolTipText("指纹识别功能开");
+        toggleButton.setToolTipText("是否开启对页面提取URL后发起HTTP请求后进行指纹识别");
 
         // 添加填充以在左侧占位
         GridBagConstraints gbc_leftFiller = new GridBagConstraints();
