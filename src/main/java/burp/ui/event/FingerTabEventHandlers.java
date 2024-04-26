@@ -42,6 +42,7 @@ public class FingerTabEventHandlers {
                         public void actionPerformed(ActionEvent e) {
                             FingerTab.historyChoiceType = "全部";
                             FingerTab.historyChoiceJMenuItem = "全部";
+                            FingerTab.setFlashButtonTrue();
                             FingerTab.filterTable("全部", "全部", null);
                         }
                     });
@@ -57,6 +58,7 @@ public class FingerTabEventHandlers {
                             public void actionPerformed(ActionEvent e) {
                                 FingerTab.historyChoiceJMenuItem = "全部";
                                 FingerTab.historyChoiceType = type;
+                                FingerTab.setFlashButtonFalse();
                                 FingerTab.filterTable(type, "全部", null); // 根据选中的类型过滤表格
                             }
                         });
@@ -77,10 +79,13 @@ public class FingerTabEventHandlers {
                             @Override
                             public void actionPerformed(ActionEvent e) {
                                 if (itemName.equals("全部")) {
+                                    FingerTab.setFlashButtonTrue();
                                     FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, null); // 根据选中的类型过滤表格
                                 } else if (itemName.equals("重点")) {
+                                    FingerTab.setFlashButtonFalse();
                                     FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, true); // 根据选中的类型过滤表格
                                 } else if (itemName.equals("普通")) {
+                                    FingerTab.setFlashButtonFalse();
                                     FingerTab.filterTable(FingerTab.historyChoiceType, FingerTab.historyChoiceJMenuItem, false); // 根据选中的类型过滤表格
                                 }
 
@@ -162,7 +167,7 @@ public class FingerTabEventHandlers {
                             if (FingerTab.currentSelectedLabel != null) {
                                 FingerTab.currentSelectedLabel.setBackground(new Color(200, 200, 200)); // 还原默认背景色
                             }
-
+                            FingerTab.setFlashButtonFalse();
                             // 设置当前点击的标签为选中状态
                             newLabel.setBackground(new Color(150, 150, 150)); // 选中状态的背景色
                             FingerTab.currentSelectedLabel = newLabel; //

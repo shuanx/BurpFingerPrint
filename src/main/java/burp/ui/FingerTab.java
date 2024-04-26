@@ -272,7 +272,7 @@ public class FingerTab implements IMessageEditorController {
                 if (FingerTab.currentSelectedLabel != null) {
                     FingerTab.currentSelectedLabel.setBackground(new Color(200, 200, 200)); // 还原默认背景色
                 }
-
+                setFlashButtonTrue();
                 // 设置当前点击的标签为选中状态
                 allLabel.setBackground(new Color(150, 150, 150)); // 选中状态的背景色
                 FingerTab.currentSelectedLabel = allLabel; // 更新当前选中的标签
@@ -438,7 +438,7 @@ public class FingerTab implements IMessageEditorController {
 
     public static void refreshTableModel(){
         // 刷新页面, 如果自动更新关闭，则不刷新页面内容
-//        lbSuccessCount.setText(String.valueOf(BurpExtender.getDataBaseService().getApiDataCount()));
+        // lbSuccessCount.setText(String.valueOf(BurpExtender.getDataBaseService().getApiDataCount()));
         if(getFlashButtonStatus()){
             if (Duration.between(operationStartTime, LocalDateTime.now()).getSeconds() > 600){
                 setFlashButtonTrue();
@@ -454,7 +454,7 @@ public class FingerTab implements IMessageEditorController {
         synchronized (model) {
             // 清空model后，根据URL来做匹配
             model.setRowCount(0);
-
+            lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
             // 获取数据库中的所有ApiDataModels
             java.util.List<TableLogModel> allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
 
@@ -477,12 +477,12 @@ public class FingerTab implements IMessageEditorController {
 
     public static void filterTable(String typeFilter, String resultFilter, Boolean isImportantFilter) {
         try{
-        // 清空model后，根据URL来做匹配
+            // 清空model后，根据URL来做匹配
             model.setRowCount(0);
+            lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
             java.util.List<TableLogModel> allApiDataModels;
             // 获取数据库中的所有ApiDataModels
             allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByFilter(typeFilter, resultFilter, isImportantFilter);
-            setFlashButtonFalse();
             operationStartTime = LocalDateTime.now();
             // 遍历apiDataModelMap
             for (TableLogModel apiDataModel : allApiDataModels) {
@@ -615,44 +615,6 @@ public class FingerTab implements IMessageEditorController {
             }
         }
 
-    }
-
-    public class CustomWrapLayout extends FlowLayout {
-        private JLabel ellipsisLabel = new JLabel("...");
-        private JPanel tagsPanel; // 指向包含标签的面板
-
-        public CustomWrapLayout(JPanel tagsPanel) {
-            super(FlowLayout.LEFT);
-            this.tagsPanel = tagsPanel;
-            this.tagsPanel.add(ellipsisLabel);
-            ellipsisLabel.setVisible(false); // 初始时不显示
-        }
-
-        @Override
-        public void layoutContainer(Container target) {
-            super.layoutContainer(target);
-
-            Component[] components = target.getComponents();
-            boolean isEllipsisNeeded = false;
-
-            if (components.length > 0) {
-                // 检查最后一个组件是否可见
-                Rectangle lastComponentBounds = components[components.length - 1].getBounds();
-                Rectangle targetBounds = target.getBounds();
-
-                // 如果最后一个组件的右边界超出了容器的宽度，则需要省略号
-                isEllipsisNeeded = (lastComponentBounds.x + lastComponentBounds.width) > targetBounds.width;
-            }
-
-            // 根据需要显示或隐藏省略号标签
-            ellipsisLabel.setVisible(isEllipsisNeeded);
-
-            // 如果需要省略号，调整它的位置
-            if (isEllipsisNeeded) {
-                Dimension ellipsisSize = ellipsisLabel.getPreferredSize();
-                ellipsisLabel.setBounds(target.getWidth() - ellipsisSize.width, 0, ellipsisSize.width, ellipsisSize.height);
-            }
-        }
     }
 
     public static void setFlashButtonTrue(){

@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 public class DatabaseService {
 
     private static final String CONNECTION_STRING = "jdbc:sqlite:" + Paths.get(Utils.getExtensionFilePath(BurpExtender.getCallbacks()), "BurpFinderPrint.db").toAbsolutePath().toString();;
-    private Gson gson = new Gson();
 
     private static DatabaseService instance;
     private Connection connection;
@@ -33,10 +32,6 @@ public class DatabaseService {
             instance = new DatabaseService();
         }
         return instance;
-    }
-
-    private Connection connect() throws SQLException {
-        return DriverManager.getConnection(CONNECTION_STRING);
     }
 
     private void initializeConnection() {
@@ -105,9 +100,9 @@ public class DatabaseService {
 
     public synchronized int insertOrUpdateLogEntry(TableLogModel logEntry) {
         int generatedId = -1; // 默认ID值，如果没有生成ID，则保持此值
-        String checkSql = "SELECT id, result, result_info, status, request_response_index FROM table_data WHERE url = ?";
+        String checkSql = "SELECT id, result, result_info, status, request_response_index, type, is_important FROM table_data WHERE url = ?";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
             // 检查记录是否存在
             checkStmt.setString(1, Utils.getUriFromUrl(logEntry.getUrl()));
@@ -119,6 +114,7 @@ public class DatabaseService {
                 generatedId = rs.getInt("id");
                 String result = rs.getString("result");
                 String status = rs.getString("status");
+                Boolean isImportant = rs.getBoolean("is_important");
                 int request_response_index = rs.getInt("request_response_index");
 
                 for (String oneRs : logEntry.getResult().split(", ")){
@@ -127,9 +123,20 @@ public class DatabaseService {
                     }
                 }
 
+                String type = rs.getString("type");
+                for (String oneType : logEntry.getType().split(", ")){
+                    if (!type.contains(oneType)){
+                        type = type + ", " + oneType;
+                    }
+                }
+
                 if (logEntry.getStatus().equals("200")){
                     request_response_index = logEntry.getRequestResponseIndex();
                     status = logEntry.getStatus();
+                }
+
+                if (!isImportant){
+                    isImportant = logEntry.getIsImportant();
                 }
 
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -137,15 +144,15 @@ public class DatabaseService {
                     updateStmt.setString(2, logEntry.getTitle());
                     updateStmt.setString(3, status);
                     updateStmt.setString(4, result);
-                    updateStmt.setString(5, logEntry.getType());
-                    updateStmt.setBoolean(6, logEntry.getIsImportant());
+                    updateStmt.setString(5, type);
+                    updateStmt.setBoolean(6, isImportant);
                     updateStmt.setString(7, rs.getString("result_info") + "\r\n\r\n" + logEntry.getResultInfo());
                     updateStmt.setString(8, logEntry.getHost());
                     updateStmt.setInt(9, logEntry.getPort());
                     updateStmt.setString(10, logEntry.getProtocol());
-                    updateStmt.setString(11, logEntry.getUrl());
-                    updateStmt.setString(12, logEntry.getTime());
-                    updateStmt.setInt(13, request_response_index);
+                    updateStmt.setString(11, logEntry.getTime());
+                    updateStmt.setInt(12, request_response_index);
+                    updateStmt.setString(13, Utils.getUriFromUrl(logEntry.getUrl()));
                     updateStmt.executeUpdate();
                 }
             } else {
@@ -188,7 +195,7 @@ public class DatabaseService {
         List<TableLogModel> allTableDataModels = new ArrayList<>();
         String sql = "SELECT * FROM table_data";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              Statement stmt  = conn.createStatement();
              ResultSet rs    = stmt.executeQuery(sql)) {
 
@@ -255,7 +262,7 @@ public class DatabaseService {
             sqlBuilder.append(" AND is_important = ?");
         }
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sqlBuilder.toString())) {
 
             // Set the parameters to the prepared statement
@@ -319,7 +326,7 @@ public class DatabaseService {
     public synchronized TableLogModel getTableDataByUrl(String url) {
         String sql = "SELECT * FROM table_data WHERE url = ?";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, url);
@@ -356,7 +363,6 @@ public class DatabaseService {
             // 如果查询结果存在，返回第一行的计数
             if (rs.next()) {
                 int count = rs.getInt("rowcount");
-                BurpExtender.getStdout().println("[+] Table table_data has " + count + " rows.");
                 return count;
             }
         } catch (SQLException e) {
@@ -370,7 +376,7 @@ public class DatabaseService {
     public synchronized void clearRequestsResponseTable() {
         String sql = "DELETE FROM requests_response"; // 用 DELETE 语句来清空表
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.executeUpdate();
@@ -384,7 +390,7 @@ public class DatabaseService {
     public synchronized void clearTableDataTable() {
         String sql = "DELETE FROM table_data"; // 用 DELETE 语句来清空表
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.executeUpdate();
@@ -412,7 +418,7 @@ public class DatabaseService {
         int generatedId = -1; // 默认ID值，如果没有生成ID，则保持此值
         String checkSql = "SELECT id FROM requests_response WHERE url = ?";
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
             // 检查记录是否存在
             checkStmt.setString(1, url);
@@ -456,7 +462,7 @@ public class DatabaseService {
         String sql = "SELECT * FROM requests_response WHERE id = ?";
         Map<String, byte[]> requestResponse = null;
 
-        try (Connection conn = this.connect();
+        try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
