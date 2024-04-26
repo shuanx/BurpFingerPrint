@@ -1,7 +1,7 @@
 # Burp 指纹识别
 ![](https://img.shields.io/badge/Author-Shaun-blue)
 ![](https://img.shields.io/badge/JDK-9+-yellow)
-![](https://img.shields.io/badge/捡漏是问艺术-往往有意想不到的成果-red)
+![](https://img.shields.io/badge/捡漏是门艺术-往往有意想不到的成果-red)
 > 攻击过程中，我们通常会用浏览器访问一些资产，该BurpSuite插件实现被动指纹识别+网站提取链接+OA爆破，可帮助我们发现更多资产。
 
 ## 功能如下
