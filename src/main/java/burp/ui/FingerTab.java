@@ -42,6 +42,7 @@ public class FingerTab implements IMessageEditorController {
 
     // 在FingerTab类中添加成员变量
     public static JToggleButton toggleButton;
+    public static JToggleButton weakPasswordBlasting;
     private static DefaultTableModel model;
     public static JTable table;
     public static JToggleButton flashButton;
@@ -81,15 +82,7 @@ public class FingerTab implements IMessageEditorController {
         gbl_panel_1.rowWeights = new double[] { 0.0D, Double.MIN_VALUE };
         FilterPanel.setLayout(gbl_panel_1);
 
-        // 在添加 "Requests Total" 和 lbRequestCount 之前添加一个占位组件
-        Component leftStrut = Box.createHorizontalStrut(5); // 你可以根据需要调整这个值
-        GridBagConstraints gbc_leftStrut = new GridBagConstraints();
-        gbc_leftStrut.insets = new Insets(0, 0, 0, 5);
-        gbc_leftStrut.fill = GridBagConstraints.HORIZONTAL;
-        gbc_leftStrut.weightx = 1.0; // 这个值决定了 leftStrut 占据的空间大小
-        gbc_leftStrut.gridx = 10;
-        gbc_leftStrut.gridy = 0;
-        FilterPanel.add(leftStrut, gbc_leftStrut);
+
 
         // 转发url总数，默认0
         JLabel lbRequest = new JLabel("Requests Total:");
@@ -162,6 +155,14 @@ public class FingerTab implements IMessageEditorController {
         flashButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
         flashButton.setToolTipText("用于控制表格是否自动化刷新，还是手工点击刷新");
 
+        // 刷新按钮按钮
+        weakPasswordBlasting = new JToggleButton(UiUtils.getImageIcon("/icon/WeakPasswordBlasting.png", 24, 24));
+        weakPasswordBlasting.setSelectedIcon(UiUtils.getImageIcon("/icon/WeakPasswordBlastingFalse.png", 24, 24));
+        weakPasswordBlasting.setPreferredSize(new Dimension(30, 30));
+        weakPasswordBlasting.setBorder(null);  // 设置无边框
+        weakPasswordBlasting.setFocusPainted(false);  // 移除焦点边框
+        weakPasswordBlasting.setContentAreaFilled(false);  // 移除选中状态下的背景填充
+        weakPasswordBlasting.setToolTipText("弱口令爆破开启（功能开发中，请进群敬请期待）");
 
         // 刷新按钮
         flashButton.addActionListener(new ActionListener() {
@@ -182,20 +183,20 @@ public class FingerTab implements IMessageEditorController {
         flashText = new JLabel("自动每5秒刷新表格中");
 
         gbc_buttons.gridx = 8; // 将横坐标位置移动到下一个单元格
-        FilterPanel.add(flashButton, gbc_buttons);
+        FilterPanel.add(weakPasswordBlasting, gbc_buttons);
         gbc_buttons.gridx = 9; // 将横坐标位置移动到下一个单元格
+        FilterPanel.add(flashButton, gbc_buttons);
+        gbc_buttons.gridx = 10; // 将横坐标位置移动到下一个单元格
         FilterPanel.add(flashText, gbc_buttons);
 
         // 添加填充以在右侧占位
         GridBagConstraints gbc_rightFiller = new GridBagConstraints();
         gbc_rightFiller.weightx = 1; // 使得这个组件吸收额外的水平空间
-        gbc_rightFiller.gridx = 11; // 位置设置为最后一个单元格
+        gbc_rightFiller.gridx = 12; // 位置设置为最后一个单元格
         gbc_rightFiller.gridy = 0; // 第一行
         gbc_rightFiller.fill = GridBagConstraints.HORIZONTAL; // 水平填充
         FilterPanel.add(Box.createHorizontalGlue(), gbc_rightFiller);
 
-        // 在FingerTab类中添加事件监听器
-//        allFingerprintsButton.addActionListener(FingerTabEventHandlers.allFingerprintsButtonAddActionListener(logTable, allFingerprintsButton));
 
         toggleButton.addActionListener(new ActionListener() {
             @Override
