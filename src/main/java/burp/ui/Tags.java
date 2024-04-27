@@ -1,12 +1,10 @@
 package burp.ui;
 
 import java.awt.*;
-import java.util.HashMap;
 import javax.swing.*;
 
 import burp.ITab;
 import burp.IBurpExtenderCallbacks;
-import burp.model.FingerPrintRule;
 
 
 public class Tags implements ITab {

@@ -196,8 +196,8 @@ public class DatabaseService {
         String sql = "SELECT * FROM table_data";
 
         try (Connection conn = getConnection();
-             Statement stmt  = conn.createStatement();
-             ResultSet rs    = stmt.executeQuery(sql)) {
+             PreparedStatement stmt  = conn.prepareStatement(sql);
+             ResultSet rs    = stmt.executeQuery()) {
 
             // loop through the result set
             while (rs.next()) {
@@ -358,9 +358,10 @@ public class DatabaseService {
         // 查询表格行数的SQL语句
         String sql = "SELECT COUNT(*) AS rowcount FROM table_data";
 
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(sql)) {
             // 如果查询结果存在，返回第一行的计数
+            ResultSet rs = checkStmt.executeQuery();
             if (rs.next()) {
                 int count = rs.getInt("rowcount");
                 return count;

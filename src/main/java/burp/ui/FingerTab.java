@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -17,16 +16,11 @@ import java.awt.event.MouseEvent;
 import javax.swing.table.*;
 import java.awt.Component;
 import java.util.Map;
-import java.util.ArrayList;
 
-//import burp.ui.event.FingerTabEventHandlers;
-import burp.model.DatabaseService;
 import burp.model.TableLogModel;
 import burp.ui.event.FingerTabEventHandlers;
-import burp.ui.renderer.CenterTableCellRenderer;
 import burp.ui.renderer.HavingImportantRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
-import burp.ui.renderer.IconTableCellRenderer;
 import burp.util.UiUtils;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
@@ -235,7 +229,7 @@ public class FingerTab implements IMessageEditorController {
         gbc_btnClear.gridy = 0;
         FilterPanel.add(moreButton, gbc_btnMore);
 
-//        exportItem.addActionListener(FingerTabEventHandlers.exportItemAddActionListener(contentPane, logTable));
+        exportItem.addActionListener(FingerTabEventHandlers.exportItemAddActionListener());
 
         // 点击”功能“的监听事件
         moreButton.addMouseListener(new MouseAdapter() {

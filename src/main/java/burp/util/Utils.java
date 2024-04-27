@@ -1,14 +1,6 @@
 package burp.util;
 
 import burp.BurpExtender;
-
-import java.io.*;
-import java.net.*;
-import java.util.Base64;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpService;
 import burp.model.TableLogModel;
@@ -17,17 +9,13 @@ import java.util.*;
 import java.util.ArrayList;
 import javax.net.ssl.*;
 import java.security.cert.X509Certificate;
-
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-
-import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -419,41 +407,6 @@ public class Utils {
     }
 
 
-    public static byte[] identifyFingerprint(String urlString) {
-        try {
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            HttpGet httpGet = new HttpGet(urlString);
-            CloseableHttpResponse response = httpClient.execute(httpGet);
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            try {
-                // 获取响应状态行
-                byteArrayOutputStream.write((response.getStatusLine().toString() + "\r\n").getBytes());
-                // 获取所有响应头部
-                Header[] headers = response.getAllHeaders();
-                for (Header header : headers) {
-                    byteArrayOutputStream.write((header.getName() + ": " + header.getValue() + "\r\n").getBytes());
-                }
-                // 添加一个空行来结束头部
-                byteArrayOutputStream.write("\r\n".getBytes());
-
-                // 获得响应实体
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    // 将响应体添加到字节数组输出流中
-                    byteArrayOutputStream.write(EntityUtils.toByteArray(entity));
-                }
-            } finally {
-                response.close();
-            }
-
-            // 返回字节数组
-            return byteArrayOutputStream.toByteArray();
-
-        } catch (IOException e) {
-            return null;
-        }
-    }
 
     /**
      * 获取-插件运行路径
@@ -484,6 +437,19 @@ public class Utils {
                 return protocol;
             }
         };
+    }
+
+    public static String escapeCsv(String value) {
+        String escapedValue = value;
+        if (value.contains("\"")) {
+            // 将所有的双引号替换成两个双引号
+            escapedValue = escapedValue.replace("\"", "\"\"");
+        }
+        // 如果值包含逗号、双引号或换行符，将其包围在双引号之中
+        if (value.contains(",") || value.contains("\n") || value.contains("\"")) {
+            escapedValue = "\"" + escapedValue + "\"";
+        }
+        return escapedValue;
     }
 
 }

@@ -1,7 +1,6 @@
 package burp;
 
 import burp.model.TableLogModel;
-import burp.ui.FingerConfigTab;
 import burp.ui.FingerTab;
 import burp.util.FingerUtils;
 import burp.util.HTTPUtils;
@@ -52,6 +51,7 @@ public class IProxyScanner implements IProxyListener {
         FingerTab.lbRequestCount.setText("0");
         BurpExtender.getDataBaseService().clearRequestsResponseTable();
         BurpExtender.getDataBaseService().clearTableDataTable();
+        FingerTab.timer.stop();
     }
 
     public void processProxyMessage(boolean messageIsRequest, final IInterceptedProxyMessage iInterceptedProxyMessage) {

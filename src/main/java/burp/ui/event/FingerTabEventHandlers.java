@@ -2,17 +2,13 @@ package burp.ui.event;
 
 import burp.BurpExtender;
 import burp.model.TableLogModel;
-import burp.ui.FingerConfigTab;
 import burp.ui.FingerTab;
-import burp.util.UiUtils;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +17,10 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.*;
 import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import static burp.util.Utils.escapeCsv;
 
 /**
  * @author： shaun
@@ -209,37 +209,67 @@ public class FingerTabEventHandlers {
             }
         };
     }
-//
-//
-//    public static ActionListener exportItemAddActionListener(JPanel contentPane, HttpLogTable logTable){
-//        return new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                JFileChooser fileChooser = new JFileChooser();
-//                fileChooser.setDialogTitle("Specify a file to save");
-//
-//                // 设置默认文件名
-//                fileChooser.setSelectedFile(new File("ExportedData.xlsx"));
-//
-//                // 限制文件类型为.xlsx
-//                FileNameExtensionFilter filter = new FileNameExtensionFilter("Excel Files", "xlsx");
-//                fileChooser.setFileFilter(filter);
-//
-//                int userSelection = fileChooser.showSaveDialog(contentPane);
-//
-//                if (userSelection == JFileChooser.APPROVE_OPTION) {
-//                    File fileToSave = fileChooser.getSelectedFile();
-//                    // 确保文件有正确的扩展名
-//                    if (!fileToSave.toString().toLowerCase().endsWith(".xlsx")) {
-//                        fileToSave = new File(fileToSave.toString() + ".xlsx");
-//                    }
-//                    // 导出表格数据到Excel文件
-//                    UiUtils.exportTableToExcel(fileToSave, contentPane, logTable);
-//                }
-//            }
-//        };
-//    }
-//
+
+    public static ActionListener exportItemAddActionListener() {
+        return new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 创建一个文件选择器实例
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Save As"); // 设置对话框标题
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setAcceptAllFileFilterUsed(false); // 取消所有文件过滤
+                fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CSV Files", "csv")); // 只允许CSV文件格式
+
+                // 设置默认的文件名
+                fileChooser.setSelectedFile(new File("BurpFinderPrint-TableData.csv"));
+
+                // 弹出保存对话框
+                int userSelection = fileChooser.showSaveDialog(null);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    // 获取用户选择的文件
+                    File fileToSave = fileChooser.getSelectedFile();
+                    String filePath = fileToSave.getAbsolutePath();
+                    // 确保文件有.csv扩展名
+                    if (!filePath.endsWith(".csv")) {
+                        filePath += ".csv";
+                    }
+
+                    // 获取所有数据模型
+                    List<TableLogModel> allTableDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
+
+                    // 创建CSV文件并写入数据
+                    try (FileWriter csvWriter = new FileWriter(filePath)) {
+                        // 写入标题行（根据TableLogModel的字段）
+                        csvWriter.append("PID,URL,Method,Title,Status,Result,Type,IsImportant,ResultInfo,Host,Port,Protocol,RequestResponseIndex,Time\n");
+
+                        // 遍历所有的数据模型并写入CSV
+                        for (TableLogModel model : allTableDataModels) {
+                            csvWriter.append(escapeCsv(String.valueOf(model.getPid())) + ",");
+                            csvWriter.append(escapeCsv(model.getUrl()) + ",");
+                            csvWriter.append(escapeCsv(model.getMethod()) + ",");
+                            csvWriter.append(escapeCsv(model.getTitle()) + ",");
+                            csvWriter.append(escapeCsv(model.getStatus()) + ",");
+                            csvWriter.append(escapeCsv(model.getResult()) + ",");
+                            csvWriter.append(escapeCsv(model.getType()) + ",");
+                            csvWriter.append(escapeCsv(String.valueOf(model.getIsImportant())) + ",");
+                            csvWriter.append(escapeCsv(model.getResultInfo()) + ",");
+                            csvWriter.append(escapeCsv(model.getHost()) + ",");
+                            csvWriter.append(escapeCsv(String.valueOf(model.getPort())) + ",");
+                            csvWriter.append(escapeCsv(model.getProtocol()) + ",");
+                            csvWriter.append(escapeCsv(String.valueOf(model.getRequestResponseIndex())) + ",");
+                            csvWriter.append(escapeCsv(model.getTime()));
+                            csvWriter.append("\n");
+                        }
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        };
+    }
+
 
     public static ActionListener clearItemAddActionListener(DefaultTableModel model, JTable logTable, JLabel lbSuccessCount){
         return new ActionListener() {

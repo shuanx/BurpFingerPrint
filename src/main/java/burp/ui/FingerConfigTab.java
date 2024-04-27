@@ -5,7 +5,6 @@ import burp.Wrapper.FingerPrintRulesWrapper;
 import burp.model.FingerPrintRule;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +13,6 @@ import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
 import java.awt.event.*;
 import java.util.Set;
 import java.util.HashSet;

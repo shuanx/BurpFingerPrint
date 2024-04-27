@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
+
 
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     public final static String extensionName = "FinderPrint";
