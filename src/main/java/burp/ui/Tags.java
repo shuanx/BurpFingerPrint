@@ -13,12 +13,14 @@ public class Tags implements ITab {
     private String tagName;
     private FingerTab fingerTab = new FingerTab();
     public FingerConfigTab fingerConfigTab = new FingerConfigTab();
+    public WeakPasswordTab weakPasswordTab = new WeakPasswordTab();
 
     public Tags(IBurpExtenderCallbacks callbacks, String name){
 
         this.tagName = name;
         // 定义tab标签页
         tabs = new JTabbedPane();
+//        tabs.add("口令爆破", weakPasswordTab.contentPane);
         tabs.add("指纹识别", fingerTab.contentPane);
         tabs.add("指纹配置", fingerConfigTab);
 

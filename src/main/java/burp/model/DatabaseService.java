@@ -92,6 +92,25 @@ public class DatabaseService {
             BurpExtender.getStderr().println("[!] create requests response db failed, because：");
             e.printStackTrace(BurpExtender.getStderr());
         }
+
+        String weakPasswordSQL = "CREATE TABLE IF NOT EXISTS weak_password (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " url TEXT NOT NULL,\n"
+                + " finger TEXT, \n"
+                + " weak_password TEXT, \n"
+                + " test_number TEXT, \n"
+                + " result_info TEXT, \n"
+                + " status TEXT, \n"
+                + " time TEXT\n"
+                + ");";
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(weakPasswordSQL);
+            BurpExtender.getStdout().println("[+] create weak_password db success~");
+        } catch (Exception e) {
+            BurpExtender.getStderr().println("[!] create weak_password db failed, because：");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
     }
 
     public Connection getConnection() throws SQLException {

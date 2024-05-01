@@ -48,7 +48,7 @@
 - [ ] 信呼OA
 
 ## 优化/建议/问题反馈群
-<img src="images/weixinqun.jpg" alt="img.png" width="200"/>
+<img src="images/weixinqun.png" alt="img.png" width="200"/>
 
 
 ## 额外推荐笔者另一个好用的插件 - BurpAPIFinder
