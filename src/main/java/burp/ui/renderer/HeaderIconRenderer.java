@@ -11,6 +11,7 @@ import burp.util.UiUtils;
  * @description：TODO
  */
 public class HeaderIconRenderer extends DefaultTableCellRenderer {
+    private static final Icon FILTER_ICON = UiUtils.getImageIcon("/icon/filterIcon.png", 17, 17);
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         // 保留原始行为
@@ -18,7 +19,7 @@ public class HeaderIconRenderer extends DefaultTableCellRenderer {
 
         // 如果是类型列
         if (column == 6 || column == 7) {
-            setIcon(UiUtils.getImageIcon("/icon/filterIcon.png", 17, 17));
+            setIcon(FILTER_ICON);
             setHorizontalAlignment(JLabel.CENTER);
             setHorizontalTextPosition(JLabel.LEFT);
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));

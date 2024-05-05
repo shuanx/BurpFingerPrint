@@ -2,9 +2,11 @@ package burp.ui;
 
 import burp.*;
 import burp.model.TableLogModel;
+import burp.model.WeakPassword;
 import burp.ui.event.FingerTabEventHandlers;
 import burp.ui.renderer.HavingImportantRenderer;
 import burp.ui.renderer.HeaderIconRenderer;
+import burp.ui.renderer.IconTableCellRenderer;
 import burp.util.UiUtils;
 
 import javax.swing.*;
@@ -45,7 +47,6 @@ public class WeakPasswordTab implements IMessageEditorController {
     public static JLabel flashText;
     public static Timer timer;
     public static LocalDateTime operationStartTime = LocalDateTime.now();
-    public static JLabel currentSelectedLabel = null;
 
     public WeakPasswordTab() {
         contentPane = new JPanel();
@@ -147,6 +148,14 @@ public class WeakPasswordTab implements IMessageEditorController {
         weakPasswordBlasting.setContentAreaFilled(false);  // 移除选中状态下的背景填充
         weakPasswordBlasting.setToolTipText("弱口令爆破开启（功能开发中，请进群敬请期待）");
 
+        weakPasswordBlasting.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // 例如，更新FingerConfigTab中的按钮状态
+                BurpExtender.getTags().fingerTab.weakPasswordBlasting.setSelected(weakPasswordBlasting.isSelected());
+            }
+        });
+
         // 刷新按钮
         flashButton.addActionListener(new ActionListener() {
             @Override
@@ -158,6 +167,7 @@ public class WeakPasswordTab implements IMessageEditorController {
                 } else {
                     // 如果按钮没有被选中，意味着刷新功能没有被激活，我们将文本设置为 "自动刷新"
                     flashText.setText("自动每5秒刷新表格中");
+                    showFilter();
                 }
             }
         });
@@ -189,6 +199,15 @@ public class WeakPasswordTab implements IMessageEditorController {
         gbc_btnClear.gridx = 13;  // 根据该值来确定是确定从左到右的顺序
         gbc_btnClear.gridy = 0;
         FilterPanel.add(btnClear, gbc_btnClear);
+
+        // 给 "清空" 按钮添加一个监听事件
+        btnClear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                BurpExtender.getDataBaseService().clearWeakPasswordTable();
+                showFilter();
+            }
+        });
 
         // 功能按钮
         JPopupMenu moreMenu = new JPopupMenu("功能");
@@ -263,6 +282,9 @@ public class WeakPasswordTab implements IMessageEditorController {
         table.getColumnModel().getColumn(5).setCellRenderer(centerRenderer);
         table.getColumnModel().getColumn(6).setCellRenderer(centerRenderer);
 
+        IconTableCellRenderer havingImportantRenderer = new IconTableCellRenderer();
+        table.getColumnModel().getColumn(5).setCellRenderer(havingImportantRenderer);
+
         // 创建右键菜单
         JPopupMenu popupMenu = new JPopupMenu();
         JMenuItem clearItem = new JMenuItem("清除");
@@ -279,31 +301,23 @@ public class WeakPasswordTab implements IMessageEditorController {
 
         // 添加ListSelectionListener来监听行选择事件
         table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-                                                               public void valueChanged(ListSelectionEvent event) {
-                                                                   if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
-                                                                       // 在这里获取选中行的数据
-                                                                       int selectedRow = table.getSelectedRow();
+           public void valueChanged(ListSelectionEvent event) {
+               if (!event.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+                   setFlashButtonFalse();
+                   operationStartTime = LocalDateTime.now();
+                   // 在这里获取选中行的数据
+                   int selectedRow = table.getSelectedRow();
+                   // 根据您的数据模型结构获取数据
+                   String url = model.getValueAt(selectedRow, 1).toString();
+                   WeakPassword wp = BurpExtender.getDataBaseService().getWeakPasswordByUrl(url);
+                   resultDeViewer.setText(wp.getResultInfo().getBytes());
+                   // 例如，你可以将它们设置到一个 HTTP 消息编辑器组件中
+                   requestViewer.setMessage(wp.getRequestsByte(), true); // true 表示请求消息
+                   responseViewer.setMessage(wp.getResponseByte(), false); // false 表示响应消息
 
-                                                                       // 根据您的数据模型结构获取数据
-                                                                       String url = model.getValueAt(selectedRow, 2).toString();
-                                                                       TableLogModel logModel = BurpExtender.getDataBaseService().getTableDataByUrl(url);
-                                                                       resultDeViewer.setText(logModel.getResultInfo().getBytes());
-                                                                       Map<String, byte[]> requestResponse = BurpExtender.getDataBaseService().selectRequestResponseById(logModel.getRequestResponseIndex());
-
-                                                                       if (requestResponse != null) {
-                                                                           // 提取请求和响应数据
-                                                                           byte[] requestBytes = requestResponse.get("request");
-                                                                           byte[] responseBytes = requestResponse.get("response");
-
-                                                                           // 现在你可以使用这些字节数据了
-                                                                           // 例如，你可以将它们设置到一个 HTTP 消息编辑器组件中
-                                                                           requestViewer.setMessage(requestBytes, true); // true 表示请求消息
-                                                                           responseViewer.setMessage(responseBytes, false); // false 表示响应消息
-                                                                       }
-
-                                                                   }
-                                                               }
-                                                           });
+               }
+           }
+       });
 
 
         JTabbedPane tabs = new JTabbedPane();
@@ -318,7 +332,6 @@ public class WeakPasswordTab implements IMessageEditorController {
 
         BurpExtender.getCallbacks().customizeUiComponent(topPanel);
 
-        // 构建一个定时刷新页面函数
         // 创建一个每5秒触发一次的定时器
         int delay = 5000; // 延迟时间，单位为毫秒
         timer = new Timer(delay, new ActionListener() {
@@ -342,7 +355,6 @@ public class WeakPasswordTab implements IMessageEditorController {
 
     public static void refreshTableModel(){
         // 刷新页面, 如果自动更新关闭，则不刷新页面内容
-        // lbSuccessCount.setText(String.valueOf(BurpExtender.getDataBaseService().getApiDataCount()));
         if(getFlashButtonStatus()){
             if (Duration.between(operationStartTime, LocalDateTime.now()).getSeconds() > 600){
                 setFlashButtonTrue();
@@ -353,61 +365,29 @@ public class WeakPasswordTab implements IMessageEditorController {
         showFilter();
     }
 
-
     public static void showFilter(){
         synchronized (model) {
             // 清空model后，根据URL来做匹配
             model.setRowCount(0);
-            lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
+            lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getWeakPasswordSuccessCount()));
+            lbRequestCount.setText(Integer.toString(BurpExtender.getDataBaseService().getWeakPasswordCount()));
             // 获取数据库中的所有ApiDataModels
-            java.util.List<TableLogModel> allApiDataModels = BurpExtender.getDataBaseService().getAllTableDataModels();
+            java.util.List<WeakPassword> weakPasswordList = BurpExtender.getDataBaseService().getAllWeakPassword();
 
             // 遍历apiDataModelMap
-            for (TableLogModel apiDataModel : allApiDataModels) {
+            for (WeakPassword weakPasswordModel : weakPasswordList) {
                 model.insertRow(0, new Object[]{
-                        apiDataModel.getPid(),
-                        apiDataModel.getMethod(),
-                        apiDataModel.getUrl(),
-                        apiDataModel.getTitle(),
-                        apiDataModel.getStatus(),
-                        apiDataModel.getResult(),
-                        apiDataModel.getType(),
-                        apiDataModel.getIsImportant(),
-                        apiDataModel.getTime()
+                        weakPasswordModel.getId(),
+                        weakPasswordModel.getUrl(),
+                        weakPasswordModel.getFinger(),
+                        weakPasswordModel.getWeakPassword(),
+                        weakPasswordModel.getTestNumber(),
+                        weakPasswordModel.getStatus(),
+                        weakPasswordModel.getTime()
                 });
             }
         }
     }
-
-    public static void filterTable(String typeFilter, String resultFilter, Boolean isImportantFilter) {
-        try{
-            // 清空model后，根据URL来做匹配
-            model.setRowCount(0);
-            lbSuccessCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
-            java.util.List<TableLogModel> allApiDataModels;
-            // 获取数据库中的所有ApiDataModels
-            allApiDataModels = BurpExtender.getDataBaseService().getTableDataModelsByFilter(typeFilter, resultFilter, isImportantFilter);
-            operationStartTime = LocalDateTime.now();
-            // 遍历apiDataModelMap
-            for (TableLogModel apiDataModel : allApiDataModels) {
-                model.insertRow(0, new Object[]{
-                        apiDataModel.getPid(),
-                        apiDataModel.getMethod(),
-                        apiDataModel.getUrl(),
-                        apiDataModel.getTitle(),
-                        apiDataModel.getStatus(),
-                        apiDataModel.getResult(),
-                        apiDataModel.getType(),
-                        apiDataModel.getIsImportant(),
-                        apiDataModel.getTime()
-                });
-            }
-        } catch (Exception e) {
-            BurpExtender.getStderr().println("[-] Error filterTableByType: ");
-            e.printStackTrace(BurpExtender.getStderr());
-        }
-    }
-
 
 
     public Component getComponet(){
@@ -426,100 +406,6 @@ public class WeakPasswordTab implements IMessageEditorController {
         return currentlyDisplayedItem.getResponse();
     }
 
-    public class WrapLayout extends FlowLayout {
-        public WrapLayout() {
-            super();
-        }
-
-        public WrapLayout(int align) {
-            super(align);
-        }
-
-        public WrapLayout(int align, int hgap, int vgap) {
-            super(align, hgap, vgap);
-        }
-
-        @Override
-        public Dimension preferredLayoutSize(Container target) {
-            return layoutSize(target, true);
-        }
-
-        @Override
-        public Dimension minimumLayoutSize(Container target) {
-            Dimension minimum = layoutSize(target, false);
-            minimum.width -= (getHgap() + 1);
-            return minimum;
-        }
-
-        private Dimension layoutSize(Container target, boolean preferred) {
-            synchronized (target.getTreeLock()) {
-                int targetWidth = target.getSize().width;
-                Container container = target;
-
-                while (container.getSize().width == 0 && container.getParent() != null) {
-                    container = container.getParent();
-                }
-
-                targetWidth = container.getSize().width;
-
-                if (targetWidth == 0) {
-                    targetWidth = Integer.MAX_VALUE;
-                }
-
-                int hgap = getHgap();
-                int vgap = getVgap();
-                Insets insets = target.getInsets();
-                int horizontalInsetsAndGap = insets.left + insets.right + (hgap * 2);
-                int maxWidth = targetWidth - horizontalInsetsAndGap;
-
-                // Fit components into the allowed width
-                Dimension dim = new Dimension(0, 0);
-                int rowWidth = 0;
-                int rowHeight = 0;
-
-                int nmembers = target.getComponentCount();
-
-                for (int i = 0; i < nmembers; i++) {
-                    Component m = target.getComponent(i);
-                    if (m.isVisible()) {
-                        Dimension d = preferred ? m.getPreferredSize() : m.getMinimumSize();
-
-                        // Wrap line if this component doesn't fit
-                        if ((rowWidth + d.width) > maxWidth) {
-                            dim.width = Math.max(rowWidth, dim.width);
-                            dim.height += rowHeight + vgap;
-                            rowWidth = 0;
-                            rowHeight = 0;
-                        }
-
-                        // Add component size to current row
-                        if (rowWidth != 0) {
-                            rowWidth += hgap;
-                        }
-                        rowWidth += d.width;
-                        rowHeight = Math.max(rowHeight, d.height);
-                    }
-                }
-
-                dim.width = Math.max(rowWidth, dim.width);
-                dim.height += rowHeight + vgap;
-                dim.width += horizontalInsetsAndGap;
-                dim.height += insets.top + insets.bottom + vgap * 2;
-
-                // When using a scroll pane or the DecoratedLookAndFeel we need to
-                // make sure the preferred size is less than the size of the
-                // target containter so shrinking the container size works
-                // correctly. Removing the horizontal gap is an easy way to do this.
-                Container scrollPane = SwingUtilities.getAncestorOfClass(JScrollPane.class, target);
-                if (scrollPane != null && target.isValid()) {
-                    dim.width -= (hgap + 1);
-                }
-
-                return dim;
-            }
-        }
-
-    }
 
     public static void setFlashButtonTrue(){
         flashButton.setSelected(false);

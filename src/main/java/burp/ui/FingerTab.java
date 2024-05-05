@@ -198,11 +198,11 @@ public class FingerTab implements IMessageEditorController {
         FilterPanel.add(Box.createHorizontalGlue(), gbc_rightFiller);
 
 
-        toggleButton.addActionListener(new ActionListener() {
+        weakPasswordBlasting.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // 例如，更新FingerConfigTab中的按钮状态
-                BurpExtender.getTags().fingerConfigTab.toggleButton.setSelected(toggleButton.isSelected());
+                BurpExtender.getTags().weakPasswordTab.weakPasswordBlasting.setSelected(weakPasswordBlasting.isSelected());
             }
         });
 

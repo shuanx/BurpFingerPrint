@@ -13,6 +13,9 @@ import java.awt.*;
  */
 public class HavingImportantRenderer extends DefaultTableCellRenderer {
 
+    private static final Icon IMPORTANT_ICON = UiUtils.getImageIcon("/icon/importantButtonIcon.png", 15, 15);
+    private static final Icon NORMAL_ICON = UiUtils.getImageIcon("/icon/normalIcon.png", 15, 15);
+
     public HavingImportantRenderer() {
         setHorizontalAlignment(CENTER); // 设置居中
     }
@@ -27,9 +30,9 @@ public class HavingImportantRenderer extends DefaultTableCellRenderer {
         // 根据单元格值设置相应图标
         if (value instanceof Boolean) {
             if ((Boolean) value) {
-                setIcon(UiUtils.getImageIcon("/icon/importantButtonIcon.png", 15, 15));
+                setIcon(IMPORTANT_ICON);
             } else {
-                setIcon(UiUtils.getImageIcon("/icon/normalIcon.png", 15, 15));
+                setIcon(NORMAL_ICON);
             }
         } else {
             setIcon(null); // 如果值不是布尔类型，则不显示图标

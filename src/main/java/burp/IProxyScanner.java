@@ -1,19 +1,19 @@
 package burp;
 
 import burp.model.TableLogModel;
+import burp.model.WeakPassword;
 import burp.ui.FingerTab;
+import burp.ui.WeakPasswordTab;
 import burp.util.FingerUtils;
 import burp.util.HTTPUtils;
 import burp.util.UrlScanCount;
 import burp.util.Utils;
+import burp.weakpassword.TomcatWeakPassword;
 
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @author： shaun
@@ -25,6 +25,10 @@ public class IProxyScanner implements IProxyListener {
     public static int totalScanCount = 0;
     final ThreadPoolExecutor executorService;  // 修改这行
     private static IExtensionHelpers helpers;
+    final ExecutorService monitorExecutorService;;  // 修改这行
+    private static ScheduledExecutorService monitorExecutor;
+    // 暴力破解模块支持指纹
+    private static final List<String> WEAKPASSWORDMODEL = Arrays.asList("Tomcat");
 
     public IProxyScanner() {
         helpers = BurpExtender.getHelpers();
@@ -32,7 +36,6 @@ public class IProxyScanner implements IProxyListener {
         int coreCount = Runtime.getRuntime().availableProcessors();
         coreCount = Math.max(coreCount, 20);
         int maxPoolSize = coreCount * 2;
-        BurpExtender.getStdout().println("[+] Number of threads enabled:: " + maxPoolSize);
         long keepAliveTime = 60L;
         executorService = new ThreadPoolExecutor(
                 coreCount,
@@ -43,6 +46,37 @@ public class IProxyScanner implements IProxyListener {
                 Executors.defaultThreadFactory(),
                 new ThreadPoolExecutor.CallerRunsPolicy() // 当线程池和队列都满时，任务在调用者线程中执行
         );
+        BurpExtender.getStdout().println("[+] run executorService maxPoolSize: " + coreCount + " ~ " + maxPoolSize);
+
+        monitorExecutorService = Executors.newFixedThreadPool(6); // 用固定数量的线程
+
+        monitorExecutor = Executors.newSingleThreadScheduledExecutor();
+        startDatabaseMonitor();
+        BurpExtender.getStdout().println("[+] run Weak password blasting monitorExecutor success~ ");
+    }
+
+    private void startDatabaseMonitor() {
+        monitorExecutor.scheduleAtFixedRate(() -> {
+            monitorExecutorService.submit(() -> {
+                try {
+                    if (WeakPasswordTab.weakPasswordBlasting.isSelected()){
+                        BurpExtender.getStdout().println("[+] 弱口令爆破模块关闭，不进行定时获取数据进行爆破。");
+                        return;
+                    }
+                    WeakPassword wp = BurpExtender.getDataBaseService().fetchAndMarkSinglePathAsCrawling();
+                    if (wp == null){
+                        BurpExtender.getStdout().println("[+] 弱口令爆破模块运行中，但无需爆破的数据。");
+                        return;
+                    }
+                    wp = TomcatWeakPassword.checkWeakPasswords(wp);
+                    BurpExtender.getStdout().println("[+] url: " + wp.getUrl() + "爆破结果为: " + wp.getStatus());
+                    BurpExtender.getDataBaseService().updateWeakPassword(wp);
+                } catch (Exception e) {
+                    BurpExtender.getStderr().println("[!] scheduleAtFixedRate error: ");
+                    e.printStackTrace(BurpExtender.getStderr());
+                }
+            });
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     public static void setHaveScanUrlNew(){
@@ -137,6 +171,8 @@ public class IProxyScanner implements IProxyListener {
                             mapResult.setStatus(Short.toString(responseInfo.getStatusCode()));
                             mapResult.setMethod(oneMethod);
                             BurpExtender.getDataBaseService().insertOrUpdateLogEntry(mapResult);
+                            // 判断是否需要需要进行爆破
+                            ifInsertWeakPasswordDatabase(mapResult);
                             BurpExtender.getStdout().println(mapResult);
                         }
                         BurpExtender.getStdout().println("[END]指纹识别结束: " + totalUrlResponse);
@@ -150,6 +186,33 @@ public class IProxyScanner implements IProxyListener {
 
         }
 
+    }
+
+    public static void shutdownMonitorExecutor() {
+        // 关闭监控线程池
+        if (monitorExecutor != null && !monitorExecutor.isShutdown()) {
+            monitorExecutor.shutdown();
+            try {
+                // 等待线程池终止，设置一个合理的超时时间
+                if (!monitorExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    // 如果线程池没有在规定时间内终止，则强制关闭
+                    monitorExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                // 如果等待期间线程被中断，恢复中断状态
+                Thread.currentThread().interrupt();
+                // 强制关闭
+                monitorExecutor.shutdownNow();
+            }
+        }
+    }
+
+    public static void ifInsertWeakPasswordDatabase(TableLogModel result){
+        for (String value : WEAKPASSWORDMODEL){
+            if (result.getResult().contains(value) && !BurpExtender.getDataBaseService().existsWeakPasswordByUrl(Utils.getUriFromUrl(result.getUrl()))){
+                BurpExtender.getDataBaseService().insertWeakPassword(Utils.getUriFromUrl(result.getUrl()), value, "-", "-", "-", "等待爆破中", "-");
+            }
+        }
     }
 
 }

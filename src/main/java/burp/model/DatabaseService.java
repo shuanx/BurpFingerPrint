@@ -101,7 +101,9 @@ public class DatabaseService {
                 + " test_number TEXT, \n"
                 + " result_info TEXT, \n"
                 + " status TEXT, \n"
-                + " time TEXT\n"
+                + " time TEXT, \n"
+                + " request BLOB, \n"
+                + " response BLOB \n"
                 + ");";
 
         try (Statement stmt = connection.createStatement()) {
@@ -421,6 +423,20 @@ public class DatabaseService {
         }
     }
 
+    public synchronized void clearWeakPasswordTable() {
+        String sql = "DELETE FROM weak_password"; // 用 DELETE 语句来清空表
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.executeUpdate();
+            BurpExtender.getStdout().println("[-] weak_password table has been cleared.");
+        } catch (Exception e) {
+            BurpExtender.getStderr().println("Error clearing weak_password table: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
 
     // 关闭数据库连接的方法
     public void closeConnection() {
@@ -499,5 +515,217 @@ public class DatabaseService {
         }
         return requestResponse;
     }
+
+    public synchronized void insertWeakPassword(String url, String finger, String weakPassword, String testNumber, String resultInfo, String status, String time) {
+        // SQL 语句来插入新数据
+        String sql = "INSERT INTO weak_password(url, finger, weak_password, test_number, result_info, status, time) VALUES(?,?,?,?,?,?,?)";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, url);
+            pstmt.setString(2, finger);
+            pstmt.setString(3, weakPassword);
+            pstmt.setString(4, testNumber);
+            pstmt.setString(5, resultInfo);
+            pstmt.setString(6, status);
+            pstmt.setString(7, time);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error insertWeakPassword: " + url);
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
+    public synchronized void deleteWeakPassword(String url) {
+        // SQL 语句来删除数据
+        String sql = "DELETE FROM weak_password WHERE url = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, url);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public synchronized void updateWeakPassword(WeakPassword wp) {
+        // SQL 语句来更新数据
+        String sql = "UPDATE weak_password SET finger = ?, weak_password = ?, test_number = ?, result_info = ?, status = ?, time = ?, request = ?, response = ? WHERE url = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, wp.getFinger());
+            pstmt.setString(2, wp.getWeakPassword());
+            pstmt.setString(3, wp.getTestNumber());
+            pstmt.setString(4, wp.getResultInfo());
+            pstmt.setString(5, wp.getStatus());
+            pstmt.setString(6, wp.getTime());
+            pstmt.setBytes(7, wp.getRequestsByte());
+            pstmt.setBytes(8, wp.getResponseByte());
+            pstmt.setString(9, wp.getUrl());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error updateWeakPassword: " + wp);
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+    }
+
+    public synchronized void updateWeakPasswordStatus(String url, String status) {
+        // SQL 语句来更新数据
+        String sql = "UPDATE weak_password SET status = ? WHERE url = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "爆破中");
+            pstmt.setString(2, url);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public synchronized List<WeakPassword> getAllWeakPassword() {
+        List<WeakPassword> resultList = new ArrayList<>();
+        String sql = "SELECT id, url, finger, weak_password, test_number, result_info, status, time FROM weak_password";
+
+        try (Connection conn = getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                WeakPassword wp = new WeakPassword();
+                wp.setId(rs.getInt("id"));
+                wp.setUrl(rs.getString("url"));
+                wp.setFinger(rs.getString("finger"));
+                wp.setWeakPassword(rs.getString("weak_password"));
+                wp.setTestNumber(rs.getString("test_number"));
+                wp.setResultInfo(rs.getString("result_info"));
+                wp.setStatus(rs.getString("status"));
+                wp.setTime(rs.getString("time"));
+                resultList.add(wp);
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error getAllWeakPassword: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+
+        return resultList;
+    }
+
+    public synchronized WeakPassword getWeakPasswordByUrl(String url) {
+        WeakPassword wp = new WeakPassword();
+        String sql = "SELECT id, url, finger, weak_password, test_number, result_info, status, time, request, response FROM weak_password where url = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, url);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        wp.setId(rs.getInt("id"));
+                        wp.setUrl(rs.getString("url"));
+                        wp.setFinger(rs.getString("finger"));
+                        wp.setWeakPassword(rs.getString("weak_password"));
+                        wp.setTestNumber(rs.getString("test_number"));
+                        wp.setResultInfo(rs.getString("result_info"));
+                        wp.setStatus(rs.getString("status"));
+                        wp.setTime(rs.getString("time"));
+                        wp.setRequestsByte(rs.getBytes("request"));
+                        wp.setResponseByte(rs.getBytes("response"));
+                    }
+                }
+
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[-] Error getAllWeakPassword: ");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        return wp;
+    }
+
+    public synchronized boolean existsWeakPasswordByUrl(String url) {
+        String sql = "SELECT COUNT(*) FROM weak_password WHERE url = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, url); // 设置查询参数
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1); // 获取匹配行的数量
+                    return count > 0; // 如果数量大于0，表示存在数据
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return false;
+    }
+
+
+    public synchronized WeakPassword fetchAndMarkSinglePathAsCrawling() throws SQLException {
+        // 事务开启
+        WeakPassword wp = null;
+        // 首先选取一条记录的ID
+        String selectSQL = "SELECT * FROM weak_password WHERE status = '等待爆破中' LIMIT 1;";
+        String updateSQL = "UPDATE weak_password SET status = '爆破中' WHERE id = ?;";
+
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectSQL)) {
+            ResultSet rs = selectStatement.executeQuery();
+            if (rs.next()) {
+                int selectedId = rs.getInt("id");
+                String url = rs.getString("url");
+                wp = new WeakPassword(rs.getInt("id"), rs.getString("url"), rs.getString("finger"), rs.getString("weak_password"), rs.getString("test_number"), rs.getString("result_info"), "爆破中", new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()));
+                try (PreparedStatement updateStatement = connection.prepareStatement(updateSQL)) {
+                    updateStatement.setInt(1, selectedId);
+                    int affectedRows = updateStatement.executeUpdate();
+                    if (affectedRows <= 0) {
+                        BurpExtender.getStderr().println("[!] fetchAndMarkSinglePathAsCrawling error: " + url);
+                    }
+                }
+            }
+        }
+
+        return wp;
+    }
+
+    public synchronized int getWeakPasswordCount() {
+        // 查询表格行数的SQL语句
+        String sql = "SELECT COUNT(*) AS rowcount FROM weak_password";
+
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(sql)) {
+            // 如果查询结果存在，返回第一行的计数
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("rowcount");
+                return count;
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[!] Error getting row count from table_data");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        // 如果查询失败，返回0或者适当的错误代码
+        return 0;
+    }
+
+    public synchronized int getWeakPasswordSuccessCount() {
+        // 查询表格行数的SQL语句
+        String sql = "SELECT COUNT(*) AS rowcount FROM weak_password where status = \"爆破成功\" ";
+
+        try (Connection conn = getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(sql)) {
+            // 如果查询结果存在，返回第一行的计数
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt("rowcount");
+                return count;
+            }
+        } catch (SQLException e) {
+            BurpExtender.getStderr().println("[!] Error getting row count from table_data");
+            e.printStackTrace(BurpExtender.getStderr());
+        }
+        // 如果查询失败，返回0或者适当的错误代码
+        return 0;
+    }
+
 
 }

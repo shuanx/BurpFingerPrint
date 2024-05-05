@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
     public final static String extensionName = "FinderPrint";
-    public final static String version = "v2024-04-22";
+    public final static String version = "v2024-05-04";
     public final static String author = "Shaun";
 
     private static PrintWriter stdout;
@@ -126,6 +126,10 @@ public class BurpExtender implements IBurpExtender, IExtensionStateListener {
             dataBaseService.closeConnection();
             BurpExtender.getStdout().println("[+] 断开数据连接成功.");
         }
+
+        // 关闭计划任务
+        IProxyScanner.shutdownMonitorExecutor();
+        BurpExtender.getStdout().println("[+] 定时爬去任务断开成功.");
     }
 
 

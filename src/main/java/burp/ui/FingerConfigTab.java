@@ -40,7 +40,6 @@ public class FingerConfigTab extends JPanel {
     private JComboBox<Boolean> isImportantField;
     private JComboBox<String> methodField, locationField, typeField;
 
-    public static JToggleButton toggleButton;
     public static JToggleButton allFingerprintsButton;
     private static List<Integer> tableToModelIndexMap = new ArrayList<>();
     public Set<String> uniqueTypes = new HashSet<>();
@@ -78,20 +77,7 @@ public class FingerConfigTab extends JPanel {
         allFingerprintsButton.setToolTipText("指纹匹配：所有指纹");
 
 
-        ImageIcon shutdownIcon = UiUtils.getImageIcon("/icon/shutdownButtonIcon.png", 50, 24);
-        ImageIcon openIcon = UiUtils.getImageIcon("/icon/openButtonIcon.png", 50, 24);
-
-
-        toggleButton = new JToggleButton(openIcon);
-        toggleButton.setSelectedIcon(shutdownIcon);
-        toggleButton.setPreferredSize(new Dimension(50, 24));
-        toggleButton.setBorder(null);  // 设置无边框
-        toggleButton.setFocusPainted(false);  // 移除焦点边框
-        toggleButton.setContentAreaFilled(false);  // 移除选中状态下的背景填充
-        toggleButton.setToolTipText("是否开启对页面提取URL后发起HTTP请求后进行指纹识别");
-
         centerPanel.add(allFingerprintsButton);
-        centerPanel.add(toggleButton);
 
 
         // 全部按钮
@@ -371,7 +357,6 @@ public class FingerConfigTab extends JPanel {
                     }
 
                 }
-                toggleButton.setSelected(false);
             }
         });
         // 点击重置按钮
@@ -418,7 +403,6 @@ public class FingerConfigTab extends JPanel {
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(FingerConfigTab.this, "数据已重置失败： " + ex.getMessage(), "重置失败", JOptionPane.ERROR_MESSAGE);
                 }
-                toggleButton.setSelected(false);
             }
         });
         // 点击保存按钮

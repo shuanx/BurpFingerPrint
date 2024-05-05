@@ -6,12 +6,10 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-/**
- * @author： shaun
- * @create： 2024/3/27 21:30
- * @description：TODO
- */
 public class IconTableCellRenderer extends DefaultTableCellRenderer {
+
+    // 预加载并缓存图标
+    private final Icon importantIcon = UiUtils.getImageIcon("/icon/weakPasswordSuccess.png", 15, 15);
 
     public IconTableCellRenderer() {
         setHorizontalAlignment(CENTER); // 设置居中
@@ -19,20 +17,16 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        // 调用父类以保留默认行为
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        // 设置文本为空，因为我们只显示图标
-        setText("");
-
-        // 根据单元格值设置相应图标
-        if (value instanceof Boolean) {
-            if ((Boolean) value) {
-                setIcon(UiUtils.getImageIcon("/icon/importantButtonIcon.png", 15, 15));
-            } else {
-                setIcon(UiUtils.getImageIcon("/icon/normalIcon.png", 15, 15));
-            }
+        // 检查单元格值是否为“爆破成功”
+        if ("爆破成功".equals(value)) {
+            setIcon(importantIcon);
+            setText(""); // 设置文本为空，因为我们只显示图标
         } else {
-            setIcon(null); // 如果值不是布尔类型，则不显示图标
+            setIcon(null); // 不显示图标
+            setText(value != null ? value.toString() : ""); // 显示文本，如果值为null则为空字符串
         }
 
         return this;
