@@ -35,7 +35,7 @@
 
     </dependencies>
     <build>
-        <finalName>BurpFingerPrint-v1.4</finalName>
+        <finalName>BurpFingerPrint-v1.6</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -10,6 +10,9 @@ import burp.util.UrlScanCount;
 import burp.util.Utils;
 import burp.weakpassword.TomcatWeakPassword;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -20,7 +23,7 @@ import java.util.concurrent.*;
  * @create： 2024/4/5 09:07
  * @description：TODO
  */
-public class IProxyScanner implements IProxyListener {
+public class IProxyScanner implements IProxyListener, IContextMenuFactory {
     private static UrlScanCount haveScanUrl = new UrlScanCount();
     public static int totalScanCount = 0;
     final ThreadPoolExecutor executorService;  // 修改这行
@@ -53,6 +56,9 @@ public class IProxyScanner implements IProxyListener {
         monitorExecutor = Executors.newSingleThreadScheduledExecutor();
         startDatabaseMonitor();
         BurpExtender.getStdout().println("[+] run Weak password blasting monitorExecutor success~ ");
+
+        //注册右键菜单
+        BurpExtender.getCallbacks().registerContextMenuFactory(this);//必须注册右键菜单Factory
     }
 
     private void startDatabaseMonitor() {
@@ -60,12 +66,12 @@ public class IProxyScanner implements IProxyListener {
             monitorExecutorService.submit(() -> {
                 try {
                     if (WeakPasswordTab.weakPasswordBlasting.isSelected()){
-                        BurpExtender.getStdout().println("[+] 弱口令爆破模块关闭，不进行定时获取数据进行爆破。");
+                        BurpExtender.getStdout().println("[-] 弱口令爆破模块关闭，不进行定时获取数据进行爆破。");
                         return;
                     }
                     WeakPassword wp = BurpExtender.getDataBaseService().fetchAndMarkSinglePathAsCrawling();
                     if (wp == null){
-                        BurpExtender.getStdout().println("[+] 弱口令爆破模块运行中，但无需爆破的数据。");
+                        BurpExtender.getStdout().println("[*] 弱口令爆破模块运行中，但无需爆破的数据。");
                         return;
                     }
                     wp = TomcatWeakPassword.checkWeakPasswords(wp);
@@ -93,10 +99,7 @@ public class IProxyScanner implements IProxyListener {
             // 更新总数
             FingerTab.lbRequestCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
 
-            IHttpRequestResponse requestResponse = iInterceptedProxyMessage.getMessageInfo();
             final IHttpRequestResponse resrsp = iInterceptedProxyMessage.getMessageInfo();
-            String method = helpers.analyzeRequest(resrsp).getMethod();
-
             // 提取url，过滤掉静态文件
             String url = String.valueOf(helpers.analyzeRequest(resrsp).getUrl());
             if (Utils.isStaticFile(url) && !url.contains("favicon.") && !url.contains(".ico")){
@@ -104,86 +107,16 @@ public class IProxyScanner implements IProxyListener {
                 return;
             }
 
-            byte[] responseBytes = requestResponse.getResponse();
-
             // 网页提取URL并进行指纹识别
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {
-
-                    // 存储url和对应的response值
-                    Map<String, Object> totalUrlResponse = new HashMap<String, Object>();
-
-                    // 当前请求的URL，requests，Response，以及findUrl来区别是否为提取出来的URL
-                    Map<String, Object> originalData = new HashMap<String, Object>();
-                    originalData.put("responseRequest", requestResponse);
-                    originalData.put("isFindUrl", false);
-                    originalData.put("method", method);
-                    totalUrlResponse.put(url, originalData);
-
-                    if (!url.contains("favicon.") && !url.contains(".ico") && !FingerTab.toggleButton.isSelected()) {
-                        String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
-                        URL urlUrl = helpers.analyzeRequest(resrsp).getUrl();
-                        // 针对html页面提取
-                        Set<String> urlSet = new HashSet<>(Utils.extractUrlsFromHtml(url, new String(responseBytes)));
-                        // 针对JS页面提取
-                        if (mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || Utils.isGetUrlExt(url)) {
-                            urlSet.addAll(Utils.findUrl(urlUrl, new String(responseBytes)));
-                        }
-                        BurpExtender.getStdout().println("[+] 进入网页提取URL页面： " + url + "\r\n URL result: " + urlSet);
-
-                        // 依次遍历urlSet获取其返回的response值
-                        for (String getUrl : urlSet) {
-                            totalUrlResponse.put(getUrl, HTTPUtils.makeGetRequest(getUrl));
-                        }
-                    }
-                    BurpExtender.getStdout().println("[+]指纹识别开始： " + totalUrlResponse);
-
-                    // 依次提取url和对应的response值进行指纹识别
-                    for (Map.Entry<String, Object> entry : totalUrlResponse.entrySet()) {
-
-                        String oneUrl = entry.getKey();
-                        Object value = entry.getValue();
-                        if (value instanceof Map) {
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> oneResult = (Map<String, Object>) value;
-                            // Now it's safe to use oneResult
-                            IHttpRequestResponse oneRequestsResponse = (IHttpRequestResponse) oneResult.get("responseRequest");
-                            byte[] oneResponseBytes = oneRequestsResponse.getResponse();
-                            int requestsResponseIndex = BurpExtender.getDataBaseService().insertOrUpdateRequestResponse(oneUrl, oneRequestsResponse.getRequest(), oneResponseBytes);
-                            // 返回结果为空则退出
-                            if (oneResponseBytes == null || oneResponseBytes.length == 0) {
-                                BurpExtender.getStdout().println("返回结果为空: " + oneUrl);
-                                continue;
-                            }
-                            String oneMethod = (String) oneResult.get("method");
-                            IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
-
-                            // 指纹识别并存储匹配结果
-                            TableLogModel mapResult = FingerUtils.FingerFilter(iInterceptedProxyMessage.getMessageReference(), oneUrl, oneResponseBytes, oneRequestsResponse.getHttpService(), helpers, requestsResponseIndex);
-
-                            // 无法识别出指纹的，则不添加
-                            if (mapResult.getResult().isEmpty()) {
-                                BurpExtender.getStdout().println("[+]无法识别指纹url: " + oneUrl);
-                                continue;
-                            }
-
-                            mapResult.setStatus(Short.toString(responseInfo.getStatusCode()));
-                            mapResult.setMethod(oneMethod);
-                            BurpExtender.getDataBaseService().insertOrUpdateLogEntry(mapResult);
-                            // 判断是否需要需要进行爆破
-                            ifInsertWeakPasswordDatabase(mapResult);
-                            BurpExtender.getStdout().println(mapResult);
-                        }
-                        BurpExtender.getStdout().println("[END]指纹识别结束: " + totalUrlResponse);
-                    }
+                    fingerPrintIdentify(iInterceptedProxyMessage.getMessageReference(), iInterceptedProxyMessage.getMessageInfo());
                 }
             });
 
             int waitingTasks = executorService.getQueue().size();  // 添加这行
-            BurpExtender.getStdout().println(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + ": 当前还有" + waitingTasks + " 个任务等待运行");  // 添加这行
-
-
+            BurpExtender.getStdout().println(new SimpleDateFormat("[*] yyyy/MM/dd HH:mm:ss").format(new Date()) + ": 当前还有" + waitingTasks + " 个任务等待运行");  // 添加这行
         }
 
     }
@@ -215,4 +148,110 @@ public class IProxyScanner implements IProxyListener {
         }
     }
 
+
+    //实现右键
+    @Override
+    public List<JMenuItem> createMenuItems(IContextMenuInvocation invocation) {
+        final IHttpRequestResponse[] iHttpRequestResponses = invocation.getSelectedMessages();
+        JMenuItem i1 = new JMenuItem("Finger Print");
+        i1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (final IHttpRequestResponse iHttpRequestResponse : iHttpRequestResponses) {
+                    // 更新总数
+                    FingerTab.lbRequestCount.setText(Integer.toString(BurpExtender.getDataBaseService().getTableDataCount()));
+                    // 网页提取URL并进行指纹识别
+                    executorService.submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            fingerPrintIdentify((int) System.currentTimeMillis(), iHttpRequestResponse);
+                        }
+                    });
+
+                    int waitingTasks = executorService.getQueue().size();  // 添加这行
+                    BurpExtender.getStdout().println(new SimpleDateFormat("[*] yyyy/MM/dd HH:mm:ss").format(new Date()) + ": 当前还有" + waitingTasks + " 个任务等待运行");  // 添加这行
+                }
+            }
+        });
+
+        return Arrays.asList(i1);
+    }
+
+
+    public static void fingerPrintIdentify(int pid,IHttpRequestResponse  requestResponse) {
+        String method = helpers.analyzeRequest(requestResponse).getMethod();
+        String url = String.valueOf(helpers.analyzeRequest(requestResponse).getUrl());
+        BurpExtender.getStdout().println(String.format("[+] url : %s", url));
+
+        // 存储url和对应的response值
+        Map<String, Object> totalUrlResponse = new HashMap<String, Object>();
+
+        // 当前请求的URL，requests，Response，以及findUrl来区别是否为提取出来的URL
+        Map<String, Object> originalData = new HashMap<String, Object>();
+        originalData.put("responseRequest", requestResponse);
+        originalData.put("isFindUrl", false);
+        originalData.put("method", method);
+        totalUrlResponse.put(url, originalData);
+
+        //获取请求信息的响应
+        byte[] responseBytes = requestResponse.getResponse();
+
+        if (!url.contains("favicon.") && !url.contains(".ico") && !FingerTab.toggleButton.isSelected()) {
+            String mime = helpers.analyzeResponse(responseBytes).getInferredMimeType();
+            URL urlUrl = helpers.analyzeRequest(requestResponse).getUrl();
+            // 针对html页面提取
+            Set<String> urlSet = new HashSet<>(Utils.extractUrlsFromHtml(url, new String(responseBytes)));
+            // 针对JS页面提取
+            if (mime.equals("script") || mime.equals("HTML") || url.contains(".htm") || Utils.isGetUrlExt(url)) {
+                urlSet.addAll(Utils.findUrl(urlUrl, new String(responseBytes)));
+            }
+            BurpExtender.getStdout().println("[+] 进入网页提取URL页面： " + url + "\r\n    URL result: " + urlSet);
+
+            // 依次遍历urlSet获取其返回的response值
+            for (String getUrl : urlSet) {
+                totalUrlResponse.put(getUrl, HTTPUtils.makeGetRequest(getUrl));
+            }
+        }
+
+        BurpExtender.getStdout().println("[+]指纹识别开始： " + totalUrlResponse);
+
+        // 依次提取url和对应的response值进行指纹识别
+        for (Map.Entry<String, Object> entry : totalUrlResponse.entrySet()) {
+
+            String oneUrl = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> oneResult = (Map<String, Object>) value;
+                // Now it's safe to use oneResult
+                IHttpRequestResponse oneRequestsResponse = (IHttpRequestResponse) oneResult.get("responseRequest");
+                byte[] oneResponseBytes = oneRequestsResponse.getResponse();
+                int requestsResponseIndex = BurpExtender.getDataBaseService().insertOrUpdateRequestResponse(oneUrl, oneRequestsResponse.getRequest(), oneResponseBytes);
+                // 返回结果为空则退出
+                if (oneResponseBytes == null || oneResponseBytes.length == 0) {
+                    BurpExtender.getStdout().println("返回结果为空: " + oneUrl);
+                    continue;
+                }
+                String oneMethod = (String) oneResult.get("method");
+                IResponseInfo responseInfo = helpers.analyzeResponse(oneResponseBytes);
+
+                // 指纹识别并存储匹配结果
+                TableLogModel mapResult = FingerUtils.FingerFilter(pid, oneUrl, oneResponseBytes, oneRequestsResponse.getHttpService(), helpers, requestsResponseIndex);
+
+                // 无法识别出指纹的，则不添加
+                if (mapResult.getResult().isEmpty()) {
+                    BurpExtender.getStdout().println("[+]无法识别指纹url: " + oneUrl);
+                    continue;
+                }
+
+                mapResult.setStatus(Short.toString(responseInfo.getStatusCode()));
+                mapResult.setMethod(oneMethod);
+                BurpExtender.getDataBaseService().insertOrUpdateLogEntry(mapResult);
+                // 判断是否需要需要进行爆破
+                ifInsertWeakPasswordDatabase(mapResult);
+                //BurpExtender.getStdout().println(mapResult);
+            }
+            BurpExtender.getStdout().println("[END]指纹识别结束: " + totalUrlResponse);
+        }
+    }
 }
