@@ -15,7 +15,7 @@ import java.util.Set;
 
 
 public class BurpExtender implements IBurpExtender, IExtensionStateListener {
-    public final static String extensionName = "FinderPrint";
+    public final static String extensionName = "FingerPrint";
     public final static String version = "v2024-05-04";
     public final static String author = "Shaun";
 
