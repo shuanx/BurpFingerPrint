@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 
 public class DatabaseService {
 
-    private static final String CONNECTION_STRING = "jdbc:sqlite:" + Paths.get(Utils.getExtensionFilePath(BurpExtender.getCallbacks()), "BurpFinderPrint.db").toAbsolutePath().toString();;
+    private static final String CONNECTION_STRING = "jdbc:sqlite:" + Paths.get(Utils.getExtensionFilePath(BurpExtender.getCallbacks()), "BurpFingerPrint.db").toAbsolutePath().toString();;
 
     private static DatabaseService instance;
     private Connection connection;

@@ -222,7 +222,7 @@ public class FingerTabEventHandlers {
                 fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("CSV Files", "csv")); // 只允许CSV文件格式
 
                 // 设置默认的文件名
-                fileChooser.setSelectedFile(new File("BurpFinderPrint-TableData.csv"));
+                fileChooser.setSelectedFile(new File("BurpFingerPrint-TableData.csv"));
 
                 // 弹出保存对话框
                 int userSelection = fileChooser.showSaveDialog(null);

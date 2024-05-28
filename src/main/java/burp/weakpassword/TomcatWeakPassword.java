@@ -18,7 +18,7 @@ import java.util.Base64;
  * @description：TODO
  */
 public class TomcatWeakPassword {
-    private static final String FINDER = "Apache Tomcat";
+    private static final String Finger = "Apache Tomcat";
     private static final List<String> weakCredentials = Arrays.asList(
             "tomcat:tomcat",
             "admin:admin",
