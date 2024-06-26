@@ -52,8 +52,8 @@
 <img src="images/weixinqun.png" alt="img.png" width="200"/>
 
 
-## 额外推荐笔者另一个好用的插件 - BurpAPIFinger
-GITHUB: https://github.com/shuanx/BurpAPIFinger
+## 额外推荐笔者另一个好用的插件 - BurpAPIFinder
+GITHUB: https://github.com/shuanx/BurpAPIFinder
 该插件为作者2024年4月精心开发出来，融合实战攻防中发现未授权、越权、敏感信息泄漏接口发现的经验入内：  
 攻防演练过程中，我们通常会用浏览器访问一些资产，但很多未授权/敏感信息/越权隐匿在已访问接口过html、JS文件等，该插件能让我们发现未授权/敏感信息/越权/登陆接口等:  
 - [x] 发现通过某接口可以进行未授权/越权获取到所有的账号密码  
